@@ -7,7 +7,7 @@ const app = express();
 const session = require('express-session');
 const path = require('path');
 
-const { PORT, MONGO_URI } = process.env;
+// const { PORT, MONGO_URI } = process.env;
 
 
 // app.get('/', (req, res) => {
