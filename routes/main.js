@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-
+//로당
 router.get('/', (req, res) => {
     res.send('hell portfolian!')
   })
+
+//북마크
+  router.post('/main/bookmark', main.controller.bookmark);
 
 
 // // contoller
