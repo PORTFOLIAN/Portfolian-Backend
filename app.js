@@ -6,8 +6,8 @@ const mongoose = require('mongoose');
 const app = express();
 const session = require('express-session');
 const path = require('path');
-
-// const { PORT, MONGO_URI } = process.env;
+const user = require('./models/user');
+const {  MONGO_URI } = process.env;
 
 
 // app.get('/', (req, res) => {
@@ -50,11 +50,39 @@ app.use('/chat', chatRouter);
 // ++++++++++++++++++ https://poiemaweb.com/mongoose 참고 해야함
 
 // // CONNECT TO MONGODB SERVER 
-// mongoose
-//   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
-//   .then(() => console.log('Successfully connected to mongodb'))
-//   .catch(e => console.error(e));
+mongoose
+  .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('Successfully connected to mongodb'))
+  .catch(e => console.error(e));
 
+//몽고몽고 테스트
+app.get('/models/user', (req, res) => {
+  const users = new user({
+
+        // _id : '1',
+    userId : 'first',
+    nickName : '코딩맨',
+    channel : '카카오',
+    email : 'good@gmail.com',
+    description : 'good',
+    photo : '주소',
+    stackList : ['nodejs'], //stackList
+    doingProjectList :  ['portfolian'], //project.id
+    doneProjectList : ['podo'], //project.id
+    applyProjectList : ['good'], // project.id 
+    bookMarkList : ['portfolian'], // project.id
+    github :'주소'
+      });
+
+      users.save()
+      .then ((result) => {
+        res.send(result)
+      })
+      .catch((err)=>{
+        console.log(err);
+      })
+  
+})
 
 
 

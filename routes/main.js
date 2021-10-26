@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const bookmarkcontroller = require('../controllers/bookmark');
 
 //로당
 router.get('/', (req, res) => {
@@ -7,7 +8,7 @@ router.get('/', (req, res) => {
   })
 
 //북마크
-  router.post('/main/bookmark', main.controller.bookmark);
+  // router.post('/main/bookmark', bookmarkcontroller.bookmark);
 
 
 // // contoller
