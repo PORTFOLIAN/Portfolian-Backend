@@ -1,18 +1,14 @@
 require('dotenv').config();
-
-
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
 const session = require('express-session');
 const path = require('path');
-const user = require('./models/user');
+const User = require('./models/user');
+const Project = require('./models/project');
 const {  MONGO_URI } = process.env;
 
 
-// app.get('/', (req, res) => {
-//     res.send('Hell portfolian!')
-//   })
 
 const PORT = 3000;
 
@@ -24,7 +20,6 @@ const PORT = 3000;
     projectRouter = require('./routes/project');
     teamRouter = require('./routes/team');
     candidatetRouter = require('./routes/candidate');
-
 
     // app.use(
     //     session({ // 옵션은 반드시 넣어줘야 한다.
@@ -54,36 +49,6 @@ mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e));
-
-//몽고몽고 테스트
-app.get('/models/user', (req, res) => {
-  const users = new user({
-
-        // _id : '1',
-    userId : 'first',
-    nickName : '코딩맨',
-    channel : '카카오',
-    email : 'good@gmail.com',
-    description : 'good',
-    photo : '주소',
-    stackList : ['nodejs'], //stackList
-    doingProjectList :  ['portfolian'], //project.id
-    doneProjectList : ['podo'], //project.id
-    applyProjectList : ['good'], // project.id 
-    bookMarkList : ['portfolian'], // project.id
-    github :'주소'
-      });
-
-      users.save()
-      .then ((result) => {
-        res.send(result)
-      })
-      .catch((err)=>{
-        console.log(err);
-      })
-  
-})
-
 
 
 const server = app.listen(PORT, () => {
