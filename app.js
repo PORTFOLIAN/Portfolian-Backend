@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+//const bodyParser = require('body-parser'); // req.body쓰려고.. 
 const mongoose = require('mongoose');
 const app = express();
 const session = require('express-session');
@@ -9,6 +10,8 @@ const Project = require('./models/project');
 const {  MONGO_URI } = process.env;
 
 
+app.use(express.json());
+app.use(express.urlencoded({ extends: true}));
 
 const PORT = 3000;
 
@@ -20,6 +23,7 @@ const PORT = 3000;
     projectRouter = require('./routes/project');
     teamRouter = require('./routes/team');
     candidatetRouter = require('./routes/candidate');
+    userRouter = require('./routes/user');
 
     // app.use(
     //     session({ // 옵션은 반드시 넣어줘야 한다.
@@ -39,8 +43,10 @@ const PORT = 3000;
 app.use('/', mainRouter); //use -> 미들 웨어를 등록해주는 메서드.
 app.use('/auth', authRouter);
 app.use('/mypage', mypageRouter);
-app.use('/project', projectRouter);
+app.use('/projects', projectRouter);
 app.use('/chat', chatRouter);
+app.use('/users', userRouter);
+
 
 // ++++++++++++++++++ https://poiemaweb.com/mongoose 참고 해야함
 
