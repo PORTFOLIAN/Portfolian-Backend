@@ -103,7 +103,7 @@ const projectSchema = mongoose.Schema(
 
 // project create & team에 findUser추가(역할 설정)
 projectSchema.statics.createProject = async function(owner, article, ownerStack){
-	const newProject = new Project(
+	let newProject = await new Project(
         {
           leader : owner,
           projectInfo : {
@@ -113,11 +113,16 @@ projectSchema.statics.createProject = async function(owner, article, ownerStack)
           },
           article : article
         }
-      )
-    await newProject.save();
-	console.log('(in function)newProject.Id : ',newProject.id);
+      ).save();
     return newProject.id;
 }
 
+projectSchema.statics.modifyProjectArticle = async function(projectId, articleDto, ownweStack){
+	this.findOneAndUpdate(
+		{_id : projectId},
+		
+
+	)
+}
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;

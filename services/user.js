@@ -1,3 +1,4 @@
+const jsonHandler = require('../utils/jsonHandle');
 
 class UserService{
 
@@ -11,12 +12,15 @@ class UserService{
         return findUser;
     };
 
-    async addDoingProject(user, doingProject) {
-        await this.UserModel.addDoingProject(user, doingProject);
+    async addDoingProject(user, doingProjectId) {
+        await this.UserModel.addDoingProject(user, doingProjectId);
     };
 
     async getBookMarkProjectList(userId) {
-        return await this.UserModel.findBookMarkProject(userId);
+        let bookMarks = await this.UserModel.findBookMarkProject(userId)
+        let returnBookMark = await jsonHandler.changeStruct(bookMarks);
+        returnBookMark['code'] = 1;
+        return returnBookMark;
     };
 
 }

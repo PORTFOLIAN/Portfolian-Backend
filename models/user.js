@@ -58,14 +58,14 @@ userSchema.statics.findByNickName = async function (nickName) {
 	return await this.findOne({nickName : nickName});
 }
 
-userSchema.statics.addDoingProject = async function (user, newProject){
-	console.log('(in addDoing)newProject.Id : ',newProject);
+userSchema.statics.addDoingProject = async function (user, newProjectId){
+	console.log('(in addDoing)newProject.Id : ',newProjectId);
 	await User.findByIdAndUpdate(
 		{_id : user._id},
 		{
 			$push : {
 				doingProjectList : {
-					_id : mongoose.Types.ObjectId(newProject)
+					_id : mongoose.Types.ObjectId(newProjectId)
 				}
 			}
 		}
@@ -74,10 +74,12 @@ userSchema.statics.addDoingProject = async function (user, newProject){
 }
 
 userSchema.statics.findBookMarkProject = async function(userId){ //우선 NickName으로 찾음
-
-	return await this.findOne({nickName : userId}).populate(
-		'bookMarkList', 'id article status'
-	)
+	return await this.findOne(
+		{nickName : userId}
+		).populate(
+		'bookMarkList', '_id article.title article.title article.stackList article.subjectDescription article.capacity \
+		article.view  status'
+	).select('bookMarkList').lean();
 }
 
 const User = mongoose.model("User",userSchema);

@@ -8,7 +8,17 @@ class ProjectService{
     async createProject(owner, articleDto, ownweStack){
         //project 생성 & team에 owner,ownweStack 넣기
         const newProject = await this.ProjectModel.createProject(owner, articleDto, ownweStack); 
-        console.log(newProject);
+        return newProject;
+    }
+
+    async modifyProjectArticle(owner,projectId, articleDto, ownweStack){
+        
+        //owner check
+
+        
+        
+        this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownweStack); 
+        return newProject;
     }
 }
 module.exports  = ProjectService;

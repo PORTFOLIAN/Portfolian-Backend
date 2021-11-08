@@ -9,8 +9,11 @@ const projectServiceInstance = new ProjectService(User,Project);
 let findBookMarkList = async function (req,res){
 
     // 굳이 userId필요없을 것 같기도 하고 ~ ~
-    //const owner = await userServiceInstance.findUserByNickName(req.params.userId);
-    res.json(await userServiceInstance.getBookMarkProjectList(req.params.userId).bookMarkList);
+    
+    //우선 NickName으로 찾음
+    const bookMarkList = await userServiceInstance.getBookMarkProjectList(req.params.userId);
+    //console.log(bookMarkList);
+    res.json(bookMarkList);
 }
 
 let addUserForTest = async function (req,res){
