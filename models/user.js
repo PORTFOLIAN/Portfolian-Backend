@@ -1,31 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
-// const userSchema = Schema(
-//     {
-//         // userId의 필요성이 있을까 => 빼도 됨
-//         userId : String,
-//         nickName :  {
-//             type : String,
-//             maxlength: 20,
-//         },
-//         channel : String,
-//         email: {
-//             type: String,
-//             trim: true,
-//         },
-//         description : String,
-//         photo : String,
-//         stackList : [String], // 논의 필요
-//         github : String,
-//         doingProjectList : [{type: mongoose.Schema.Types.ObjectId, ref : "Project"}],
-//         doneProjectList : [{type: mongoose.Schema.Types.ObjectId, ref : "Project"}],
-//         applyProjectList : [{type: mongoose.Schema.Types.ObjectId, ref : "Project"}],
-//         bookMarkList : [{type: mongoose.Schema.Types.ObjectId, ref : "Project"}],
-//     }
-//     ,
-// 	{ timestamps: true }
-// )
 const userSchema = new Schema(
 	{
 		nickName :  {
@@ -73,9 +48,39 @@ const userSchema = new Schema(
   	},
 	{
 		versionKey: false,
-		timestamps: true
+		timestamps: true,
+		toObject: { virtuals: true },
+    	toJSON: { virtuals: true }
 	}
 );
+
+userSchema.statics.findByNickName = async function (nickName) {
+	return await this.findOne({nickName : nickName});
+}
+
+userSchema.statics.addDoingProject = async function (user, newProjectId){
+	console.log('(in addDoing)newProject.Id : ',newProjectId);
+	await User.findByIdAndUpdate(
+		{_id : user._id},
+		{
+			$push : {
+				doingProjectList : {
+					_id : mongoose.Types.ObjectId(newProjectId)
+				}
+			}
+		}
+	);
+	console.log(user);
+}
+
+userSchema.statics.findBookMarkProject = async function(userId){ //우선 NickName으로 찾음
+	return await this.findOne(
+		{nickName : userId}
+		).populate(
+		'bookMarkList', '_id article.title article.title article.stackList article.subjectDescription article.capacity \
+		article.view  status'
+	).select('bookMarkList').lean();
+}
 
 const User = mongoose.model("User",userSchema);
 module.exports  = User;

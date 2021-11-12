@@ -8,6 +8,10 @@ const articleSchema = mongoose.Schema(
 		condition: String, //모집 조건
 		progress : String, //진행방식
 		subjectDescription : String, //주제 설명
+		stackList : {
+			type: [String],
+			default : []
+		},
 		description : { // 프로젝트 상세
 			type : String,
 			default : ""
@@ -21,6 +25,11 @@ const articleSchema = mongoose.Schema(
 			type: Number, 
 			default: 0 
 		},
+		bookMarkUserList : {
+			type : [{type: mongoose.Schema.Types.ObjectId, ref : "User"}],
+			default : []
+		}
+		,
 		bookMarkCnt : {
 			type: Number,
 			default: 0
@@ -35,12 +44,14 @@ const articleSchema = mongoose.Schema(
 const projectInfoSchema = mongoose.Schema(
 	{
 		teamName : String,
+		projectTitle : String,
 		team : 
 		{
-			type : [({type: mongoose.Schema.Types.ObjectId, ref : "User"},String)],
+			type : [ 
+				{ teamMember : {type: mongoose.Schema.Types.ObjectId, ref : "User"} , memberStack: String }
+			],
 			default : []
 		},
-		projectTitle : String,
 		projectPhoto : {
 			type :String,
 			default: ""
@@ -71,10 +82,6 @@ const projectSchema = mongoose.Schema(
 			type: Number,
 			default : 0
 		},
-		stackList : {
-			type: [String],
-			default : []
-		},
 		candidiate : {
 			type: [{type: mongoose.Schema.Types.ObjectId, ref : "User"}], //지원자
 			default : []
@@ -88,9 +95,49 @@ const projectSchema = mongoose.Schema(
 	},
     {
         versionKey: false,
-        timestamps: true
+        timestamps: true,
+		toObject: { virtuals: true },
+    	toJSON: { virtuals: true }
     }
 )
 
+// project create & team에 findUser추가(역할 설정)
+projectSchema.statics.createProject = async function(owner, article, ownerStack){
+	let newProject = await new Project(
+        {
+          leader : owner,
+          projectInfo : {
+            teamName : article.title,
+            projectTitle : article.title,
+			team : [{teamMember : owner, memberStack : ownerStack}]
+          },
+          article : article
+        }
+      ).save();
+    return newProject.id;
+}
+
+projectSchema.statics.modifyProjectArticle = async function(projectId, articleDto, ownweStack){
+	await this.findOneAndUpdate(
+		{ article : {  _id : projectId }},
+		{
+			$set: {
+				'article.$.title' : articleDto.title,
+				'article.$.stackList' : articleDto.stackList,
+				'article.$.subjectDescription' : articleDto.subjectDescription,
+				'article.$.projectTime' : articleDto.projectTime,
+				'article.$.condition' : articleDto.condition,
+				'article.$.progress' : articleDto.progress,
+				'article.$.description' : articleDto.description,
+				'article.$.capacity' : articleDto.capacity
+			}
+		}
+	);
+}
+projectSchema.statics.findByArticleId = async function(projectId){
+	return await this.findOne(
+		{ article : {  _id : mongoose.Types.ObjectId(projectId) }}
+	);
+}
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;

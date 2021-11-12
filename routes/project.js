@@ -1,11 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const projectController = require('../controllers/project');
 
-// // contoller
-// const project = require('../controllers/project')
+router.post('/', projectController.createProjectAritcle);
+router.put('/:projectId', projectController.modifyProjectAritcle);
 
-
-router.get('/', (req, res) => {
-    res.send(' portfolian project!')
-  })
 module.exports = router;
