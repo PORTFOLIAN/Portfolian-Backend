@@ -4,5 +4,4 @@ const userController = require('../controllers/user');
 
 router.post('/addUserForTest/:userId', userController.addUserForTest);
 router.get('/:userId/bookMark', userController.findBookMarkList);
-
 module.exports = router;

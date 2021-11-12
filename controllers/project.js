@@ -27,8 +27,9 @@ let modifyProjectAritcle = async function(req,res){
   // owner 찾기 => 수정 필요
   const owner = await userServiceInstance.findUserByNickName(req.query.userId);
 
-  await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
-  res.json(newProjectId);
+  let ret = await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
+  //await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
+  res.json(ret);
 }
 
 module.exports = {createProjectAritcle, modifyProjectAritcle};

@@ -2,8 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="e1391c9b-ca32-4280-a2d8-156aa0b6fe19" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/Portfolian-Backend.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Portfolian-Backend.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/controllers/project.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/project.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/project.js" beforeDir="false" afterPath="$PROJECT_DIR$/models/project.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/project.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/project.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/routes/user.js" beforeDir="false" afterPath="$PROJECT_DIR$/routes/user.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/services/project.js" beforeDir="false" afterPath="$PROJECT_DIR$/services/project.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

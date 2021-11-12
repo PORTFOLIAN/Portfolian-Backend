@@ -118,11 +118,26 @@ projectSchema.statics.createProject = async function(owner, article, ownerStack)
 }
 
 projectSchema.statics.modifyProjectArticle = async function(projectId, articleDto, ownweStack){
-	this.findOneAndUpdate(
-		{_id : projectId},
-		
-
-	)
+	await this.findOneAndUpdate(
+		{ article : {  _id : projectId }},
+		{
+			$set: {
+				'article.$.title' : articleDto.title,
+				'article.$.stackList' : articleDto.stackList,
+				'article.$.subjectDescription' : articleDto.subjectDescription,
+				'article.$.projectTime' : articleDto.projectTime,
+				'article.$.condition' : articleDto.condition,
+				'article.$.progress' : articleDto.progress,
+				'article.$.description' : articleDto.description,
+				'article.$.capacity' : articleDto.capacity
+			}
+		}
+	);
+}
+projectSchema.statics.findByArticleId = async function(projectId){
+	return await this.findOne(
+		{ article : {  _id : mongoose.Types.ObjectId(projectId) }}
+	);
 }
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;

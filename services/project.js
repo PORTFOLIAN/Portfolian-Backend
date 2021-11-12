@@ -15,10 +15,10 @@ class ProjectService{
         
         //owner check
 
-        
-        
-        this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownweStack); 
-        return newProject;
+        let findPro = await this.ProjectModel.findByArticleId(projectId); 
+        console.log(findPro);
+        //this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownweStack); 
+        return findPro;
     }
 }
 module.exports  = ProjectService;
