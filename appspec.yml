@@ -4,3 +4,7 @@ os: linux
 files:
   - source:  /
     destination: /home/ubuntu/build/
+    
+hooks:
+  ApplicationStart:
+    - location: /home/ubuntu/scripts/start.sh
