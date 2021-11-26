@@ -18,11 +18,26 @@ let createProjectAritcle = async function(req,res){
   
   //owner의 진행중인 프로젝트에 push
   await userServiceInstance.addDoingProject(owner, newProjectId);
-  res.json(newProjectId);
+  res.json({newProjectID : newProjectId});
 }
 
 let modifyProjectAritcle = async function(req,res){
-  
+  /*
+  * {
+    code : int, //http code
+    projectList : [{
+        projectId : string,
+        title : string,
+        stackList : List<string>,
+        description : string,
+        capacity : int,
+        view : int,
+       bookMark : bool,
+       status : int
+       }]
+    }
+  * */
+
   // token check
   // owner 찾기 => 수정 필요
   const owner = await userServiceInstance.findUserByNickName(req.query.userId);

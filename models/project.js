@@ -16,10 +16,6 @@ const articleSchema = mongoose.Schema(
 			type : String,
 			default : ""
 		},
-		photo : { //모집 글 사진
-			type: String,
-			default : ""
-		},
 		capacity: { type : Number},
 		view : { 
 			type: Number, 
