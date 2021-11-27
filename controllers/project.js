@@ -14,10 +14,10 @@ let createProjectAritcle = async function(req,res){
   const owner = await userServiceInstance.findUserByNickName(req.query.userId);
 
   // 모집글 내용 유효성 확인
-  let validate = projectServiceInstance.validateArticleContents(req.body.article);
-  if (validate.code <= 0)
+  let validateArticleInfo = projectServiceInstance.validateArticleContents(req.body.article);
+  if (validateArticleInfo.code <= 0)
   {
-    res.json(validate);
+    res.json(validateArticleInfo);
     return;
   }
 
@@ -30,28 +30,28 @@ let createProjectAritcle = async function(req,res){
 }
 
 let modifyProjectAritcle = async function(req,res){
-  /*
-  * {
-    code : int, //http code
-    projectList : [{
-        projectId : string,
-        title : string,
-        stackList : List<string>,
-        description : string,
-        capacity : int,
-        view : int,
-       bookMark : bool,
-       status : int
-       }]
-    }
-  * */
-
   // token check
   // owner 찾기 => 수정 필요
   const owner = await userServiceInstance.findUserByNickName(req.query.userId);
 
+  // 모집글 내용 유효성 확인
+
+  let validateProjectLeader = await projectServiceInstance.validateProjectOwner(req.params.projectId, owner);
+  if (validateProjectLeader.code <= 0)
+  {
+    res.json(validateProjectLeader);
+    return;
+  }
+
+  let validateArticleResult = projectServiceInstance.validateArticleContents(req.body.article);
+  if (validateArticleResult.code <= 0)
+  {
+    res.json(validateArticleResult);
+    return;
+  }
+
   let ret = await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
-  //await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
+  await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
   res.json(ret);
 }
 

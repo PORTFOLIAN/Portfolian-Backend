@@ -13,9 +13,7 @@ class ProjectService{
 
     async modifyProjectArticle(owner,projectId, articleDto, ownweStack){
         
-        //owner check
-
-        let findPro = await this.ProjectModel.findByArticleId(projectId); 
+        let findPro = await this.ProjectModel.findByArticleId(projectId);
         console.log(findPro);
         //this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownweStack); 
         return findPro;
@@ -42,5 +40,22 @@ class ProjectService{
             return {code : -9, message : "capacity는 0이상 정수로 입력해주세요."};
         return {code : 1, message : "validation 통과"};
     }
+
+    async validateProjectOwner(projectId, owner)
+    {
+
+        if(projectId.length != 24)
+            return {code : -12, message : "올바르지 않은 projectId입니다."};
+
+        const modifyProject = await this.ProjectModel.findLeaderById(projectId);
+        if (modifyProject == null || modifyProject.id != projectId)
+            return {code : -10, message : "Project를 찾을 수 없습니다."};
+
+        if (modifyProject.leader.id != owner.id)
+            return {code : -11, message : "해당 project에 대한 권한이 없습니다."};
+
+        return {code : 1, message : "project에 대한 유효성 검사 통과"};
+    }
+
 }
 module.exports  = ProjectService;

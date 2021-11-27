@@ -135,5 +135,14 @@ projectSchema.statics.findByArticleId = async function(projectId){
 		{ article : {  _id : mongoose.Types.ObjectId(projectId) }}
 	);
 }
+
+projectSchema.statics.findLeaderById = async function(projectId){
+	return await this.findOne(
+		{ _id : mongoose.Types.ObjectId(projectId) }
+		).populate(
+			'leader','_id'
+		);
+}
+
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;
