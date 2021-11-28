@@ -6,12 +6,11 @@ const ProjectService = require('../services/project');
 const userServiceInstance = new UserService(User,Project);
 const projectServiceInstance = new ProjectService(User,Project);
 
-
 let createProjectAritcle = async function(req,res){
   
   // token check
   // owner 찾기 => 수정 필요
-  const owner = await userServiceInstance.findUserByNickName(req.query.userId);
+  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
 
   // 모집글 내용 유효성 확인
   let validateArticleInfo = projectServiceInstance.validateArticleContents(req.body.article);
@@ -31,7 +30,7 @@ let createProjectAritcle = async function(req,res){
 
 let modifyProjectAritcle = async function(req,res){
 
-  const owner = await userServiceInstance.findUserByNickName(req.query.userId);
+  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
 
   // 모집글 내용 유효성 확인
 
@@ -54,4 +53,17 @@ let modifyProjectAritcle = async function(req,res){
   res.json(ret);
 }
 
-module.exports = {createProjectAritcle, modifyProjectAritcle};
+let getProjectAritcle = async function(req,res){
+
+  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
+  let stackList = req.query.stack;
+  let sort = req.query.sort;
+  let keyword = req.query.keyword;
+
+  console.log("stackList: ", stackList);
+  console.log("sort: ", sort);
+  console.log("keyword: ", keyword);
+  res.json({'stackList': stackList, 'sort':sort,'keyword':keyword});
+}
+
+module.exports = {getProjectAritcle, createProjectAritcle, modifyProjectAritcle};
