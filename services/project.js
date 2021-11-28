@@ -11,12 +11,9 @@ class ProjectService{
         return newProject;
     }
 
-    async modifyProjectArticle(owner,projectId, articleDto, ownweStack){
-        
-        let findPro = await this.ProjectModel.findByArticleId(projectId);
-        console.log(findPro);
-        //this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownweStack); 
-        return findPro;
+    async modifyProjectArticle(owner,projectId, articleDto, ownerStack){
+        this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownerStack);
+        return {code : 1, message : "project수정 완료"};
     }
 
     validateArticleContents(articleDto){

@@ -30,8 +30,7 @@ let createProjectAritcle = async function(req,res){
 }
 
 let modifyProjectAritcle = async function(req,res){
-  // token check
-  // owner 찾기 => 수정 필요
+
   const owner = await userServiceInstance.findUserByNickName(req.query.userId);
 
   // 모집글 내용 유효성 확인
