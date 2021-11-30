@@ -1,26 +1,85 @@
 const express = require('express');
 const router = express.Router();
-//const authController = require('../controllers/auth');
-const passport = require('passport')
-const KakaoStrategy = require('passport-kakao').Strategy;
+const {  url, clientID, clientSecret, redirectUri, userInfoUrl } = process.env;
 
+class Kakao {
+  constructor(code) {
+    this.url = url;
+    this.clientID = clientID;
+    this.clientSecret = clientSecret;
+    this.redirectUri = redirectUri;
+    this.code = code;
+    this.userInfoUrl = userInfoUrl;
+  }
+}
 
+const getAccessToken = async (options) => {
+  try {
+    return await fetch(options.url, {
+      method: 'POST',
+      headers: {
+        'content-type':'application/x-www-form-urlencoded;charset=utf-8'
+      },
+      body: qs.stringify({
+        grant_type: 'authorization_code',
+        client_id: options.clientID,
+        client_secret: options.clientSecret,
+        redirectUri: options.redirectUri,
+        code: options.code,
+      }),
+    }).then(res => res.json());
+  }catch(e) {
+    logger.info("error", e);
+  }
+};
 
-passport.use('kakao', new KakaoStrategy({
-  clientID: 'b668e9922c3d723f5aa8abffe1bfe1fd',
-  callbackURL: '/auth/kakao/callback',     // 위에서 설정한 Redirect URI
-}, async (accessToken, refreshToken, profile, done) => {
-  console.log(profile);
-  console.log(accessToken);
-  console.log(refreshToken);
-}))
+const getUserInfo = async (url, access_token) => {
+  try {
+    return await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+        'Authorization': `Bearer ${access_token}`
+      }
+    }).then(res => res.json());
+  }catch(e) {
+    logger.info("error", e);
+  }
+};
 
-router.get('/kakao', passport.authenticate('kakao'));
+const getOption = (coperation, code)=> {
+  switch(coperation){
+    case 'kakao':
+      return new Kakao(code);
+      break;
+    case 'google':
+      // return new Google(code);
+      break;
+    case 'naver':
+      // return new Naver(code);
+      break;
+  }
+}
 
-router.get('/kakao/callback', passport.authenticate('kakao', {
-  failureRedirect: '/',
-}), (res, req) => {
-  res.redirect('/auth');
-});
+app.get('/oauth/:coperation/access', async (req, res) => {
+  const userInfo = await getUserInfo(options.userInfoUrl, req.body('access-token'));
+  console.log(userInfo);
+  res.send(token);
+})
+
+app.get('/oauth/:coperation/refresh', async (req, res) => {
+  const userInfo = await getUserInfo(options.userInfoUrl, req.body('refresh-token'));
+  console.log(userInfo);
+  res.send(token);
+})
+
+app.get(`/oauth/:coperation/callback`, async (req, res) => {
+  const coperation = req.params.coperation;
+  const code = req.param('code');
+  const options = getOption(coperation, code);
+  const token = await getAccessToken(options);
+  const userInfo = await getUserInfo(options.userInfoUrl, token.access_token);
+  res.send(token);
+})
 
 module.exports = router;
