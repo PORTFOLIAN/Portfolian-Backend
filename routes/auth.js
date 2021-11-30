@@ -61,13 +61,24 @@ const getOption = (coperation, code)=> {
   }
 }
 
+app.get('/oauth/:coperation/access', async (req, res) => {
+  const userInfo = await getUserInfo(options.userInfoUrl, req.body('access-token'));
+  console.log(userInfo);
+  res.send(token);
+})
+
+app.get('/oauth/:coperation/refresh', async (req, res) => {
+  const userInfo = await getUserInfo(options.userInfoUrl, req.body('refresh-token'));
+  console.log(userInfo);
+  res.send(token);
+})
+
 app.get(`/oauth/:coperation/callback`, async (req, res) => {
   const coperation = req.params.coperation;
   const code = req.param('code');
   const options = getOption(coperation, code);
   const token = await getAccessToken(options);
   const userInfo = await getUserInfo(options.userInfoUrl, token.access_token);
-
   res.send(token);
 })
 
