@@ -53,8 +53,7 @@ let modifyProjectAritcle = async function(req,res,next){
   res.json(ret);
 }
 
-let getProjectAritcle = async function(req,res,next){
-  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
+let getAllProjectAritcles = async function(req,res,next){
   let stackList = req.query.stack;
   let sort = req.query.sort;
   let keyword = req.query.keyword;
@@ -62,7 +61,9 @@ let getProjectAritcle = async function(req,res,next){
   console.log("stackList: ", stackList);
   console.log("sort: ", sort);
   console.log("keyword: ", keyword);
-  res.json({'stackList': stackList, 'sort':sort,'keyword':keyword});
+
+  let ret = await projectServiceInstance.getAllArticles();
+  res.json(ret);
 }
 
-module.exports = {getProjectAritcle, createProjectAritcle, modifyProjectAritcle};
+module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle};

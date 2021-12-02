@@ -1,3 +1,5 @@
+const jsonHandler = require("../utils/jsonHandle");
+
 class ProjectService{
 
     constructor(UserModel, ProjectModel) {
@@ -55,8 +57,11 @@ class ProjectService{
     }
 
     async getAllArticles(){
-        const newProject = await this.ProjectModel.createProject(owner, articleDto, ownweStack);
-        return newProject;
+        const ProjectList = await this.ProjectModel.getAllArticles();
+
+        let returnProjectList = await jsonHandler.changeStruct(ProjectList);
+        returnProjectList['code'] = 1;
+        return returnProjectList;
     }
 }
 module.exports  = ProjectService;

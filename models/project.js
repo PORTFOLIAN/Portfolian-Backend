@@ -144,5 +144,13 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
+projectSchema.statics.getAllArticles = async function(){
+	return await this.find({})
+		.select(
+		'_id article.title article.title article.stackList article.subjectDescription article.capacity \
+		article.view  status'
+	).lean();
+}
+
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;
