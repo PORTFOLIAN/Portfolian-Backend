@@ -54,5 +54,9 @@ class ProjectService{
         return {code : 1, message : "project에 대한 유효성 검사 통과"};
     }
 
+    async getAllArticles(){
+        const newProject = await this.ProjectModel.createProject(owner, articleDto, ownweStack);
+        return newProject;
+    }
 }
 module.exports  = ProjectService;

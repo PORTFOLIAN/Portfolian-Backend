@@ -22,7 +22,6 @@ class UserService{
         returnBookMark['code'] = 1;
         return returnBookMark;
     };
-
 }
 module.exports  = UserService;
 

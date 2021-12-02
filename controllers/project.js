@@ -6,7 +6,7 @@ const ProjectService = require('../services/project');
 const userServiceInstance = new UserService(User,Project);
 const projectServiceInstance = new ProjectService(User,Project);
 
-let createProjectAritcle = async function(req,res){
+let createProjectAritcle = async function(req,res,next){
   
   // token check
   // owner 찾기 => 수정 필요
@@ -28,7 +28,7 @@ let createProjectAritcle = async function(req,res){
   res.json({code : 1, message: "성공적으로 수행되었습니다.", newProjectID : newProjectId});
 }
 
-let modifyProjectAritcle = async function(req,res){
+let modifyProjectAritcle = async function(req,res,next){
 
   const owner = await userServiceInstance.findUserByNickName(req.body.userId);
 
@@ -53,8 +53,7 @@ let modifyProjectAritcle = async function(req,res){
   res.json(ret);
 }
 
-let getProjectAritcle = async function(req,res){
-
+let getProjectAritcle = async function(req,res,next){
   const owner = await userServiceInstance.findUserByNickName(req.body.userId);
   let stackList = req.query.stack;
   let sort = req.query.sort;
