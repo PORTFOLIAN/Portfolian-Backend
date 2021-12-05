@@ -7,5 +7,4 @@ router.get('/', projectController.getAllProjectAritcles);
 router.post('/', projectController.createProjectAritcle);
 router.put('/:projectId', projectController.modifyProjectAritcle);
 
-router.get()
 module.exports = router;

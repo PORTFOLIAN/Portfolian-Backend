@@ -58,8 +58,8 @@ class ProjectService{
 
     async getAllArticles(){
         const ProjectList = await this.ProjectModel.getAllArticles();
-
-        let returnProjectList = await jsonHandler.changeStruct(ProjectList);
+        console.log("ProjectList: ",ProjectList);
+        let returnProjectList = await jsonHandler.getArticleListRes(ProjectList);
         returnProjectList['code'] = 1;
         return returnProjectList;
     }

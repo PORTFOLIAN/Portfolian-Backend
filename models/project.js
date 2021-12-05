@@ -145,9 +145,9 @@ projectSchema.statics.findLeaderById = async function(projectId){
 }
 
 projectSchema.statics.getAllArticles = async function(){
-	return await this.find({})
+	return await this.find({}).populate('leader','_id photo')
 		.select(
-		'_id article.title article.title article.stackList article.subjectDescription article.capacity \
+		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
 		article.view  status'
 	).lean();
 }
