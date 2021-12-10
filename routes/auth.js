@@ -11,6 +11,7 @@ const getUserInfo = async (access_token) => {
       }
     }).then(res => res.json());
   }catch(e) {
+    console.log("error: ",e);
     return {code : -1, message:"올바르지 않은 access_token입니다."}
   }
 };
