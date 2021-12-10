@@ -18,10 +18,12 @@ const getUserInfo = async (access_token) => {
 
 router.post('/:coperation/access', async (req, res) => {
   console.log("accessToken : ", req.body.token);
-  const userInfo = await getUserInfo(req.body.token);
+  let userInfo = await getUserInfo(req.body.token);
   console.log("userInfo: ",userInfo);
-  if(userInfo.code)
+  if(userInfo.code) {
     res.json(userInfo);
+    return;
+  }
   res.json({message:"성공 이제 jwt보내야함",userInfo});
 })
 
