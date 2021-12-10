@@ -22,7 +22,7 @@ candidatetRouter = require('./routes/candidate');
 userRouter = require('./routes/user');
 
 app.use('/', mainRouter);
-app.use('/auth', authRouter);
+app.use('/oauth', authRouter);
 app.use('/mypage', mypageRouter);
 app.use('/projects', projectRouter);
 app.use('/chat', chatRouter);
