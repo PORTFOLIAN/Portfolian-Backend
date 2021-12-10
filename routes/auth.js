@@ -17,6 +17,7 @@ const getUserInfo = async (access_token) => {
 
 
 router.post('/:coperation/access', async (req, res) => {
+  console.log("try login");
   const userInfo = await getUserInfo(req.body.accessToken);
   console.log("userInfo: ",userInfo);
   if(userInfo.code)
