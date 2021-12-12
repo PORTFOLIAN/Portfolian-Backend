@@ -1,26 +1,36 @@
 const express = require('express');
 const router = express.Router();
-//const authController = require('../controllers/auth');
-const passport = require('passport')
-const KakaoStrategy = require('passport-kakao').Strategy;
+const fetch = require('node-fetch-commonjs');
+
+const getUserInfo = async (coperation, access_token) => {
+  try {
+    return await fetch("https://kapi.kakao.com/v2/user/me", {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+        'Authorization': `Bearer ${access_token}`
+      }
+    }).then(res => res.json());
+  }catch(e) {
+    console.log("error: ",e);
+    return {code : -1, message:"올바르지 않은 access_token입니다."}
+  }
+};
 
 
-
-passport.use('kakao', new KakaoStrategy({
-  clientID: 'b668e9922c3d723f5aa8abffe1bfe1fd',
-  callbackURL: '/auth/kakao/callback',     // 위에서 설정한 Redirect URI
-}, async (accessToken, refreshToken, profile, done) => {
-  console.log(profile);
-  console.log(accessToken);
-  console.log(refreshToken);
-}))
-
-router.get('/kakao', passport.authenticate('kakao'));
-
-router.get('/kakao/callback', passport.authenticate('kakao', {
-  failureRedirect: '/',
-}), (res, req) => {
-  res.redirect('/auth');
-});
+router.post('/:coperation/access', async (req, res) => {
+  console.log("body : ", req.body);
+  console.log("accessToken : ", req.body.token);
+  let userInfo = await getUserInfo(coperation,req.body.token);
+  console.log("userInfo: ",userInfo);
+  if(userInfo.code) {
+    res.json(userInfo);
+    return;
+  }
+  // let isNew = id와 coperation으로 find User
+  //
+  //res.json({isNew: isNew, jwt 2개});
+  res.json({message:"성공 이제 jwt보내야함",userInfo});
+})
 
 module.exports = router;
