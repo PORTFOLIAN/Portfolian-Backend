@@ -114,6 +114,7 @@ app.get("/project/read/:project", async (req, res) => {
 
     leader : leaderInfo
 }
+  console.log(projectInfo)
  
   try { 
     if (!project) {
