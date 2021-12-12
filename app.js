@@ -52,7 +52,7 @@ app.get("/header", async (req, res) => {
 
 
 //게시글 조회 3번 (api형태로 전송해야함, 클릭시에 조회수 1 상승 , 북마크여부 유효성검사)
-app.get("/project/:project", async (req, res) => {
+app.get("/projects/:project", async (req, res) => {
   const project = req.params.project;
   const readProject = await Project.findById(project).populate('leader', '_id photo nickName description').select(' leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription').lean();
   
@@ -90,7 +90,7 @@ app.get("/project/:project", async (req, res) => {
     }
     readProject.article.view++; //수정
 
-    res.status(200).send(readProject);
+    res.status(200).send(projectInfo);
 
   } catch (e) {
     res.status(500).json({
