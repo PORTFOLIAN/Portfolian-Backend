@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const fetch = require('node-fetch-commonjs');
 
-const getUserInfo = async (access_token) => {
+const getUserInfo = async (coperation, access_token) => {
   try {
     return await fetch("https://kapi.kakao.com/v2/user/me", {
       method: 'POST',
@@ -21,12 +21,15 @@ const getUserInfo = async (access_token) => {
 router.post('/:coperation/access', async (req, res) => {
   console.log("body : ", req.body);
   console.log("accessToken : ", req.body.token);
-  let userInfo = await getUserInfo(req.body.token);
+  let userInfo = await getUserInfo(coperation,req.body.token);
   console.log("userInfo: ",userInfo);
   if(userInfo.code) {
     res.json(userInfo);
     return;
   }
+  // let isNew = id와 coperation으로 find User
+  //
+  //res.json({isNew: isNew, jwt 2개});
   res.json({message:"성공 이제 jwt보내야함",userInfo});
 })
 

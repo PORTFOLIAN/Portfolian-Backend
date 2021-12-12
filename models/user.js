@@ -12,6 +12,10 @@ const userSchema = new Schema(
 		email: {
 			type: String,
 			trim: true,
+			default : ""
+		},
+		id : {
+			type: String
 		},
 		description : {
 			type : String,
