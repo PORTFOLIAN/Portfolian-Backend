@@ -11,7 +11,7 @@ const {  MONGO_URI } = process.env;
 const PORT = 3000;
 
 app.use(express.json());
-app.use(express.urlencoded({ extends: true}));
+// app.use(express.urlencoded({ extends: true}));
 
 mainRouter = require('./routes/main'),
 authRouter = require('./routes/auth'),
@@ -31,18 +31,24 @@ app.use('/users', userRouter);
 const jsonHandler = require('./utils/jsonHandle');
 
 
-// 회원정보 조회 (수정해야함)
-app.get("/header", async (req, res) => {
+// 회원정보 조회 (완료)
+app.get("/header/:id", async (req, res) => {
   const id = req.params.id;
   try {
     const userInfo = await User.findById(id);
-    const name = userInfo.nickName
-    console.log(name)
-    if (!userInfo) {
+    const user = {
+      name : userInfo.nickName,
+      profile : userInfo.photo
+    } 
+    const headerInfo = {
+      user : user
+    }
+    console.log(headerInfo)
+    if (!headerInfo) {
       return res.status(404).send('404 에러 ');
     }
 
-    res.status(200).send(name);
+    res.status(200).send(headerInfo);
   } catch (e) {
     res.status(500).json({
       message: "회원정보 조회 실패",
@@ -51,11 +57,11 @@ app.get("/header", async (req, res) => {
 });
 
 
-//게시글 조회 3번 (api형태로 전송해야함, 클릭시에 조회수 1 상승 , 북마크여부 유효성검사)
+//게시글 조회 3번 (api형태로 전송해야함, 클릭시에 조회수 1 상승 ,)
 app.get("/project/:project", async (req, res) => {
   const project = req.params.project;
-  const readProject = await Project.findById(project).populate('leader', '_id photo nickName description').select(' leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription').lean();
-  
+  const readProject = await Project.findByIdAndUpdate(project, {$inc : {"article.view" : 1}},{ new: true}).populate('leader', '_id photo nickName description stackList').select(' leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription').lean();
+
   const contentInfo = {
     subjectDescription : readProject.article.subjectDescription,
     projectTime : readProject.article.projectTime,
@@ -67,7 +73,8 @@ app.get("/project/:project", async (req, res) => {
     userId : readProject.leader._id,
     nickName : readProject.leader.nickName,
     description : readProject.leader.description,
-    photo : readProject.leader.photo
+    photo : readProject.leader.photo,
+    stackList : readProject.leader.stackList
   
   }
   const projectInfo = {
@@ -88,7 +95,6 @@ app.get("/project/:project", async (req, res) => {
     if (!project) {
       return res.status(404).send('404 에러');
     }
-    readProject.article.view++; //수정
 
     res.status(200).send(readProject);
 
@@ -103,12 +109,12 @@ app.get("/project/:project", async (req, res) => {
 
 
 // 나의 정보 보기 (13번)
-app.get("/user/info/:id", async (req, res) => {
-  const id = req.params.id;
+app.get("/users/:userNickname/info", async (req, res) => {
+  const id = req.params.userNickname;
   try {
     const userInfo = await User.findById(id);
     const name = userinfo.nickName
-    consol.log(userInfo)
+    consol.log(name)
     if (!userInfo) {
       return res.status(404).send(userInfo);
     }
@@ -122,7 +128,7 @@ app.get("/user/info/:id", async (req, res) => {
 });
 
 //북마크 삭제 (수정해야함 )
-app.delete("/user/delete/:projectId", async (req, res) => {
+app.delete("/users/{userNickname}/bookMark", async (req, res) => {
   // const userId = req.session.id;
   const filter = {'_id' :'61a1d8a1a12f84c536540d06'};
   const projectId  = req.params.projectId;
@@ -132,7 +138,7 @@ app.delete("/user/delete/:projectId", async (req, res) => {
   
   // `doc` is the document _after_ `update` was applied because of
   // `new: true`
-  let doc = await User.findOne({filter, deleteOne},(err) => {
+  let doc = await User.deleteOne({bookMarkList},(err) => {
     if(err){
       console.log(err)
     }
