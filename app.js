@@ -7,6 +7,7 @@ const path = require('path');
 const User = require('./models/user');
 const Project = require('./models/project');
 
+
 const {  MONGO_URI } = process.env;
 const PORT = 3000;
 
@@ -28,8 +29,6 @@ app.use('/mypage', mypageRouter);
 app.use('/projects', projectRouter);
 app.use('/chat', chatRouter);
 app.use('/users', userRouter);
-const jsonHandler = require('./utils/jsonHandle');
-
 
 // 회원정보 조회 (완료)
 app.get("/header/:id", async (req, res) => {
@@ -57,7 +56,7 @@ app.get("/header/:id", async (req, res) => {
 });
 
 
-//게시글 조회 3번 (api형태로 전송해야함, 클릭시에 조회수 1 상승 ,)
+//게시글 조회 3번 
 app.get("/project/:project", async (req, res) => {
   const project = req.params.project;
   const readProject = await Project.findByIdAndUpdate(project, {$inc : {"article.view" : 1}},{ new: true}).populate('leader', '_id photo nickName description stackList').select(' leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription').lean();
@@ -110,17 +109,16 @@ app.get("/project/:project", async (req, res) => {
 
 // 나의 정보 보기 (13번)
 app.get("/users/:userNickname/info", async (req, res) => {
-  const id = req.params.userNickname;
+  const nickName = req.params.userNickname;
+  const userInfo = await User.findOne({nickName : nickName}).select('_id nickName description stackList photo github email').lean();
   try {
-    const userInfo = await User.findById(id);
-    const name = userinfo.nickName
-    consol.log(name)
     if (!userInfo) {
       return res.status(404).send(userInfo);
     }
     console.log(id);
     res.status(200).send(userInfo);
   } catch (e) {
+    
     res.status(500).json({
       message: "회원정보 조회 실패",
     });
@@ -128,54 +126,49 @@ app.get("/users/:userNickname/info", async (req, res) => {
 });
 
 //북마크 삭제 (수정해야함 )
-app.delete("/users/{userNickname}/bookMark", async (req, res) => {
-  // const userId = req.session.id;
-  const filter = {'_id' :'61a1d8a1a12f84c536540d06'};
-  const projectId  = req.params.projectId;
+app.post("/users/:userNickname/bookMark", async (req, res) => {
+  console.log(req.body.like)
+  const nickName = req.params.userNickname;
+  const bookMarkCnt = req.body.like;
+  const projectId = req.body.projectId;
 
-  const deleteOne = { $pull: { bookMarkList: { $in: [projectId]} } }
-
-  
-  // `doc` is the document _after_ `update` was applied because of
-  // `new: true`
-  let doc = await User.deleteOne({bookMarkList},(err) => {
-    if(err){
-      console.log(err)
-    }
-    console.log('good')})
-    return await doc
+  if (bookMarkCnt == 'true'){
+    const bookMarkOnUser = await User.findOneAndUpdate({ name: nickName }, { $push: { bookMarkList: projectId } }).select('_id');
+    const id = bookMarkOnUser._id
+    console.log(id)
+    const bookMarkOnProject =  await Project.findOneAndUpdate({ _id: projectId }, { $set: { "article.bookMarkCnt": 'true'} , $push : {"article.bookMarkUserList" : id } });
+    
+    try {
+      if (!bookMarkOnProject) {
+        return res.status(404).send(bookMarkOnProject);
+      }
+      res.status(200).send(bookMarkOnProject);
+    } catch (e) {
+      
+      res.status(500).json({
+        message: "북마크 추가 실패",
+      });
+    }  }
+  else {
+    const bookMarkOffUser = await User.findOneAndUpdate({ name: nickName }, { $pull: { bookMarkList: projectId } }).select('_id');
+    const id = bookMarkOffUser._id
+    console.log(id)
+    const bookMarkOffProject =  await Project.findOneAndUpdate({ _id: projectId }, { $set: { "article.bookMarkCnt": 'false' }, $pull : {"article.bookMarkUserList" : id } });
+    try {
+      if (!bookMarkOffProject) {
+        return res.status(404).send(bookMarkOffProject);
+      }
+      res.status(200).send(bookMarkOffProject);
+    } catch (e) {
+      
+      res.status(500).json({
+        message: "북마크 제거 실패",
+      });
+    } 
+  }
   })
 
 
-
-  
-// app.delete("/up/delete/:projectId", async (req, res) => {
-//   // const userId = req.session.id;
-//   const userId = '6178067dd760f83c6faf0a01';
-//   const projectId  = req.params.projectId;
-//   console.log(projectId)
-//   // mongoose
-//   await User.updateOne(userId, {$unset: {ninkName : projectId}});
-
-//   // const findId = await User.findById(userId);
-//   // console.log(findId);
-//   // console.log("============================y")
-//   // if (findId) {
-//   //   if (true) {
-//   //     await User.deleteOne( {bookMarkList : projectId});
-//   //     res.status(200).send({ result: "success" });
-//   //   } 
-//   // } else {
-//   //   res.status(400).send({ result: "북마크 존재하지 않음" });
-//   // }
-// });
-
-
-//multer
-// const upload = multer({ dest: 'uploads/', limits: { fileSize: 5 * 1024 * 1024 } });
-// app.post('/up', upload.single('img'), (req, res) => {
-//   console.log(req.file); 
-// });
 
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
