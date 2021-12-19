@@ -1,36 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const fetch = require('node-fetch-commonjs');
+const authController = require('../controllers/auth');
 
-const getUserInfo = async (coperation, access_token) => {
-  try {
-    return await fetch("https://kapi.kakao.com/v2/user/me", {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-        'Authorization': `Bearer ${access_token}`
-      }
-    }).then(res => res.json());
-  }catch(e) {
-    console.log("error: ",e);
-    return {code : -1, message:"올바르지 않은 access_token입니다."}
-  }
-};
-
-
-router.post('/:coperation/access', async (req, res) => {
-  console.log("body : ", req.body);
-  console.log("accessToken : ", req.body.token);
-  let userInfo = await getUserInfo(coperation,req.body.token);
-  console.log("userInfo: ",userInfo);
-  if(userInfo.code) {
-    res.json(userInfo);
-    return;
-  }
-  // let isNew = id와 coperation으로 find User
-  //
-  //res.json({isNew: isNew, jwt 2개});
-  res.json({message:"성공 이제 jwt보내야함",userInfo});
-})
+router.post('/:coperation/access', authController.getAccessToken);
+router.post('/:coperation/test', authController.getAccessToken_test);
+router.get('/verify/jwt/test', authController.verifyJWT_test);
+router.post('/refresh', authController.refreshAccessToken);
 
 module.exports = router;
