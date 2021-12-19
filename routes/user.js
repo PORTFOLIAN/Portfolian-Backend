@@ -3,5 +3,6 @@ const router = express.Router();
 const userController = require('../controllers/user');
 
 router.post('/addUserForTest/:userId', userController.addUserForTest);
-router.get('/:userId/bookMark', userController.findBookMarkList);
+router.get('/:userNickName/bookMark', userController.findBookMarkList);
+router.patch('/:userId/nickName',  userController.changeNickName);
 module.exports = router;

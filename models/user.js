@@ -1,12 +1,16 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema
 
-const userSchema = new Schema(
+const userSchema = mongoose.Schema(
 	{
 		nickName :  {
 			type : String,
 			maxlength: 20,
-			default : "기본닉네임"
+			default : "portfolian"
+		},
+		refreshToken:{
+			type : String,
+			default : ""
 		},
 		channel : String,
 		email: {
@@ -14,7 +18,7 @@ const userSchema = new Schema(
 			trim: true,
 			default : ""
 		},
-		id : {
+		oauthId : {
 			type: String
 		},
 		description : {
@@ -58,12 +62,26 @@ const userSchema = new Schema(
 	}
 );
 
+userSchema.statics.createUser= async function(oauthId, coperation, refreshToken){
+	let newUser = await new User(
+		{
+			oauthId : oauthId,
+			channel : coperation,
+			refreshToken : refreshToken
+		}
+	).save();
+	return newUser.id;
+}
+
 userSchema.statics.findByNickName = async function (nickName) {
 	return await this.findOne({nickName : nickName});
 }
 
+userSchema.statics.findUserById = async function (userId) {
+	return await this.findOne({_id : mongoose.Types.ObjectId(userId)});
+}
+
 userSchema.statics.addDoingProject = async function (user, newProjectId){
-	console.log('(in addDoing)newProject.Id : ',newProjectId);
 	await User.findByIdAndUpdate(
 		{_id : user._id},
 		{
@@ -77,6 +95,17 @@ userSchema.statics.addDoingProject = async function (user, newProjectId){
 	console.log(user);
 }
 
+userSchema.statics.changeNickName = async function (userId, nickName){
+	await User.findOneAndUpdate(
+		{_id : mongoose.Types.ObjectId(userId)},
+		{
+			$set: {
+				'nickName': nickName
+			}
+		}
+	);
+}
+
 userSchema.statics.findBookMarkProject = async function(userId){ //우선 NickName으로 찾음
 	return await this.findOne(
 		{nickName : userId}
@@ -85,6 +114,25 @@ userSchema.statics.findBookMarkProject = async function(userId){ //우선 NickNa
 		article.view  status'
 	).select('bookMarkList').lean();
 }
+
+userSchema.statics.findUserIdByOauthId= async function(oauthId, coperation){
+	return await this.findOne(
+		{
+			oauthId :  oauthId,
+			channel: coperation
+		}
+	).select('id');
+}
+
+userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
+	await User.findByIdAndUpdate(
+		{_id : userId},
+		{
+			$set : { refreshToken : refreshToken}
+		}
+	);
+}
+
 
 const User = mongoose.model("User",userSchema);
 module.exports  = User;
