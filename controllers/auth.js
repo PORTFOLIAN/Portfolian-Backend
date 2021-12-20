@@ -26,7 +26,7 @@ let verifyJWT_test = async function(req,res){
 let refreshAccessToken = async function (req,res){
     let userId = req.body.userId;
     let refreshToken = req.body.refreshToken;
-    if (userId === null){
+    if (!userId){
         res.json({code:-1, message : "userId를 입력해주세요."});
         return;
     }

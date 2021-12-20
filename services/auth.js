@@ -64,19 +64,21 @@ class AuthService{
     }
 
     async refreshAccessToken(userId, refreshToken){
+        if(userId.length != 24)
+            return {code : -4, message : "올바르지 않은 userId입니다."};
+
         let findUser = await this.UserModel.findUserById(userId);
-        if (findUser === null)
-            return {code : -4, message : "잘못된 userId입니다."};
-        if (findUser.refreshToken !== refreshToken)
-            return {code: -2, message: "userId와 refreshToken의 정보가 일치하지 않습니다."};
+        if (findUser == null || findUser.id != userId)
+            return {code : -5, message : "User를 찾을 수 없습니다."};
         try {
+            if (findUser.refreshToken != refreshToken)
+                return {code: -2, message: "올바르지 않은 refreshToken입니다."};
             jwt.verify(refreshToken, secret);
             let accessToken = JWT.getAccessToken(findUser.id, findUser.oauthId, findUser.channel);
             return {code : 1, accessToken : accessToken};
         } catch (err) {
             return {code : -3, message : "만료된 refreshToken입니다."};
         }
-
     }
 }
 module.exports  = AuthService;
