@@ -63,12 +63,11 @@ app.get("/projects/:project", async (req, res) => {
   
   function bookMarkChk() { 
     let bookMarkCheck
-    if(readProject.article.bookMarkUserList == project) bookMarkCheck = 'true'; //project 부분에 유저id가 들어가야함
-    else bookMarkCheck = 'false';
+    if(readProject.article.bookMarkUserList == project) bookMarkCheck = true  //project 부분에 유저id가 들어가야함
+    else bookMarkCheck = false
     
     return bookMarkCheck
-  }
-  console.log(bookMarkChk())
+  }s
 
   const contentInfo = {
     subjectDescription : readProject.article.subjectDescription,
@@ -93,11 +92,11 @@ app.get("/projects/:project", async (req, res) => {
     contents : contentInfo,
     capacity : readProject.article.capacity,
     view : readProject.article.view,
-    // bookMark : readProject.article.bookMarkCnt,
     bookMark : bookMarkChk(),
 
     status : readProject.status,
-    leader : leaderInfo
+    leader : leaderInfo,
+    
 }
   
  
@@ -105,7 +104,6 @@ app.get("/projects/:project", async (req, res) => {
     if (!project) {
       return res.status(404).send('404 에러');
     }
-
     res.status(200).send(projectInfo);
 
   } catch (e) {
