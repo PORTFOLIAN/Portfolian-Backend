@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-// const fetch = require('node-fetch-commonjs');
+const fetch = require('node-fetch-commonjs');
 
 const getUserInfo = async (coperation, access_token) => {
   try {

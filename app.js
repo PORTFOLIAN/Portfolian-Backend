@@ -57,9 +57,18 @@ app.get("/header/:id", async (req, res) => {
 
 
 //게시글 조회 3번 
-app.get("/project/:project", async (req, res) => {
+app.get("/projects/:project", async (req, res) => {
   const project = req.params.project;
-  const readProject = await Project.findByIdAndUpdate(project, {$inc : {"article.view" : 1}},{ new: true}).populate('leader', '_id photo nickName description stackList').select(' leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription').lean();
+  const readProject = await Project.findByIdAndUpdate(project, {$inc : {"article.view" : 1}},{ new: true}).populate('leader', '_id photo nickName description stackList').select(' _id leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription article.bookMarkUserList ').lean();
+  
+  function bookMarkChk() { 
+    let bookMarkCheck
+    if(readProject.article.bookMarkUserList == project) bookMarkCheck = 'true'; //project 부분에 유저id가 들어가야함
+    else bookMarkCheck = 'false';
+    
+    return bookMarkCheck
+  }
+  console.log(bookMarkChk())
 
   const contentInfo = {
     subjectDescription : readProject.article.subjectDescription,
@@ -84,7 +93,9 @@ app.get("/project/:project", async (req, res) => {
     contents : contentInfo,
     capacity : readProject.article.capacity,
     view : readProject.article.view,
-    bookMark : readProject.article.bookMarkCnt,
+    // bookMark : readProject.article.bookMarkCnt,
+    bookMark : bookMarkChk(),
+
     status : readProject.status,
     leader : leaderInfo
 }
@@ -95,7 +106,7 @@ app.get("/project/:project", async (req, res) => {
       return res.status(404).send('404 에러');
     }
 
-    res.status(200).send(readProject);
+    res.status(200).send(projectInfo);
 
   } catch (e) {
     res.status(500).json({
@@ -108,14 +119,14 @@ app.get("/project/:project", async (req, res) => {
 
 
 // 나의 정보 보기 (13번)
-app.get("/users/:userNickname/info", async (req, res) => {
-  const nickName = req.params.userNickname;
-  const userInfo = await User.findOne({nickName : nickName}).select('_id nickName description stackList photo github email').lean();
+app.get("/users/:id/info", async (req, res) => {
+  const userId = req.params.id;
+  const userInfo = await User.findOne({_id : userId}).select('_id nickName description stackList photo github email').lean();
+  console.log(userInfo)
   try {
     if (!userInfo) {
-      return res.status(404).send(userInfo);
+      return res.status(404).send('나의 정보보기 오류');
     }
-    console.log(id);
     res.status(200).send(userInfo);
   } catch (e) {
     
@@ -125,24 +136,21 @@ app.get("/users/:userNickname/info", async (req, res) => {
   }
 });
 
-//북마크 삭제 (수정해야함 )
-app.post("/users/:userNickname/bookMark", async (req, res) => {
-  console.log(req.body.like)
-  const nickName = req.params.userNickname;
+//북마크 설정
+app.post("/users/:id/bookMark", async (req, res) => {
+  const userId = req.params.id;
   const bookMarkCnt = req.body.like;
   const projectId = req.body.projectId;
 
   if (bookMarkCnt == 'true'){
-    const bookMarkOnUser = await User.findOneAndUpdate({ name: nickName }, { $push: { bookMarkList: projectId } }).select('_id');
-    const id = bookMarkOnUser._id
-    console.log(id)
-    const bookMarkOnProject =  await Project.findOneAndUpdate({ _id: projectId }, { $set: { "article.bookMarkCnt": 'true'} , $push : {"article.bookMarkUserList" : id } });
-    
+    const bookMarkOnUser = await User.findOneAndUpdate({ _id: userId }, { $push: { bookMarkList: projectId } }).select('_id');
+    const bookMarkOnProject =  await Project.findOneAndUpdate({ _id: projectId }, { $inc: { "article.bookMarkCnt": 1} , $push : {"article.bookMarkUserList" : userId } });
+    console.log(bookMarkOnProject.article.bookMarkUserList)
     try {
       if (!bookMarkOnProject) {
-        return res.status(404).send(bookMarkOnProject);
+        return res.status(404).send('북마크 실패');
       }
-      res.status(200).send(bookMarkOnProject);
+      res.status(200).send('북마크 추가 성공');
     } catch (e) {
       
       res.status(500).json({
@@ -150,15 +158,13 @@ app.post("/users/:userNickname/bookMark", async (req, res) => {
       });
     }  }
   else {
-    const bookMarkOffUser = await User.findOneAndUpdate({ name: nickName }, { $pull: { bookMarkList: projectId } }).select('_id');
-    const id = bookMarkOffUser._id
-    console.log(id)
-    const bookMarkOffProject =  await Project.findOneAndUpdate({ _id: projectId }, { $set: { "article.bookMarkCnt": 'false' }, $pull : {"article.bookMarkUserList" : id } });
+    const bookMarkOffUser = await User.findOneAndUpdate({ _id: userId }, { $pull: { bookMarkList: projectId } }).select('_id');
+    const bookMarkOffProject =  await Project.findOneAndUpdate({ _id: projectId }, { $inc: { "article.bookMarkCnt": -1 }, $pull : {"article.bookMarkUserList" : userId } });
     try {
       if (!bookMarkOffProject) {
-        return res.status(404).send(bookMarkOffProject);
+        return res.status(404).send('북마크 제거 실패');
       }
-      res.status(200).send(bookMarkOffProject);
+      res.status(200).send('북마크 제거 성공');
     } catch (e) {
       
       res.status(500).json({

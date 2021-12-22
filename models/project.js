@@ -24,11 +24,12 @@ const articleSchema = mongoose.Schema(
 		bookMarkUserList : {
 			type : [{type: mongoose.Schema.Types.ObjectId, ref : "User"}],
 			default : []
+			
 		}
 		,
 		bookMarkCnt : {
-			type: Boolean,
-			default: false,
+			type: Number,
+			default: 0
 		}
 	},
 	{

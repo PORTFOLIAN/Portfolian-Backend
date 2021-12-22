@@ -10,9 +10,11 @@ router.get('/:userId/bookMark', userController.findBookMarkList);
 // router.get('/header/:id', userController.userHead);
 
 
-// router.post('/upload',upload.single("userImage"), (req,res) => {
-//     const userImage = req.file;
-// })
+router.post('/upload',upload.single("userImage"), (req,res) => {
+    console.log("ddd")
+    const userImage = req.file;
+    console.log(userImage)
+})
 
 
 
