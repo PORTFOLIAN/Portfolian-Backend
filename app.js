@@ -13,7 +13,6 @@ const {  MONGO_URI } = process.env;
 const PORT = 3000;
 
 app.use(cors({
-  origin: "*",
   credentials : true
 }));
 app.use(express.json());
