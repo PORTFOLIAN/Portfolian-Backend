@@ -28,6 +28,7 @@ const userSchema = mongoose.Schema(
 		photo : {
 			type : String,
 			default : "기본 이미지 URL"
+
 		},
 		github : {
 			type : String,
