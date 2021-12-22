@@ -57,6 +57,7 @@ app.get("/header/:id", async (req, res) => {
 
 
 //게시글 조회 3번 
+
 app.get("/projects/:project", async (req, res) => {
   const project = req.params.project;
   const readProject = await Project.findByIdAndUpdate(project, {$inc : {"article.view" : 1}},{ new: true}).populate('leader', '_id photo nickName description stackList').select(' _id leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription article.bookMarkUserList ').lean();

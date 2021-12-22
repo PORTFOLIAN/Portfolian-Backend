@@ -1,4 +1,5 @@
 const jsonHandler = require('../utils/jsonHandle');
+const {getRefreshToken, getAccessToken} = require("../utils/jwt");
 
 class UserService{
 
@@ -23,6 +24,14 @@ class UserService{
         returnBookMark['code'] = 1;
         return returnBookMark;
     };
+
+    async changeNickName(userId, tokenUserId, nickName) {
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        await this.UserModel.changeNickName(userId, nickName);
+        return {code : 1, message : "nickName이 변경되었습니다."}
+    };
+
 }
 module.exports  = UserService;
 
