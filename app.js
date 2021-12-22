@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const cors = require('cors');
 const session = require('express-session');
 const path = require('path');
 const User = require('./models/user');
@@ -11,6 +12,7 @@ const Project = require('./models/project');
 const {  MONGO_URI } = process.env;
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json());
 // app.use(express.urlencoded({ extends: true}));
 
