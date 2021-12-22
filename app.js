@@ -68,7 +68,7 @@ app.get("/projects/:project", async (req, res) => {
     else bookMarkCheck = false
     
     return bookMarkCheck
-  }s
+  }
 
   const contentInfo = {
     subjectDescription : readProject.article.subjectDescription,
