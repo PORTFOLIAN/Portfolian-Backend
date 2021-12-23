@@ -16,10 +16,6 @@ const articleSchema = mongoose.Schema(
 			type : String,
 			default : ""
 		},
-		photo : { //모집 글 사진
-			type: String,
-			default : ""
-		},
 		capacity: { type : Number},
 		view : { 
 			type: Number, 
@@ -28,6 +24,7 @@ const articleSchema = mongoose.Schema(
 		bookMarkUserList : {
 			type : [{type: mongoose.Schema.Types.ObjectId, ref : "User"}],
 			default : []
+			
 		}
 		,
 		bookMarkCnt : {
@@ -117,27 +114,44 @@ projectSchema.statics.createProject = async function(owner, article, ownerStack)
     return newProject.id;
 }
 
-projectSchema.statics.modifyProjectArticle = async function(projectId, articleDto, ownweStack){
+projectSchema.statics.modifyProjectArticle = async function(projectId, articleDto, ownerStack){
 	await this.findOneAndUpdate(
-		{ article : {  _id : projectId }},
+		{ _id : mongoose.Types.ObjectId(projectId) },
 		{
-			$set: {
-				'article.$.title' : articleDto.title,
-				'article.$.stackList' : articleDto.stackList,
-				'article.$.subjectDescription' : articleDto.subjectDescription,
-				'article.$.projectTime' : articleDto.projectTime,
-				'article.$.condition' : articleDto.condition,
-				'article.$.progress' : articleDto.progress,
-				'article.$.description' : articleDto.description,
-				'article.$.capacity' : articleDto.capacity
-			}
+			'article.title': articleDto.title,
+			'article.stackList' : articleDto.stackList,
+			'article.subjectDescription' : articleDto.subjectDescription,
+			'article.projectTime' : articleDto.projectTime,
+			'article.condition' : articleDto.condition,
+			'article.progress' : articleDto.progress,
+			'article.description' : articleDto.description,
+			'article.capacity' : articleDto.capacity,
+			'projectInfo.team.0.memberStack': ownerStack
 		}
 	);
 }
+
 projectSchema.statics.findByArticleId = async function(projectId){
 	return await this.findOne(
 		{ article : {  _id : mongoose.Types.ObjectId(projectId) }}
 	);
 }
+
+projectSchema.statics.findLeaderById = async function(projectId){
+	return await this.findOne(
+		{ _id : mongoose.Types.ObjectId(projectId) }
+		).populate(
+			'leader','_id'
+		);
+}
+
+projectSchema.statics.getAllArticles = async function(){
+	return await this.find({}).populate('leader','_id photo')
+		.select(
+		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
+		article.view  status'
+	).lean();
+}
+
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;

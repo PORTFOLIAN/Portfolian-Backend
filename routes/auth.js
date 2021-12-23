@@ -1,14 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const authController = require('../controllers/auth');
 
-
-
-// // contoller
-// const auth = require('../controllers/auth')
-
-
-router.get('/', (req, res) => {
-    res.send(' portfolian login!')
-  })
+router.post('/:coperation/access', authController.getAccessToken);
+router.post('/:coperation/test', authController.getAccessToken_test);
+router.get('/verify/jwt/test', authController.verifyJWT_test);
+router.post('/refresh', authController.refreshAccessToken);
+router.patch('/logout', authController.logout);
 
 module.exports = router;

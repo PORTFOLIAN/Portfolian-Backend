@@ -1,0 +1,10 @@
+#ec2에 배포 후 실행할 위치지정
+version: 0.0
+os: linux
+files:
+  - source:  /
+    destination: /home/ubuntu/build/
+    
+hooks:
+  ApplicationStart:
+    - location: /home/ubuntu/scripts/start.sh
