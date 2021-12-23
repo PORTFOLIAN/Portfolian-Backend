@@ -44,7 +44,16 @@ let changeNickName = async function (req,res){
     res.json(changeNickName);
 }
 
-
+let deleteUser = async function (req,res){
+    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.json(verifyTokenRes);
+        return;
+    }
+    let deleteUserRes = await userServiceInstance.deleteUser(req.params.userId, verifyTokenRes.userId);
+    res.json(deleteUserRes);
+}
 
 // let userHead = async (req, res) => {
 //   const id = req.params.id;
@@ -74,4 +83,4 @@ let changeNickName = async function (req,res){
 
 
 
-module.exports = {findBookMarkList, addUserForTest, changeNickName};
+module.exports = {findBookMarkList, addUserForTest, changeNickName, deleteUser};

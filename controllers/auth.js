@@ -1,7 +1,10 @@
-const User = require('../models/user');
 const AuthService = require('../services/auth');
+const UserService = require("../services/user");
+const User = require('../models/user');
+const Project = require("../models/project");
 
 const authServiceInstance = new AuthService(User);
+const userServiceInstance = new UserService(User,Project);
 
 let getAccessToken = async function (req,res){
     let userInfo = await authServiceInstance.getUserInfo(req.params.coperation, req.body.token);
@@ -34,4 +37,15 @@ let refreshAccessToken = async function (req,res){
     res.json(newAccessToken);
 }
 
-module.exports = {getAccessToken, getAccessToken_test, verifyJWT_test, refreshAccessToken};
+let logout = async function (req,res){
+    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.json(verifyTokenRes);
+        return;
+    }
+    let logoutRes = await userServiceInstance.deleteRefreshToken(verifyTokenRes.userId);
+    res.json(logoutRes);
+}
+
+module.exports = {getAccessToken, getAccessToken_test, verifyJWT_test, refreshAccessToken, logout};

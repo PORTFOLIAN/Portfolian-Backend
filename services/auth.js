@@ -59,7 +59,7 @@ class AuthService{
             else
                 return { code: -2, message: "accessToken이 존재하지 않습니다."};
         } catch (err) {
-            return { code: -1, message: "유효하지 않은 accessToken입니다."};
+            return { code: -99, message: "만료된 accessToken입니다."};
         }
     }
 
