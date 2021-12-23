@@ -24,7 +24,6 @@ let getBookMarkListRes = async function (obj){
 }
 
 let getArticleListRes = async function (obj){
-    console.log("res : ",obj);
     const articleList = obj.map(element =>{
         return {
             projectId : element._id,

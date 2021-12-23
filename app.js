@@ -49,7 +49,6 @@ app.get("/header/:id", async (req, res) => {
     const headerInfo = {
       user : user
     }
-    console.log(headerInfo)
     if (!headerInfo) {
       return res.status(404).send('404 에러 ');
     }
@@ -128,7 +127,6 @@ app.get("/projects/:project", async (req, res) => {
 app.get("/users/:id/info", async (req, res) => {
   const userId = req.params.id;
   const userInfo = await User.findOne({_id : userId}).select('_id nickName description stackList photo github email').lean();
-  console.log(userInfo)
   try {
     if (!userInfo) {
       return res.status(404).send('나의 정보보기 오류');
@@ -151,7 +149,6 @@ app.post("/users/:id/bookMark", async (req, res) => {
   if (bookMarkCnt == 'true'){
     const bookMarkOnUser = await User.findOneAndUpdate({ _id: userId }, { $push: { bookMarkList: projectId } }).select('_id');
     const bookMarkOnProject =  await Project.findOneAndUpdate({ _id: projectId }, { $inc: { "article.bookMarkCnt": 1} , $push : {"article.bookMarkUserList" : userId } });
-    console.log(bookMarkOnProject.article.bookMarkUserList)
     try {
       if (!bookMarkOnProject) {
         return res.status(404).send('북마크 실패');
