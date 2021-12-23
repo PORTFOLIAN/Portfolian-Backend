@@ -139,7 +139,7 @@ projectSchema.statics.findByArticleId = async function(projectId){
 
 projectSchema.statics.findLeaderById = async function(projectId){
 	return await this.findOne(
-		{ _id : mongoose.Types.ObjectId(projectId) }
+		{ _id : projectId }
 		).populate(
 			'leader','_id'
 		);

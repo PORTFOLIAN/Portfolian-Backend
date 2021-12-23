@@ -54,7 +54,12 @@ class AuthService{
             {
                 let accessToken = header.authorization.split(' ')[1];
                 decoded = jwt.verify(accessToken, secret);
-                return { code: 1, userId: decoded.userId };
+                let findUser = await this.UserModel.findUserById(decoded.userId);
+                if (findUser == null)
+                {
+                    return { code: -3, message: "user가 존재하지 않습니다." }
+                }
+                return { code: 1, userId: decoded.userId, user : findUser };
             }
             else
                 return { code: -2, message: "accessToken이 존재하지 않습니다."};
