@@ -134,6 +134,13 @@ userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
 	);
 }
 
-
+userSchema.statics.deleteRefreshToken= async function(userId){
+	await User.findByIdAndUpdate(
+		{_id : userId},
+		{
+			$set : { refreshToken : ""}
+		}
+	);
+}
 const User = mongoose.model("User",userSchema);
 module.exports  = User;

@@ -6,5 +6,6 @@ router.post('/:coperation/access', authController.getAccessToken);
 router.post('/:coperation/test', authController.getAccessToken_test);
 router.get('/verify/jwt/test', authController.verifyJWT_test);
 router.post('/refresh', authController.refreshAccessToken);
+router.patch('/logout', authController.logout);
 
 module.exports = router;

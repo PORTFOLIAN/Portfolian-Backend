@@ -32,6 +32,11 @@ class UserService{
         return {code : 1, message : "nickName이 변경되었습니다."}
     };
 
+    async deleteRefreshToken(userId){
+        await this.UserModel.deleteRefreshToken(userId);
+        return {code: 1, message : "로그아웃 성공"};
+    }
+
 }
 module.exports  = UserService;
 
