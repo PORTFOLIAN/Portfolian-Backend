@@ -142,5 +142,9 @@ userSchema.statics.deleteRefreshToken= async function(userId){
 		}
 	);
 }
+
+userSchema.statics.deleteUser= async function(userId){
+	await User.findByIdAndDelete({_id : userId});
+}
 const User = mongoose.model("User",userSchema);
 module.exports  = User;

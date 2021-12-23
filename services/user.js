@@ -37,6 +37,12 @@ class UserService{
         return {code: 1, message : "로그아웃 성공"};
     }
 
+    async deleteUser(userId, tokenUserId){
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        await this.UserModel.deleteUser(userId);
+        return {code: 1, message : "탈퇴 성공"};
+    }
 }
 module.exports  = UserService;
 
