@@ -116,6 +116,33 @@ userSchema.statics.findBookMarkProject = async function(userId){ //우선 NickNa
 	).select('bookMarkList').lean();
 }
 
+
+userSchema.statics.findUserInfo = async function(userId){ 
+	return await this.findOne(
+		{_id : userId}
+		).select(
+		'_id nickName description stackList photo github email'
+		).lean();
+}
+
+userSchema.statics.findUserHeader = async function(id){ 
+	return await this.findById(id);
+}
+
+userSchema.statics.changeBookMarkOn = async function(userId,projectId){ 
+	return await this.findOneAndUpdate(
+		{ _id: userId },
+		{ $push: { bookMarkList: projectId } })
+		.select('_id');
+}
+
+userSchema.statics.changeBookMarkOff = async function(userId,projectId){ 
+	return await this.findOneAndUpdate(
+		{ _id: userId },
+		{ $pull: { bookMarkList: projectId }})
+		.select('_id')
+}
+
 userSchema.statics.findUserIdByOauthId= async function(oauthId, coperation){
 	return await this.findOne(
 		{
@@ -146,5 +173,6 @@ userSchema.statics.deleteRefreshToken= async function(userId){
 userSchema.statics.deleteUser= async function(userId){
 	await User.findByIdAndDelete({_id : userId});
 }
+
 const User = mongoose.model("User",userSchema);
 module.exports  = User;

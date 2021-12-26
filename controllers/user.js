@@ -55,32 +55,63 @@ let deleteUser = async function (req,res){
     res.json(deleteUserRes);
 }
 
-// let userHead = async (req, res) => {
-//   const id = req.params.id;
-//   console.log(id)
-//   try {
-//     const userInfo = await User.findById(id);
-//     const user = {
-//       name : userInfo.nickName,
-//       profile : userInfo.photo
-//     } 
-//     const headerInfo = {
-//       user : user
-//     }
-//     console.log(headerInfo)
-//     if (!headerInfo) {
-//       return res.status(404).send('404 에러 ');
-//     }
+let getUserHeader = async (req, res) => {
+  const id = req.params.id;
+  console.log(id)
+  try {
+    const headerInfo = await userServiceInstance.getUserHeader(id);
 
-//     res.status(200).send(headerInfo);
-//   } catch (e) {
-//     res.status(500).json({
-//       message: "회원정보 조회 실패",
-//     });
-//   }
-// }
+    if (!headerInfo) {
+      return res.status(404).send('404 에러 ');
+    }
 
+    res.status(200).send(headerInfo);
+  } catch (e) {
+    res.status(500).json({
+      message: "회원정보 조회 실패",
+    });
+  }
+}
 
+let getUserInfo = async (req,res) => {
+  const userId = req.params.id;
+  
+  try {
+    const userInfo = await userServiceInstance.getUserInfo(userId);
+    if (!userInfo) {
+      return res.status(404).send('나의 정보보기 오류');
+    }
+    res.status(200).send(userInfo);
+  } catch (e) {
+    
+    res.status(500).json({
+      message: "회원정보 조회 실패",
+    });
+  }
+}
 
+let changeBookMark = async (req,res) => {
+  const userId = req.params.id;
+  const bookMarkCnt = req.body.like;
+  const projectId = req.body.projectId;
+  
+  try {
+    
+    const result = await userServiceInstance.changeBookMark(userId,bookMarkCnt,projectId);
 
-module.exports = {findBookMarkList, addUserForTest, changeNickName, deleteUser};
+    if (!result) {
+            console.log(result)
+
+      return res.status(404).send('북마크 변경 실패');
+
+    }
+    res.status(200).send('북마크 변경 성공');
+  } catch (e) {
+    res.status(500).json({
+      message: "북마크 변경 실패",
+    });
+  }
+  
+}
+
+module.exports = {findBookMarkList, addUserForTest, getUserHeader, getUserInfo, changeBookMark};
