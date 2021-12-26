@@ -153,5 +153,32 @@ projectSchema.statics.getAllArticles = async function(){
 	).lean();
 }
 
+projectSchema.statics.getProjectAricle = async function(project){
+	return await this.findByIdAndUpdate(project, {$inc : {"article.view" : 1}},{ new: true})
+	.populate('leader' , '_id photo nickName description stackList')
+	.select(' _id leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription article.bookMarkUserList ')
+	.populate('projectInfo')
+	.lean();
+}
+
+projectSchema.statics.changeBookMarkOn= async function(userId,projectId){
+	return await this.findOneAndUpdate(
+		{ _id: projectId }, 
+		{
+		$inc: { "article.bookMarkCnt": 1},
+		$push : {"article.bookMarkUserList" : userId } 
+		});
+}
+
+
+projectSchema.statics.changeBookMarkOff= async function(userId,projectId){
+	return await this.findOneAndUpdate(
+		{ _id: projectId },
+		{
+		$inc: { "article.bookMarkCnt": -1 },
+		$pull : {"article.bookMarkUserList" : userId } 
+		});
+}
+
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;

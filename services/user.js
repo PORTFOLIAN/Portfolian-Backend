@@ -25,7 +25,7 @@ class UserService{
     };
 
     async getUserHeader(id){
-        const userInfo = await this.UserModel.findById(id);
+        const userInfo = await this.UserModel.findUserHeader(id);
         const user = {
         name : userInfo.nickName,
         profile : userInfo.photo
@@ -37,7 +37,7 @@ class UserService{
     }
 
     async getUserInfo(userId) {
-        const userInfo = await this.UserModel.findOne({_id : userId}).select('_id nickName description stackList photo github email').lean();
+        const userInfo = await this.UserModel.findUserInfo(userId)
         const userMyInfo= { 
             userId : userId,
             nickName : userInfo.nickName,
@@ -55,13 +55,15 @@ class UserService{
 
     async changeBookMark(userId,bookMarkCnt,projectId){
         let result;
+        
         if (bookMarkCnt == 'true'){
-            const bookMarkOnUser = await this.UserModel.findOneAndUpdate({ _id: userId }, { $push: { bookMarkList: projectId } }).select('_id');
-            result =  await this.ProjectModel.findOneAndUpdate({ _id: projectId }, { $inc: { "article.bookMarkCnt": 1} , $push : {"article.bookMarkUserList" : userId } });
+            const bookMarkOnUser = await this.UserModel.changeBookMarkOn(userId,projectId)
+            result =  await this.ProjectModel.changeBookMarkOn(userId,projectId)
             
+            console.log(bookMarkOnUser)
         } else {
-            const bookMarkOffUser = await this.UserModel.findOneAndUpdate({ _id: userId }, { $pull: { bookMarkList: projectId } }).select('_id');
-            result =  await this.ProjectModel.findOneAndUpdate({ _id: projectId }, { $inc: { "article.bookMarkCnt": -1 }, $pull : {"article.bookMarkUserList" : userId } });
+            const bookMarkOffUser = await this.UserModel.changeBookMarkOff(userId,projectId)
+            result =  await this.ProjectModel.changeBookMarkOff(userId,projectId)
         }
         
         return result
