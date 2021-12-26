@@ -63,5 +63,51 @@ class ProjectService{
         returnProjectList['code'] = 1;
         return returnProjectList;
     }
+
+    async getProjectArticle(project) {
+        
+        const readProject = await this.ProjectModel.findByIdAndUpdate(project, {$inc : {"article.view" : 1}},{ new: true})
+        .populate('leader' , '_id photo nickName description stackList')
+        .select(' _id leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription article.bookMarkUserList ')
+        .populate('projectInfo')
+        .lean();
+        function bookMarkChk() { 
+            let bookMarkCheck
+            if(readProject.article.bookMarkUserList == project) bookMarkCheck = true  //project 부분에 유저id가 들어가야함
+            else bookMarkCheck = false
+            return bookMarkCheck
+        }
+        const contentInfo = {
+        subjectDescription : readProject.article.subjectDescription,
+        projectTime : readProject.article.projectTime,
+        recruitmentCondition : readProject.article.condition,
+        progress : readProject.article.progress,
+        description : readProject.article.description,
+        }
+        const leaderInfo = {
+        userId : readProject.leader._id,
+        nickName : readProject.leader.nickName,
+        description : readProject.leader.description,
+        photo : readProject.leader.photo,
+        stack : readProject.projectInfo.team[0].memberStack
+        
+        }
+        const projectInfo = {
+        code : 1,
+        title  : readProject.article.title,
+        projectId : readProject._id,
+        stackList : readProject.article.stackList,
+        contents : contentInfo,
+        capacity : readProject.article.capacity,
+        view : readProject.article.view,
+        bookMark : bookMarkChk(),
+
+        status : readProject.status,
+        leader : leaderInfo,
+        }
+
+        return projectInfo;
+        
+    }
 }
 module.exports  = ProjectService;

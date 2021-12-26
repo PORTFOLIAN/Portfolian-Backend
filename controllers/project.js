@@ -66,4 +66,24 @@ let getAllProjectAritcles = async function(req,res,next){
   res.json(ret);
 }
 
-module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle};
+let getProjectArticle = async function(req, res, next) {
+  const project = req.params.project;
+  
+  try { 
+    if (!project) {
+      return res.status(404).send('404 에러');
+    }
+
+    let ret = await projectServiceInstance.getProjectArticle(project);
+    console.log(ret)
+    res.status(200).send(ret);
+
+  } catch (e) {
+    res.status(500).json({
+      message: "project 조회 실패",
+    });
+  }
+  
+}
+
+module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle};
