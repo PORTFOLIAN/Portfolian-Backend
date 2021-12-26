@@ -1,4 +1,5 @@
 const jsonHandler = require('../utils/jsonHandle');
+const {getRefreshToken, getAccessToken} = require("../utils/jwt");
 
 class UserService{
 
@@ -69,6 +70,24 @@ class UserService{
         return result
     }
     
+    async changeNickName(userId, tokenUserId, nickName) {
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        await this.UserModel.changeNickName(userId, nickName);
+        return {code : 1, message : "nickName이 변경되었습니다."}
+    };
+
+    async deleteRefreshToken(userId){
+        await this.UserModel.deleteRefreshToken(userId);
+        return {code: 1, message : "로그아웃 성공"};
+    }
+
+    async deleteUser(userId, tokenUserId){
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        await this.UserModel.deleteUser(userId);
+        return {code: 1, message : "탈퇴 성공"};
+    }
 }
 module.exports  = UserService;
 

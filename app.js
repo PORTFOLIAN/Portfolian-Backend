@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+const cors = require('cors');
 const session = require('express-session');
 const path = require('path');
 const User = require('./models/user');
@@ -10,6 +11,12 @@ const Project = require('./models/project');
 
 const {  MONGO_URI } = process.env;
 const PORT = 3000;
+
+let corsOption = {
+origin: 'http://localhost:3000', // 허락하는 요청 주소
+credentials: true // true로 하면 설정한 내용을 response 헤더에 추가 해줍니다.
+}
+app.use(cors(corsOption));
 
 app.use(express.json());
 // app.use(express.urlencoded({ extends: true}));
