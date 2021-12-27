@@ -10,5 +10,4 @@ router.post('/:id/bookMark', userController.changeBookMark);
 router.patch('/:userId/nickName',  userController.changeNickName);
 router.delete('/:userId', userController.deleteUser);
 
-
 module.exports = router;

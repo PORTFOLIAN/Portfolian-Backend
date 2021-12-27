@@ -6,7 +6,7 @@ const userSchema = mongoose.Schema(
 		nickName :  {
 			type : String,
 			maxlength: 20,
-			default : "portfolian"
+			default : ""
 		},
 		refreshToken:{
 			type : String,
@@ -143,13 +143,13 @@ userSchema.statics.changeBookMarkOff = async function(userId,projectId){
 		.select('_id')
 }
 
-userSchema.statics.findUserIdByOauthId= async function(oauthId, coperation){
+userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
 	return await this.findOne(
 		{
 			oauthId :  oauthId,
 			channel: coperation
 		}
-	).select('id');
+	).select('id nickName');
 }
 
 userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
