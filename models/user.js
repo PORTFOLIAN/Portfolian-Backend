@@ -107,9 +107,9 @@ userSchema.statics.changeNickName = async function (userId, nickName){
 	);
 }
 
-userSchema.statics.findBookMarkProject = async function(userId){ //우선 NickName으로 찾음
+userSchema.statics.findBookMarkProject = async function(userId){ 
 	return await this.findOne(
-		{nickName : userId}
+		{_id : userId}
 		).populate(
 		'bookMarkList', '_id article.leader article.title article.title article.stackList article.subjectDescription article.capacity \
 		article.view  status'

@@ -7,11 +7,15 @@ const userServiceInstance = new UserService(User,Project);
 const authServiceInstance = new AuthService(User);
 
 let findBookMarkList = async function (req,res){
-    // 굳이 userId필요없을 것 같기도 하고 ~ ~
-
-    //우선 NickName으로 찾음
-    const bookMarkList = await userServiceInstance.getBookMarkProjectList(req.params.userId);
-    res.json(bookMarkList);
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
+  {
+      res.json(verifyTokenRes);
+      return;
+  }
+    
+  const bookMarkList = await userServiceInstance.getBookMarkProjectList(verifyTokenRes.userId);
+  res.json(bookMarkList);
 }
 
 let addUserForTest = async function (req,res){
@@ -114,4 +118,4 @@ let changeBookMark = async (req,res) => {
   
 }
 
-module.exports = {findBookMarkList, addUserForTest, getUserHeader, getUserInfo, changeBookMark};
+module.exports = {findBookMarkList, addUserForTest, getUserHeader, getUserInfo, changeBookMark, changeNickName, deleteUser, };

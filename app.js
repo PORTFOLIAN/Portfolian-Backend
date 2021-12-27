@@ -21,19 +21,13 @@ app.use(cors(corsOption));
 app.use(express.json());
 // app.use(express.urlencoded({ extends: true}));
 
-mainRouter = require('./routes/main'),
 authRouter = require('./routes/auth'),
 chatRouter = require('./routes/chat'),
-mypageRouter = require('./routes/mypage'),
 projectRouter = require('./routes/project');
-teamRouter = require('./routes/team');
-candidatetRouter = require('./routes/candidate');
 userRouter = require('./routes/user');
 headerRouter = require('./routes/header')
 
-app.use('/', mainRouter);
 app.use('/oauth', authRouter);
-app.use('/mypage', mypageRouter);
 app.use('/projects', projectRouter);
 app.use('/chat', chatRouter);
 app.use('/users', userRouter);

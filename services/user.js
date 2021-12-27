@@ -19,8 +19,7 @@ class UserService{
 
     async getBookMarkProjectList(userId) {
         let bookMarks = await this.UserModel.findBookMarkProject(userId)
-        console.log("bookMarks : ",bookMarks);
-        let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks);
+        let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks.bookMarkList);
         returnBookMark['code'] = 1;
         return returnBookMark;
     };
