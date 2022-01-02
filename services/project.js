@@ -29,18 +29,7 @@ class ProjectService{
         return {code : 1, message : "validation 통과"};
     }
 
-    async createProject(owner, articleDto, ownweStack){
-        let validateArticleInfo = this.validateArticleContents(articleDto);
-        if (validateArticleInfo.code <= 0)
-            return validateArticleInfo;
-
-        //project 생성 & team에 owner,ownweStack 넣기
-        const newProject = await this.ProjectModel.createProject(owner, articleDto, ownweStack); 
-        return { code : 1, message: "성공적으로 수행되었습니다.",newProjectID : newProject};
-    }
-
-    async validateProjectOwner(projectId, owner)
-    {
+    async validateProjectOwner(projectId, owner){
 
         if(projectId.length != 24)
             return {code : -12, message : "올바르지 않은 projectId입니다."};
@@ -53,6 +42,44 @@ class ProjectService{
             return {code : -11, message : "해당 project에 대한 권한이 없습니다."};
 
         return {code : 1, message : "project에 대한 유효성 검사 통과"};
+    }
+
+    async createProject(owner, articleDto, ownweStack){
+        let validateArticleInfo = this.validateArticleContents(articleDto);
+        if (validateArticleInfo.code <= 0)
+            return validateArticleInfo;
+
+        //project 생성 & team에 owner,ownweStack 넣기
+        const newProject = await this.ProjectModel.createProject(owner, articleDto, ownweStack); 
+        return { code : 1, message: "성공적으로 수행되었습니다.",newProjectID : newProject};
+    }
+
+    async deleteProject(owner, projectId) {
+        // 권한 유효성 검사
+        let validateOwnerRes = await this.validateProjectOwner(projectId, owner);
+        if (validateOwnerRes.code < 0)
+            return validateOwnerRes;
+
+        let findProject = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
+        console.log('findProject : ',findProject);
+        console.log('status : ',findProject.status);
+        console.log('candidate : ',findProject.candidate);
+        console.log('projectInfo : ',findProject.projectInfo);
+        console.log('article : ',findProject.article);
+       // let {status, candidate, projectInfo, article} = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
+
+        // console.log('status : ',status);
+        // console.log('candidate : ',candidate);
+        // console.log('projectInfo : ',projectInfo);
+        // console.log('article : ',article);
+
+        // 1. bookMark 삭제
+
+        // 2. apply 삭제
+        // 3. status확인 후 team의 doing, done에서 삭제
+        // 4. project 삭제
+
+        return {code : 1, message : "project 삭제 완료"};
     }
 
     async modifyProjectArticle(owner,projectId, articleDto, ownerStack){
@@ -72,13 +99,12 @@ class ProjectService{
 
     async getAllArticles(){
         const ProjectList = await this.ProjectModel.getAllArticles();
-        //console.log("ProjectList: ",ProjectList);
         let returnProjectList = await jsonHandler.getArticleListRes(ProjectList);
         returnProjectList['code'] = 1;
         return returnProjectList;
     }
     
-    async getProjectArticle(project) {
+    async getProjectArticle(project){
         
         const readProject = await this.ProjectModel.getProjectAricle(project);
          function bookMarkChk() { 

@@ -27,7 +27,7 @@ const userSchema = mongoose.Schema(
 		},
 		photo : {
 			type : String,
-			default : "기본 이미지 URL"
+			default : "https://media.vlpt.us/images/tlsrlgkrry/post/0f671da7-21ff-4dfc-b388-06950ed4a21d/127.0.0.1.PNG"
 
 		},
 		github : {
@@ -115,7 +115,6 @@ userSchema.statics.findBookMarkProject = async function(userId){
 		article.view  status'
 	).select('bookMarkList').lean();
 }
-
 
 userSchema.statics.findUserInfo = async function(userId){ 
 	return await this.findOne(

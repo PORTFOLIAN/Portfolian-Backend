@@ -6,6 +6,7 @@ const projectController = require('../controllers/project');
 router.get('/', projectController.getAllProjectAritcles);
 router.post('/', projectController.createProjectAritcle);
 router.put('/:projectId', projectController.modifyProjectAritcle);
+router.delete('/:projectId', projectController.deleteProject);
 router.get('/:project', projectController.getProjectArticle);
 
 

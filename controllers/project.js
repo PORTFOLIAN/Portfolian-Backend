@@ -29,6 +29,17 @@ let createProjectAritcle = async function(req,res,next){
   res.json(createProjectRes);
 }
 
+let deleteProject = async function(req, res, next){
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
+  {
+    res.json(verifyTokenRes);
+    return;
+  }
+  let deleteArticleRes = await projectServiceInstance.deleteProject(verifyTokenRes.user, req.params.projectId);
+  res.json(deleteArticleRes);
+}
+
 let modifyProjectAritcle = async function(req,res,next){
 
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
@@ -75,4 +86,4 @@ let getProjectArticle = async function(req, res, next) {
   
 }
 
-module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle};
+module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle, deleteProject};
