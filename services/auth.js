@@ -47,6 +47,7 @@ class AuthService{
             await this.UserModel.updateRefreshToken(findUser.id, refreshToken);
         }
         let accessToken = JWT.getAccessToken(findUser.id);
+        console.log("login(findUser) : ", findUser);
         return {'code': 1 ,'accessToken': accessToken,'refreshToken': refreshToken, "isNew" : isNew, 'userId': findUser.id};
     }
 
