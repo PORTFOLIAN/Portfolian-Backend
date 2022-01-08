@@ -107,6 +107,22 @@ userSchema.statics.changeNickName = async function (userId, nickName){
 	);
 }
 
+userSchema.statics.changeUserInfo = async function(userId,info,photo){
+	await User.findOneAndUpdate(
+		{_id : mongoose.Types.ObjectId(userId)},
+		{
+			$set: {
+				'nickName': info.nickName,
+				'description' : info.description,
+				'stack' : info.stack,
+				'photo' : photo,
+				'github' : info.github,
+				'mail' : info.mail
+			}
+		}
+	);
+}
+
 userSchema.statics.findBookMarkProject = async function(userId){ 
 	return await this.findOne(
 		{_id : userId}

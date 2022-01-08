@@ -108,6 +108,8 @@ class ProjectService{
             sort = "createdAt"
         else if (sort === "view")
             sort = "article.view"
+        else if (sort === "bookMark")
+            sort = "article.bookMarkCnt"
         sort = "-" + sort;
         if (keyword === "default")
             keyword = ""

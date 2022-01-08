@@ -22,24 +22,6 @@ let findBookMarkList = async function (req,res){
   res.json(bookMarkList);
 }
 
-let addUserForTest = async function (req,res){
-    console.log(req.query.stack);
-    const users = new User({
-        nickName : req.params.userId,
-        channel : 'kakao',
-        email : 'testtesttest@gmail.com',
-        stackList : req.query.stack, //stackList
-        });
-    
-     users.save()
-          .then ((result) => {
-            res.send(result)
-          })
-          .catch((err)=>{
-            console.log(err);
-          });
-}
-
 let changeNickName = async function (req,res){
 
     let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
@@ -48,6 +30,11 @@ let changeNickName = async function (req,res){
         res.json(verifyTokenRes);
         return;
     }
+    if (verifyTokenRes.code == 2) {
+        res.json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+
     let changeNickName = await userServiceInstance.changeNickName(req.params.userId, verifyTokenRes.userId, req.body.nickName);
     res.json(changeNickName);
 }
@@ -59,6 +46,11 @@ let deleteUser = async function (req,res){
         res.json(verifyTokenRes);
         return;
     }
+    if (verifyTokenRes.code == 2) {
+        res.json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+
     let deleteUserRes = await userServiceInstance.deleteUser(req.params.userId, verifyTokenRes.userId);
     res.json(deleteUserRes);
 }
@@ -79,6 +71,21 @@ let getUserHeader = async (req, res) => {
       message: "회원정보 조회 실패",
     });
   }
+}
+
+let changeUserInfo = async (req, res) => {
+    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.json(verifyTokenRes);
+        return;
+    }
+    if (verifyTokenRes.code == 2) {
+        res.json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+    let changeUserInfoRes = await userServiceInstance.changeUserInfo(req.params.userId, verifyTokenRes.userId, req.body, req.file.location);
+    res.json(changeUserInfoRes);
 }
 
 let getUserInfo = async (req,res) => {
@@ -122,4 +129,4 @@ let changeBookMark = async (req,res) => {
   
 }
 
-module.exports = {findBookMarkList, addUserForTest, getUserHeader, getUserInfo, changeBookMark, changeNickName, deleteUser, };
+module.exports = {findBookMarkList, getUserHeader, getUserInfo, changeBookMark, changeNickName, deleteUser,changeUserInfo };

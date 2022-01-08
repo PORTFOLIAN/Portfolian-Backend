@@ -157,7 +157,7 @@ projectSchema.statics.getAllArticles = async function(userId,sort,keyword){
 		.populate('leader','_id photo')
 		.select(
 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
-		article.view  status createdAt'
+		article.view  article.bookMarkCnt status createdAt'
 	).sort(sort).lean();
 }
 

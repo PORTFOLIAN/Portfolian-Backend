@@ -82,9 +82,7 @@ let getProjectArticle = async function(req, res, next) {
   const projectId = req.params.projectId;
   try {
     let ret = await projectServiceInstance.getProjectArticle(project);
-
     res.status(200).send(ret);
-
   } catch (e) {
     res.status(500).json({
       message: "project 조회 실패",

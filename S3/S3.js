@@ -18,10 +18,10 @@ let upload = multer({
       contentType: multerS3.AUTO_CONTENT_TYPE, // 자동을 콘텐츠 타입 세팅
       acl: 'public-read', // 클라이언트에서 자유롭게 가용하기 위함
       key : function(req, file, cb) {
-          cb(null, `${Date.now()}_${file.originalname}.jpg`);
+          cb(null, Date.now() + '.' + file.originalname.split('.').pop());
       },
   }),
   limits: { fileSize: 5 * 1024 * 1024 }, // 용량 제한
 });
 
-module.upload = multer(upload);
+module.exports = upload;

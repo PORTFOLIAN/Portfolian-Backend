@@ -76,6 +76,14 @@ class UserService{
         return {code : 1, message : "nickName이 변경되었습니다."}
     };
 
+    async changeUserInfo(userId, tokenUserId, info, photo){
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+
+        await this.UserModel.changeUserInfo(userId, info, photo);
+        return {code : 1, message : "사용자 정보가 변경되었습니다."}
+    }
+
     async deleteRefreshToken(userId){
         await this.UserModel.deleteRefreshToken(userId);
         return {code: 1, message : "로그아웃 성공"};
