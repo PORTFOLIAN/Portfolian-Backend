@@ -15,6 +15,10 @@ let createProjectAritcle = async function(req,res,next){
     res.json(verifyTokenRes);
     return;
   }
+  if (verifyTokenRes.code == 2) {
+    res.json({code: -98, message: "로그인 후 이용해주세요."});
+    return;
+  }
 
   // project create & team에 findUser추가(역할 설정)
   const createProjectRes = await projectServiceInstance.createProject(verifyTokenRes.user, req.body.article, req.body.ownerStack);
@@ -36,6 +40,11 @@ let deleteProject = async function(req, res, next){
     res.json(verifyTokenRes);
     return;
   }
+  if (verifyTokenRes.code == 2) {
+    res.json({code: -98, message: "로그인 후 이용해주세요."});
+    return;
+  }
+
   let deleteArticleRes = await projectServiceInstance.deleteProject(verifyTokenRes.user, req.params.projectId);
   res.json(deleteArticleRes);
 }
@@ -48,34 +57,32 @@ let modifyProjectAritcle = async function(req,res,next){
     res.json(verifyTokenRes);
     return;
   }
+  if (verifyTokenRes.code == 2) {
+    res.json({code: -98, message: "로그인 후 이용해주세요."});
+    return;
+  }
 
   let modifyArticleRes = await projectServiceInstance.modifyProjectArticle(verifyTokenRes.user, req.params.projectId ,req.body.article, req.body.ownerStack);
   res.json(modifyArticleRes);
 }
 
 let getAllProjectAritcles = async function(req,res,next){
-  let stackList = req.query.stack;
-  let sort = req.query.sort;
-  let keyword = req.query.keyword;
-
-  console.log("stackList: ", stackList);
-  console.log("sort: ", sort);
-  console.log("keyword: ", keyword);
-
-  let ret = await projectServiceInstance.getAllArticles();
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
+  {
+    res.json(verifyTokenRes);
+    return;
+  }
+  let userId = verifyTokenRes.userId;
+  let ret = await projectServiceInstance.getAllArticles(userId,req.query);
   res.json(ret);
 }
 
 let getProjectArticle = async function(req, res, next) {
-  const project = req.params.project;
-  
-  try { 
-    if (!project) {
-      return res.status(404).send('404 에러');
-    }
-
+  const projectId = req.params.projectId;
+  try {
     let ret = await projectServiceInstance.getProjectArticle(project);
-    console.log(ret)
+
     res.status(200).send(ret);
 
   } catch (e) {

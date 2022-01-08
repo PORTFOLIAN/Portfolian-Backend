@@ -13,7 +13,11 @@ let findBookMarkList = async function (req,res){
       res.json(verifyTokenRes);
       return;
   }
-    
+  if (verifyTokenRes.code == 2) {
+      res.json({code: -98, message: "로그인 후 이용해주세요."});
+      return;
+  }
+
   const bookMarkList = await userServiceInstance.getBookMarkProjectList(verifyTokenRes.userId);
   res.json(bookMarkList);
 }

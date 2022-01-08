@@ -57,6 +57,8 @@ class AuthService{
             if (header.authorization && header.authorization.startsWith('Bearer'))
             {
                 let accessToken = header.authorization.split(' ')[1];
+                if (accessToken == '.')
+                    return { code: 2, userId: "default", user : null };
                 decoded = jwt.verify(accessToken, secret);
                 let findUser = await this.UserModel.findUserById(decoded.userId);
                 if (findUser === null)

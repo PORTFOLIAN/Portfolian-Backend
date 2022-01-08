@@ -152,12 +152,13 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
-projectSchema.statics.getAllArticles = async function(){
-	return await this.find({}).populate('leader','_id photo')
+projectSchema.statics.getAllArticles = async function(userId,sort,keyword){
+	return await this.find({"article.title": {$regex : keyword}})
+		.populate('leader','_id photo')
 		.select(
 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
-		article.view  status'
-	).lean();
+		article.view  status createdAt'
+	).sort(sort).lean();
 }
 
 projectSchema.statics.getProjectAricle = async function(project){

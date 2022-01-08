@@ -22,16 +22,16 @@ app.use(express.json());
 // app.use(express.urlencoded({ extends: true}));
 
 authRouter = require('./routes/auth'),
-chatRouter = require('./routes/chat'),
+// chatRouter = require('./routes/chat'),
 projectRouter = require('./routes/project');
 userRouter = require('./routes/user');
-headerRouter = require('./routes/header')
+headerRouter = require('./routes/header');
 
 app.use('/oauth', authRouter);
 app.use('/projects', projectRouter);
-app.use('/chat', chatRouter);
+// app.use('/chat', chatRouter);
 app.use('/users', userRouter);
-app.use('/header',headerRouter)
+app.use('/header',headerRouter);
 
 mongoose
   .connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
