@@ -53,20 +53,27 @@ class UserService{
         return userMyInfo;
     }
 
-    async changeBookMark(userId,bookMarkCnt,projectId){
-        let result;
-        
-        if (bookMarkCnt == 'true'){
-            const bookMarkOnUser = await this.UserModel.changeBookMarkOn(userId,projectId)
-            result =  await this.ProjectModel.changeBookMarkOn(userId,projectId)
-            
-            console.log(bookMarkOnUser)
-        } else {
-            const bookMarkOffUser = await this.UserModel.changeBookMarkOff(userId,projectId)
-            result =  await this.ProjectModel.changeBookMarkOff(userId,projectId)
+    async changeBookMark(userId, tokenUserId, bookMarked, projectId){
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+
+        // 북마크 했는 지 안했는 지 유효성 검사
+        //return {code : -1, message : "이미 반영되었습니다."}
+
+        if (bookMarked == true)
+        {
+            //북마크 true => false 로 변경
+            await this.UserModel.pullBookMark(userId, projectId);
+            await this.ProjectModel.pullBookMark(userId,projectId);
         }
-        
-        return result
+        else
+        {
+            //북마크 false => true로 변경
+            await this.UserModel.pushBookMark(userId, projectId);
+            await this.ProjectModel.pushBookMark(userId,projectId);
+        }
+
+        return {code : 1, message : "북마크 수정 완료되었습니다."}
     }
     
     async changeNickName(userId, tokenUserId, nickName) {

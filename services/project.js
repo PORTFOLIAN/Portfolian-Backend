@@ -63,9 +63,6 @@ class ProjectService{
         let findProject = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
         console.log('findProject : ',findProject);
         console.log('status : ',findProject.status);
-        console.log('candidate : ',findProject.candidate);
-        console.log('projectInfo : ',findProject.projectInfo);
-        console.log('article : ',findProject.article);
        // let {status, candidate, projectInfo, article} = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
 
         // console.log('status : ',status);

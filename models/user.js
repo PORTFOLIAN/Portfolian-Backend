@@ -144,18 +144,16 @@ userSchema.statics.findUserHeader = async function(id){
 	return await this.findById(id);
 }
 
-userSchema.statics.changeBookMarkOn = async function(userId,projectId){ 
+userSchema.statics.pullBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: userId },
-		{ $push: { bookMarkList: projectId } })
-		.select('_id');
+		{ $pull: { bookMarkList: projectId } });
 }
 
-userSchema.statics.changeBookMarkOff = async function(userId,projectId){ 
+userSchema.statics.pushBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: userId },
-		{ $pull: { bookMarkList: projectId }})
-		.select('_id')
+		{ $push: { bookMarkList: projectId }});
 }
 
 userSchema.statics.findUserByOauthId= async function(oauthId, coperation){

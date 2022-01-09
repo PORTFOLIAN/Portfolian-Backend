@@ -24,7 +24,6 @@ const articleSchema = mongoose.Schema(
 		bookMarkUserList : {
 			type : [{type: mongoose.Schema.Types.ObjectId, ref : "User"}],
 			default : []
-			
 		}
 		,
 		bookMarkCnt : {
@@ -140,7 +139,7 @@ projectSchema.statics.findByArticleId = async function(articleId){
 projectSchema.statics.findDeleteInfoByArticleId = async function(projectId){
 	return await this.findOne(
 		{_id : mongoose.Types.ObjectId(projectId) }
-	).populate('projectInfo article')
+	).populate('projectInfo article' ,'article.bookMarkUserList')
 		.select('status candidiate projectInfo article')
 }
 
@@ -172,21 +171,21 @@ projectSchema.statics.getProjectAricle = async function(project){
 	.lean();
 }
 
-projectSchema.statics.changeBookMarkOn= async function(userId,projectId){
+projectSchema.statics.pushBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
-		{ _id: projectId }, 
+		{ _id: projectId },
 		{
 		$inc: { "article.bookMarkCnt": 1},
 		$push : {"article.bookMarkUserList" : userId } 
 		});
 }
 
-projectSchema.statics.changeBookMarkOff= async function(userId,projectId){
+projectSchema.statics.pullBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: projectId },
 		{
 		$inc: { "article.bookMarkCnt": -1 },
-		$pull : {"article.bookMarkUserList" : userId } 
+		$pull : { "article.bookMarkUserList" : userId }
 		});
 }
 

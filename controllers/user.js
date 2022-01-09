@@ -106,27 +106,21 @@ let getUserInfo = async (req,res) => {
 }
 
 let changeBookMark = async (req,res) => {
-  const userId = req.params.id;
-  const bookMarkCnt = req.body.like;
-  const projectId = req.body.projectId;
-  
-  try {
-    
-    const result = await userServiceInstance.changeBookMark(userId,bookMarkCnt,projectId);
-
-    if (!result) {
-            console.log(result)
-
-      return res.status(404).send('북마크 변경 실패');
-
+    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.status(401).json(verifyTokenRes);
+        return;
     }
-    res.status(200).send('북마크 변경 성공');
-  } catch (e) {
-    res.status(500).json({
-      message: "북마크 변경 실패",
-    });
-  }
-  
+    if (verifyTokenRes.code == 0) {
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+
+    let bookMarked = req.body.bookMarked;
+    let projectId = req.body.projectId;
+    let changeBookMarkRes = await userServiceInstance.changeBookMark(req.params.userId, verifyTokenRes.userId, bookMarked, projectId);
+    res.json(changeBookMarkRes);
 }
 
 module.exports = {findBookMarkList, getUserHeader, getUserInfo, changeBookMark, changeNickName, deleteUser,changeUserInfo };
