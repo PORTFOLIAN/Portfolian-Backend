@@ -41,13 +41,6 @@ let modifyProjectAritcle = async function(req,res,next){
     return;
   }
 
-  let validateArticleResult = projectServiceInstance.validateArticleContents(req.body.article);
-  if (validateArticleResult.code <= 0)
-  {
-    res.json(validateArticleResult);
-    return;
-  }
-
   let ret = await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
   await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
   res.json(ret);
@@ -66,4 +59,29 @@ let getAllProjectAritcles = async function(req,res,next){
   res.json(ret);
 }
 
-module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle};
+let deleteProject = async function(req,res,next){
+
+  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
+
+  // 모집글 내용 유효성 확인
+
+  let validateProjectLeader = await projectServiceInstance.validateProjectOwner(req.params.projectId, owner);
+  if (validateProjectLeader.code <= 0)
+  {
+    res.json(validateProjectLeader);
+    return;
+  }
+
+  let validateArticleResult = projectServiceInstance.validateArticleContents(req.body.article);
+  if (validateArticleResult.code <= 0)
+  {
+    res.json(validateArticleResult);
+    return;
+  }
+
+  let ret = await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
+  await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
+  res.json(ret);
+}
+
+module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, deleteProject};
