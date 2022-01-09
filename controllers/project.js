@@ -15,7 +15,7 @@ let createProjectAritcle = async function(req,res,next){
     res.json(verifyTokenRes);
     return;
   }
-  if (verifyTokenRes.code == 2) {
+  if (verifyTokenRes.code == 0) {
     res.json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }
@@ -40,7 +40,7 @@ let deleteProject = async function(req, res, next){
     res.json(verifyTokenRes);
     return;
   }
-  if (verifyTokenRes.code == 2) {
+  if (verifyTokenRes.code == 0) {
     res.json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }
@@ -57,7 +57,7 @@ let modifyProjectAritcle = async function(req,res,next){
     res.json(verifyTokenRes);
     return;
   }
-  if (verifyTokenRes.code == 2) {
+  if (verifyTokenRes.code == 0) {
     res.json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }

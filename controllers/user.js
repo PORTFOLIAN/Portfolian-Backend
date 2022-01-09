@@ -13,7 +13,7 @@ let findBookMarkList = async function (req,res){
       res.json(verifyTokenRes);
       return;
   }
-  if (verifyTokenRes.code == 2) {
+  if (verifyTokenRes.code == 0) {
       res.json({code: -98, message: "로그인 후 이용해주세요."});
       return;
   }
@@ -30,7 +30,7 @@ let changeNickName = async function (req,res){
         res.json(verifyTokenRes);
         return;
     }
-    if (verifyTokenRes.code == 2) {
+    if (verifyTokenRes.code == 0) {
         res.json({code: -98, message: "로그인 후 이용해주세요."});
         return;
     }
@@ -46,7 +46,7 @@ let deleteUser = async function (req,res){
         res.json(verifyTokenRes);
         return;
     }
-    if (verifyTokenRes.code == 2) {
+    if (verifyTokenRes.code == 0) {
         res.json({code: -98, message: "로그인 후 이용해주세요."});
         return;
     }
@@ -80,7 +80,7 @@ let changeUserInfo = async (req, res) => {
         res.json(verifyTokenRes);
         return;
     }
-    if (verifyTokenRes.code == 2) {
+    if (verifyTokenRes.code == 0) {
         res.json({code: -98, message: "로그인 후 이용해주세요."});
         return;
     }
