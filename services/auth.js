@@ -40,15 +40,16 @@ class AuthService{
         else if (findUser.nickName === "")
         {
             isNew = true;
+            findUser=findUser.id;
         }
         else{
             // 있으면 refreshToken 갱신
             isNew = false;
-            await this.UserModel.updateRefreshToken(findUser.id, refreshToken);
+            findUser=findUser.id;
+            await this.UserModel.updateRefreshToken(findUser, refreshToken);
         }
-        let accessToken = JWT.getAccessToken(findUser.id);
-        console.log("login(findUser) : ", findUser);
-        return {'code': 1 ,'accessToken': accessToken,'refreshToken': refreshToken, "isNew" : isNew, 'userId': findUser.id};
+        let accessToken = JWT.getAccessToken(findUser);
+        return {'code': 1 ,'accessToken': accessToken,'refreshToken': refreshToken, "isNew" : isNew, 'userId': findUser};
     }
 
     async verifyAccessToken(header){
