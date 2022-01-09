@@ -79,7 +79,7 @@ const projectSchema = mongoose.Schema(
 			type: Number,
 			default : 0
 		},
-		candidiate : {
+		candidate : {
 			type: [{type: mongoose.Schema.Types.ObjectId, ref : "User"}], //지원자
 			default : []
 		},
@@ -131,10 +131,17 @@ projectSchema.statics.modifyProjectArticle = async function(projectId, articleDt
 	);
 }
 
-projectSchema.statics.findByArticleId = async function(projectId){
+projectSchema.statics.findByArticleId = async function(articleId){
 	return await this.findOne(
-		{ article : {  _id : mongoose.Types.ObjectId(projectId) }}
+		{ article : {  _id : mongoose.Types.ObjectId(articleId) }}
 	);
+}
+
+projectSchema.statics.findDeleteInfoByArticleId = async function(projectId){
+	return await this.findOne(
+		{_id : mongoose.Types.ObjectId(projectId) }
+	).populate('projectInfo article')
+		.select('status candidiate projectInfo article')
 }
 
 projectSchema.statics.findLeaderById = async function(projectId){
@@ -145,12 +152,42 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
-projectSchema.statics.getAllArticles = async function(){
-	return await this.find({}).populate('leader','_id photo')
+projectSchema.statics.getAllArticles = async function(userId,sort,keyword){
+	return await this.find({"article.title": {$regex : keyword}})
+		.populate('leader','_id photo')
 		.select(
 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
-		article.view  status'
-	).lean();
+		article.view  article.bookMarkCnt status createdAt'
+	).sort(sort).lean();
+}
+
+projectSchema.statics.getProjectAricle = async function(project){
+	return await this.findByIdAndUpdate(project,
+		{ $inc : { "article.view" : 1 }},
+		{ new : true }
+	)
+	.populate('leader' , '_id photo nickName description stackList')
+	.select(' _id leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription article.bookMarkUserList ')
+	.populate('projectInfo')
+	.lean();
+}
+
+projectSchema.statics.changeBookMarkOn= async function(userId,projectId){
+	return await this.findOneAndUpdate(
+		{ _id: projectId }, 
+		{
+		$inc: { "article.bookMarkCnt": 1},
+		$push : {"article.bookMarkUserList" : userId } 
+		});
+}
+
+projectSchema.statics.changeBookMarkOff= async function(userId,projectId){
+	return await this.findOneAndUpdate(
+		{ _id: projectId },
+		{
+		$inc: { "article.bookMarkCnt": -1 },
+		$pull : {"article.bookMarkUserList" : userId } 
+		});
 }
 
 const Project = mongoose.model("Project", projectSchema);

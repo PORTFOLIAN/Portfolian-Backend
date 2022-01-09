@@ -30,21 +30,25 @@ class AuthService{
         let isNew = true;
 
         //DB에서 oauthId, channel이용해서 찾기
-        let findUserId = await this.UserModel.findUserIdByOauthId(oauthId, channel);
-        if (findUserId === null)
+        let findUser = await this.UserModel.findUserByOauthId(oauthId, channel);
+        if (findUser === null)
         {
             // 없으면 회원 만들고 oauthId, channel,refreshToken넣기
             isNew = true;
-            findUserId = await this.UserModel.createUser(oauthId, channel, refreshToken);
+            findUser = await this.UserModel.createUser(oauthId, channel, refreshToken);
+        }
+        else if (findUser.nickName === "")
+        {
+            isNew = true;
         }
         else{
             // 있으면 refreshToken 갱신
             isNew = false;
-            findUserId = findUserId.id;
-            await this.UserModel.updateRefreshToken(findUserId, refreshToken);
+            await this.UserModel.updateRefreshToken(findUser.id, refreshToken);
         }
-        let accessToken = JWT.getAccessToken(findUserId, oauthId, channel);
-        return {'code': 1 ,'accessToken': accessToken,'refreshToken': refreshToken, "isNew" : isNew, 'userId': findUserId};
+        let accessToken = JWT.getAccessToken(findUser.id);
+        console.log("login(findUser) : ", findUser);
+        return {'code': 1 ,'accessToken': accessToken,'refreshToken': refreshToken, "isNew" : isNew, 'userId': findUser.id};
     }
 
     async verifyAccessToken(header){
@@ -54,10 +58,15 @@ class AuthService{
             {
                 let accessToken = header.authorization.split(' ')[1];
                 decoded = jwt.verify(accessToken, secret);
-                return { code: 1, userId: decoded.userId };
+                let findUser = await this.UserModel.findUserById(decoded.userId);
+                if (findUser === null)
+                {
+                    return { code: -3, message: "user가 존재하지 않습니다."}
+                }
+                return { code: 1, userId: decoded.userId, user : findUser };
             }
             else
-                return { code: -2, message: "accessToken이 존재하지 않습니다."};
+                return { code: 0, userId: "default", user : null };
         } catch (err) {
             return { code: -99, message: "만료된 accessToken입니다."};
         }

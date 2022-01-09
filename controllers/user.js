@@ -7,29 +7,19 @@ const userServiceInstance = new UserService(User,Project);
 const authServiceInstance = new AuthService(User);
 
 let findBookMarkList = async function (req,res){
-    // 굳이 userId필요없을 것 같기도 하고 ~ ~
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.status(401).json(verifyTokenRes);
+        return;
+    }
+    if (verifyTokenRes.code == 0) {
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
 
-    //우선 NickName으로 찾음
-    const bookMarkList = await userServiceInstance.getBookMarkProjectList(req.params.userId);
-    res.json(bookMarkList);
-}
-
-let addUserForTest = async function (req,res){
-    console.log(req.query.stack);
-    const users = new User({
-        nickName : req.params.userId,
-        channel : 'kakao',
-        email : 'testtesttest@gmail.com',
-        stackList : req.query.stack, //stackList
-        });
-    
-     users.save()
-          .then ((result) => {
-            res.send(result)
-          })
-          .catch((err)=>{
-            console.log(err);
-          });
+  const bookMarkList = await userServiceInstance.getBookMarkProjectList(verifyTokenRes.userId);
+  res.json(bookMarkList);
 }
 
 let changeNickName = async function (req,res){
@@ -37,9 +27,14 @@ let changeNickName = async function (req,res){
     let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
     if (verifyTokenRes === null || verifyTokenRes.code < 0)
     {
-        res.json(verifyTokenRes);
+        res.status(401).json(verifyTokenRes);
         return;
     }
+    if (verifyTokenRes.code == 0) {
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+
     let changeNickName = await userServiceInstance.changeNickName(req.params.userId, verifyTokenRes.userId, req.body.nickName);
     res.json(changeNickName);
 }
@@ -48,39 +43,90 @@ let deleteUser = async function (req,res){
     let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
     if (verifyTokenRes === null || verifyTokenRes.code < 0)
     {
-        res.json(verifyTokenRes);
+        res.status(401).json(verifyTokenRes);
         return;
     }
+    if (verifyTokenRes.code == 0) {
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+
     let deleteUserRes = await userServiceInstance.deleteUser(req.params.userId, verifyTokenRes.userId);
     res.json(deleteUserRes);
 }
 
-// let userHead = async (req, res) => {
-//   const id = req.params.id;
-//   console.log(id)
-//   try {
-//     const userInfo = await User.findById(id);
-//     const user = {
-//       name : userInfo.nickName,
-//       profile : userInfo.photo
-//     } 
-//     const headerInfo = {
-//       user : user
-//     }
-//     console.log(headerInfo)
-//     if (!headerInfo) {
-//       return res.status(404).send('404 에러 ');
-//     }
+let getUserHeader = async (req, res) => {
+  const id = req.params.id;
+  console.log(id)
+  try {
+    const headerInfo = await userServiceInstance.getUserHeader(id);
 
-//     res.status(200).send(headerInfo);
-//   } catch (e) {
-//     res.status(500).json({
-//       message: "회원정보 조회 실패",
-//     });
-//   }
-// }
+    if (!headerInfo) {
+      return res.status(404).send('404 에러 ');
+    }
 
+    res.status(200).send(headerInfo);
+  } catch (e) {
+    res.status(500).json({
+      message: "회원정보 조회 실패",
+    });
+  }
+}
 
+let changeUserInfo = async (req, res) => {
+    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.status(401).json(verifyTokenRes);
+        return;
+    }
+    if (verifyTokenRes.code == 0) {
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+    let changeUserInfoRes = await userServiceInstance.changeUserInfo(req.params.userId, verifyTokenRes.userId, req.body, req.file.location);
+    res.json(changeUserInfoRes);
+}
 
+let getUserInfo = async (req,res) => {
+  const userId = req.params.id;
+  
+  try {
+    const userInfo = await userServiceInstance.getUserInfo(userId);
+    if (!userInfo) {
+      return res.status(404).send('나의 정보보기 오류');
+    }
+    res.status(200).send(userInfo);
+  } catch (e) {
+    
+    res.status(500).json({
+      message: "회원정보 조회 실패",
+    });
+  }
+}
 
-module.exports = {findBookMarkList, addUserForTest, changeNickName, deleteUser};
+let changeBookMark = async (req,res) => {
+  const userId = req.params.id;
+  const bookMarkCnt = req.body.like;
+  const projectId = req.body.projectId;
+  
+  try {
+    
+    const result = await userServiceInstance.changeBookMark(userId,bookMarkCnt,projectId);
+
+    if (!result) {
+            console.log(result)
+
+      return res.status(404).send('북마크 변경 실패');
+
+    }
+    res.status(200).send('북마크 변경 성공');
+  } catch (e) {
+    res.status(500).json({
+      message: "북마크 변경 실패",
+    });
+  }
+  
+}
+
+module.exports = {findBookMarkList, getUserHeader, getUserInfo, changeBookMark, changeNickName, deleteUser,changeUserInfo };

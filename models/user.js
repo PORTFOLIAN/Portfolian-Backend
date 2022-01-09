@@ -6,7 +6,7 @@ const userSchema = mongoose.Schema(
 		nickName :  {
 			type : String,
 			maxlength: 20,
-			default : "portfolian"
+			default : ""
 		},
 		refreshToken:{
 			type : String,
@@ -27,7 +27,7 @@ const userSchema = mongoose.Schema(
 		},
 		photo : {
 			type : String,
-			default : "기본 이미지 URL"
+			default : "https://media.vlpt.us/images/tlsrlgkrry/post/0f671da7-21ff-4dfc-b388-06950ed4a21d/127.0.0.1.PNG"
 
 		},
 		github : {
@@ -107,22 +107,64 @@ userSchema.statics.changeNickName = async function (userId, nickName){
 	);
 }
 
-userSchema.statics.findBookMarkProject = async function(userId){ //우선 NickName으로 찾음
+userSchema.statics.changeUserInfo = async function(userId,info,photo){
+	await User.findOneAndUpdate(
+		{_id : mongoose.Types.ObjectId(userId)},
+		{
+			$set: {
+				'nickName': info.nickName,
+				'description' : info.description,
+				'stack' : info.stack,
+				'photo' : photo,
+				'github' : info.github,
+				'mail' : info.mail
+			}
+		}
+	);
+}
+
+userSchema.statics.findBookMarkProject = async function(userId){ 
 	return await this.findOne(
-		{nickName : userId}
+		{_id : userId}
 		).populate(
 		'bookMarkList', '_id article.leader article.title article.title article.stackList article.subjectDescription article.capacity \
 		article.view  status'
-	).select('bookMarkList').lean();
+	).select('bookMarkList createdAt').sort('-createdAt').lean();
 }
 
-userSchema.statics.findUserIdByOauthId= async function(oauthId, coperation){
+userSchema.statics.findUserInfo = async function(userId){ 
+	return await this.findOne(
+		{_id : userId}
+		).select(
+		'_id nickName description stackList photo github email'
+		).lean();
+}
+
+userSchema.statics.findUserHeader = async function(id){ 
+	return await this.findById(id);
+}
+
+userSchema.statics.changeBookMarkOn = async function(userId,projectId){ 
+	return await this.findOneAndUpdate(
+		{ _id: userId },
+		{ $push: { bookMarkList: projectId } })
+		.select('_id');
+}
+
+userSchema.statics.changeBookMarkOff = async function(userId,projectId){ 
+	return await this.findOneAndUpdate(
+		{ _id: userId },
+		{ $pull: { bookMarkList: projectId }})
+		.select('_id')
+}
+
+userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
 	return await this.findOne(
 		{
 			oauthId :  oauthId,
 			channel: coperation
 		}
-	).select('id');
+	).select('id nickName');
 }
 
 userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
@@ -146,5 +188,6 @@ userSchema.statics.deleteRefreshToken= async function(userId){
 userSchema.statics.deleteUser= async function(userId){
 	await User.findByIdAndDelete({_id : userId});
 }
+
 const User = mongoose.model("User",userSchema);
 module.exports  = User;

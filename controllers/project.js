@@ -2,86 +2,94 @@ const Project = require('../models/project');
 const User = require('../models/user');
 const UserService = require('../services/user');
 const ProjectService = require('../services/project');
+const AuthService = require("../services/auth");
 
 const userServiceInstance = new UserService(User,Project);
 const projectServiceInstance = new ProjectService(User,Project);
+const authServiceInstance = new AuthService(User);
 
 let createProjectAritcle = async function(req,res,next){
-  
-  // token check
-  // owner 찾기 => 수정 필요
-  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
-
-  // 모집글 내용 유효성 확인
-  let validateArticleInfo = projectServiceInstance.validateArticleContents(req.body.article);
-  if (validateArticleInfo.code <= 0)
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
   {
-    res.json(validateArticleInfo);
+    res.status(401).json(verifyTokenRes);
+    return;
+  }
+  if (verifyTokenRes.code == 0) {
+    res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }
 
   // project create & team에 findUser추가(역할 설정)
-  const newProjectId = await projectServiceInstance.createProject(owner, req.body.article, req.body.ownerStack);
-  
+  const createProjectRes = await projectServiceInstance.createProject(verifyTokenRes.user, req.body.article, req.body.ownerStack);
+  if (createProjectRes.code <= 0)
+  {
+    res.json(createProjectRes);
+    return;
+  }
+
   //owner의 진행중인 프로젝트에 push
-  await userServiceInstance.addDoingProject(owner, newProjectId);
-  res.json({code : 1, message: "성공적으로 수행되었습니다.", newProjectID : newProjectId});
+  await userServiceInstance.addDoingProject(verifyTokenRes.user, createProjectRes.newProjectID);
+  res.json(createProjectRes);
+}
+
+let deleteProject = async function(req, res, next){
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
+  {
+    res.status(401).json(verifyTokenRes);
+    return;
+  }
+  if (verifyTokenRes.code == 0) {
+    res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+    return;
+  }
+
+  let deleteArticleRes = await projectServiceInstance.deleteProject(verifyTokenRes.user, req.params.projectId);
+  res.json(deleteArticleRes);
 }
 
 let modifyProjectAritcle = async function(req,res,next){
 
-  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
-
-  // 모집글 내용 유효성 확인
-
-  let validateProjectLeader = await projectServiceInstance.validateProjectOwner(req.params.projectId, owner);
-  if (validateProjectLeader.code <= 0)
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
   {
-    res.json(validateProjectLeader);
+    res.status(401).json(verifyTokenRes);
+    return;
+  }
+  if (verifyTokenRes.code == 0) {
+    res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }
 
-  let ret = await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
-  await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
-  res.json(ret);
+  let modifyArticleRes = await projectServiceInstance.modifyProjectArticle(verifyTokenRes.user, req.params.projectId ,req.body.article, req.body.ownerStack);
+  res.json(modifyArticleRes);
 }
 
 let getAllProjectAritcles = async function(req,res,next){
-  let stackList = req.query.stack;
-  let sort = req.query.sort;
-  let keyword = req.query.keyword;
-
-  console.log("stackList: ", stackList);
-  console.log("sort: ", sort);
-  console.log("keyword: ", keyword);
-
-  let ret = await projectServiceInstance.getAllArticles();
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
+  {
+    res.status(401).json(verifyTokenRes);
+    return;
+  }
+  let userId = verifyTokenRes.userId;
+  let ret = await projectServiceInstance.getAllArticles(userId,req.query);
   res.json(ret);
 }
 
-let deleteProject = async function(req,res,next){
-
-  const owner = await userServiceInstance.findUserByNickName(req.body.userId);
-
-  // 모집글 내용 유효성 확인
-
-  let validateProjectLeader = await projectServiceInstance.validateProjectOwner(req.params.projectId, owner);
-  if (validateProjectLeader.code <= 0)
-  {
-    res.json(validateProjectLeader);
-    return;
+let getProjectArticle = async function(req, res, next) {
+  let projectId = req.params.projectId;
+  try {
+    let ret = await projectServiceInstance.getProjectArticle(projectId);
+    res.status(200).send(ret);
+  } catch (e) {
+    res.status(500).json({
+      message: "project 조회 실패",
+    });
   }
-
-  let validateArticleResult = projectServiceInstance.validateArticleContents(req.body.article);
-  if (validateArticleResult.code <= 0)
-  {
-    res.json(validateArticleResult);
-    return;
-  }
-
-  let ret = await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
-  await projectServiceInstance.modifyProjectArticle(owner, req.params.projectId ,req.body.article, req.body.ownerStack);
-  res.json(ret);
+  
 }
 
-module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, deleteProject};
+module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle, deleteProject};
+

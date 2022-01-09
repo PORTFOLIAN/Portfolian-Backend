@@ -44,6 +44,10 @@ let logout = async function (req,res){
         res.json(verifyTokenRes);
         return;
     }
+    if (verifyTokenRes.code == 0) {
+        res.json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
     let logoutRes = await userServiceInstance.deleteRefreshToken(verifyTokenRes.userId);
     res.json(logoutRes);
 }
