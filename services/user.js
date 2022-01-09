@@ -40,6 +40,13 @@ class UserService{
     async deleteUser(userId, tokenUserId){
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
+        // 북마크한 프로젝트 삭제, 카운트 감소
+
+        // doing, done 프로젝트 삭제
+        // => 반장일 경우 프로젝트 삭제
+        // => 반장 아니면 team에서 그 사람만 삭제
+
+
         await this.UserModel.deleteUser(userId);
         return {code: 1, message : "탈퇴 성공"};
     }
