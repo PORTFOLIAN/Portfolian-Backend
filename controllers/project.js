@@ -81,7 +81,7 @@ let getAllProjectAritcles = async function(req,res,next){
 let getProjectArticle = async function(req, res, next) {
   const projectId = req.params.projectId;
   try {
-    let ret = await projectServiceInstance.getProjectArticle(project);
+    let ret = await projectServiceInstance.getProjectArticle(projectId);
     res.status(200).send(ret);
   } catch (e) {
     res.status(500).json({
