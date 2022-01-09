@@ -8,15 +8,15 @@ const authServiceInstance = new AuthService(User);
 
 let findBookMarkList = async function (req,res){
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
-  if (verifyTokenRes === null || verifyTokenRes.code < 0)
-  {
-      res.json(verifyTokenRes);
-      return;
-  }
-  if (verifyTokenRes.code == 0) {
-      res.json({code: -98, message: "로그인 후 이용해주세요."});
-      return;
-  }
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.status(401).json(verifyTokenRes);
+        return;
+    }
+    if (verifyTokenRes.code == 0) {
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
 
   const bookMarkList = await userServiceInstance.getBookMarkProjectList(verifyTokenRes.userId);
   res.json(bookMarkList);
@@ -27,11 +27,11 @@ let changeNickName = async function (req,res){
     let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
     if (verifyTokenRes === null || verifyTokenRes.code < 0)
     {
-        res.json(verifyTokenRes);
+        res.status(401).json(verifyTokenRes);
         return;
     }
     if (verifyTokenRes.code == 0) {
-        res.json({code: -98, message: "로그인 후 이용해주세요."});
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
         return;
     }
 
@@ -43,11 +43,11 @@ let deleteUser = async function (req,res){
     let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
     if (verifyTokenRes === null || verifyTokenRes.code < 0)
     {
-        res.json(verifyTokenRes);
+        res.status(401).json(verifyTokenRes);
         return;
     }
     if (verifyTokenRes.code == 0) {
-        res.json({code: -98, message: "로그인 후 이용해주세요."});
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
         return;
     }
 
@@ -77,11 +77,11 @@ let changeUserInfo = async (req, res) => {
     let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
     if (verifyTokenRes === null || verifyTokenRes.code < 0)
     {
-        res.json(verifyTokenRes);
+        res.status(401).json(verifyTokenRes);
         return;
     }
     if (verifyTokenRes.code == 0) {
-        res.json({code: -98, message: "로그인 후 이용해주세요."});
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
         return;
     }
     let changeUserInfoRes = await userServiceInstance.changeUserInfo(req.params.userId, verifyTokenRes.userId, req.body, req.file.location);

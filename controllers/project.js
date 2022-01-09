@@ -12,11 +12,11 @@ let createProjectAritcle = async function(req,res,next){
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
   if (verifyTokenRes === null || verifyTokenRes.code < 0)
   {
-    res.json(verifyTokenRes);
+    res.status(401).json(verifyTokenRes);
     return;
   }
   if (verifyTokenRes.code == 0) {
-    res.json({code: -98, message: "로그인 후 이용해주세요."});
+    res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }
 
@@ -37,11 +37,11 @@ let deleteProject = async function(req, res, next){
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
   if (verifyTokenRes === null || verifyTokenRes.code < 0)
   {
-    res.json(verifyTokenRes);
+    res.status(401).json(verifyTokenRes);
     return;
   }
   if (verifyTokenRes.code == 0) {
-    res.json({code: -98, message: "로그인 후 이용해주세요."});
+    res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }
 
@@ -54,11 +54,11 @@ let modifyProjectAritcle = async function(req,res,next){
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
   if (verifyTokenRes === null || verifyTokenRes.code < 0)
   {
-    res.json(verifyTokenRes);
+    res.status(401).json(verifyTokenRes);
     return;
   }
   if (verifyTokenRes.code == 0) {
-    res.json({code: -98, message: "로그인 후 이용해주세요."});
+    res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
     return;
   }
 
@@ -70,7 +70,7 @@ let getAllProjectAritcles = async function(req,res,next){
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
   if (verifyTokenRes === null || verifyTokenRes.code < 0)
   {
-    res.json(verifyTokenRes);
+    res.status(401).json(verifyTokenRes);
     return;
   }
   let userId = verifyTokenRes.userId;

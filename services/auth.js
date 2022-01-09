@@ -61,7 +61,7 @@ class AuthService{
                 let findUser = await this.UserModel.findUserById(decoded.userId);
                 if (findUser === null)
                 {
-                    return { code: -3, message: "user가 존재하지 않습니다." }
+                    return { code: -3, message: "user가 존재하지 않습니다."}
                 }
                 return { code: 1, userId: decoded.userId, user : findUser };
             }
