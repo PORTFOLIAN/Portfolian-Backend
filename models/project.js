@@ -164,7 +164,7 @@ projectSchema.statics.getAllArticles = async function(userId,sort,keyword){
 projectSchema.statics.getProjectAricle = async function(project){
 	return await this.findByIdAndUpdate(project,
 		{ $inc : { "article.view" : 1 }},
-		{ new: true}
+		{ new : true }
 	)
 	.populate('leader' , '_id photo nickName description stackList')
 	.select(' _id leader status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription article.bookMarkUserList ')

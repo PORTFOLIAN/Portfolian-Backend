@@ -57,8 +57,6 @@ class AuthService{
             if (header.authorization && header.authorization.startsWith('Bearer'))
             {
                 let accessToken = header.authorization.split(' ')[1];
-                if (accessToken == '.')
-                    return { code: 2, userId: "default", user : null };
                 decoded = jwt.verify(accessToken, secret);
                 let findUser = await this.UserModel.findUserById(decoded.userId);
                 if (findUser === null)
@@ -68,7 +66,7 @@ class AuthService{
                 return { code: 1, userId: decoded.userId, user : findUser };
             }
             else
-                return { code: -2, message: "accessToken이 존재하지 않습니다."};
+                return { code: 2, userId: "default", user : null };
         } catch (err) {
             return { code: -99, message: "만료된 accessToken입니다."};
         }
