@@ -21,9 +21,9 @@ class UserService{
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
         let bookMarks = await this.ProjectModel.findBookMarkProject(userId);
-        console.log('return : ', bookMarks);
-        let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks.bookMarkList);
+        let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks);
         returnBookMark['code'] = 1;
+        returnBookMark['message'] = "북마크한 프로젝트 보기 성공";
         return returnBookMark;
     };
 
