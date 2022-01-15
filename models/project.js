@@ -139,8 +139,7 @@ projectSchema.statics.findByArticleId = async function(articleId){
 projectSchema.statics.findDeleteInfoByArticleId = async function(projectId){
 	return await this.findOne(
 		{_id : mongoose.Types.ObjectId(projectId) }
-	).populate('projectInfo article' ,'article.bookMarkUserList')
-		.select('status candidiate projectInfo article')
+	).populate('projectInfo','team').select('status article.bookMarkUserList projectInfo')
 }
 
 projectSchema.statics.findLeaderById = async function(projectId){
@@ -154,7 +153,7 @@ projectSchema.statics.findLeaderById = async function(projectId){
 projectSchema.statics.getAllArticles = async function(userId,sort,keyword, stack){
 	return await this.find(
 		{"article.title": {$regex : keyword},
-		"article.stackList" : {$in:stack}})
+		"article.stackList" : {$in : stack}})
 		.populate('leader','_id photo')
 		.select(
 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \

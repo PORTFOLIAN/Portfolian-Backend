@@ -61,20 +61,13 @@ class ProjectService{
             return validateOwnerRes;
 
         let findProject = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
-        console.log('findProject : ',findProject);
-        console.log('status : ',findProject.status);
-       // let {status, candidate, projectInfo, article} = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
+        console.log('findProject(delete) : ',findProject);
+        console.log('team(delete) : ',findProject.team);
+        //bookMark, doing
 
-        // console.log('status : ',status);
-        // console.log('candidate : ',candidate);
-        // console.log('projectInfo : ',projectInfo);
-        // console.log('article : ',article);
 
-        // 1. bookMark 삭제
+        // status확인 후 team의 doing, done에서 삭제
 
-        // 2. apply 삭제
-        // 3. status확인 후 team의 doing, done에서 삭제
-        // 4. project 삭제
 
         return {code : 1, message : "project 삭제 완료"};
     }
