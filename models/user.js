@@ -127,11 +127,18 @@ userSchema.statics.findBookMarkProject = async function(userId){
 	return await this.findOne(
 		{_id : userId}
 		).populate(
-		'bookMarkList', '_id article.leader article.title article.title article.stackList article.subjectDescription article.capacity \
-		article.view  status'
+		'bookMarkList', '_id  leader article.title article.stackList article.subjectDescription article.capacity \
+		article.view  article.bookMarkCnt status createdAt'
 	).select('bookMarkList createdAt').sort('-createdAt').lean();
 }
-
+// userSchema.statics.findBookMarkProject = async function(userId){
+// 	return await this.findOne(
+// 		{_id : userId}
+// 	).populate(
+// 		'bookMarkList', '_id  leader article.title article.stackList article.subjectDescription article.capacity \
+// 		article.view  article.bookMarkCnt status createdAt'
+// 	).populate('leader').select('bookMarkList createdAt').sort('-createdAt').lean();
+// }
 userSchema.statics.findUserInfo = async function(userId){ 
 	return await this.findOne(
 		{_id : userId}

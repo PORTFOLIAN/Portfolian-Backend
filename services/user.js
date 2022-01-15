@@ -17,8 +17,11 @@ class UserService{
         await this.UserModel.addDoingProject(user, doingProjectId);
     };
 
-    async getBookMarkProjectList(userId) {
-        let bookMarks = await this.UserModel.findBookMarkProject(userId)
+    async getBookMarkProjectList(userId, tokenUserId) {
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        let bookMarks = await this.UserModel.findBookMarkProject(userId);
+        console.log('return : ', bookMarks);
         let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks.bookMarkList);
         returnBookMark['code'] = 1;
         return returnBookMark;

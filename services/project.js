@@ -94,7 +94,7 @@ class ProjectService{
         return {code : 1, message : "project수정 완료"};
     }
 
-    async getAllArticles(userId,query){
+    async getAllArticles(userId, query){
     // default(최신순) or bookMarkCnt or view
         let sort = query.sort;
         let keyword = query.keyword;
@@ -110,7 +110,12 @@ class ProjectService{
         sort = "-" + sort;
         if (keyword === "default")
             keyword = ""
-        const ProjectList = await this.ProjectModel.getAllArticles(userId,sort,keyword);
+        if (stack === "default")
+            stack = ["Front-end","Back-end","React","Vue","Spring","Django","Javascript","iOS","Android",
+            "Angular","HTML/CSS","Flask","Node.js","Java","python","Kotlin","Swift","Go","C/C++","C#",
+            "Design","Figma","Sketch","AdobeXD","Photoshop","Illustrator","Firebase","AWS","GCP","Git","ect"]
+        console.log("stack : ", stack);
+        const ProjectList = await this.ProjectModel.getAllArticles(userId,sort,keyword, stack);
         let returnProjectList = await jsonHandler.getArticleListRes(ProjectList);
         returnProjectList['code'] = 1;
         return returnProjectList;

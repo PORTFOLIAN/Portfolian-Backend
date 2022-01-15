@@ -18,7 +18,7 @@ let findBookMarkList = async function (req,res){
         return;
     }
 
-  const bookMarkList = await userServiceInstance.getBookMarkProjectList(verifyTokenRes.userId);
+  const bookMarkList = await userServiceInstance.getBookMarkProjectList(req.params.userId, verifyTokenRes.userId);
   res.json(bookMarkList);
 }
 

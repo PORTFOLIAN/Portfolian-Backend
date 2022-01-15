@@ -151,8 +151,10 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
-projectSchema.statics.getAllArticles = async function(userId,sort,keyword){
-	return await this.find({"article.title": {$regex : keyword}})
+projectSchema.statics.getAllArticles = async function(userId,sort,keyword, stack){
+	return await this.find(
+		{"article.title": {$regex : keyword},
+		"article.stackList" : {$in:stack}})
 		.populate('leader','_id photo')
 		.select(
 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
