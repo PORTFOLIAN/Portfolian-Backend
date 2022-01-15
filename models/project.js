@@ -173,6 +173,15 @@ projectSchema.statics.getProjectAricle = async function(project){
 	.lean();
 }
 
+projectSchema.statics.findBookMarkProject = async function(userId){
+	return await this.findOne(
+		{"article.bookMarkUserList" : {$in : [userId]}})
+		.populate('leader' , '_id photo')
+		.select(' _id leader article.title article.stackList article.subjectDescription article.capacity \
+		article.view  article.bookMarkCnt status createdAt')
+		.lean();
+}
+
 projectSchema.statics.pushBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: projectId },

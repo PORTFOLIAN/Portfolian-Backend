@@ -123,14 +123,14 @@ userSchema.statics.changeUserInfo = async function(userId,info,photo){
 	);
 }
 
-userSchema.statics.findBookMarkProject = async function(userId){ 
-	return await this.findOne(
-		{_id : userId}
-		).populate(
-		'bookMarkList', '_id  leader article.title article.stackList article.subjectDescription article.capacity \
-		article.view  article.bookMarkCnt status createdAt'
-	).select('bookMarkList createdAt').sort('-createdAt').lean();
-}
+// userSchema.statics.findBookMarkProject = async function(userId){
+// 	return await this.findOne(
+// 		{_id : userId}
+// 		).populate(
+// 		'bookMarkList', '_id  leader article.title article.stackList article.subjectDescription article.capacity \
+// 		article.view  article.bookMarkCnt status createdAt'
+// 	).select('bookMarkList createdAt').sort('-createdAt').lean();
+// }
 // userSchema.statics.findBookMarkProject = async function(userId){
 // 	return await this.findOne(
 // 		{_id : userId}

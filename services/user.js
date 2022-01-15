@@ -20,7 +20,7 @@ class UserService{
     async getBookMarkProjectList(userId, tokenUserId) {
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
-        let bookMarks = await this.UserModel.findBookMarkProject(userId);
+        let bookMarks = await this.ProjectModel.findBookMarkProject(userId);
         console.log('return : ', bookMarks);
         let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks.bookMarkList);
         returnBookMark['code'] = 1;
