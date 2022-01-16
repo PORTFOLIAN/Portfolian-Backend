@@ -36,7 +36,10 @@ let verifyJWT_test = async function(req,res){
 let refreshAccessToken = async function (req,res){
     let userId = req.body.userId;
     // let refreshToken = req.body.refreshToken;
-    let refreshToken = req.cookies.REFRESH;
+    let refreshToken = req.cookie.REFRESH;
+    // let refreshToken = "dfdf";
+    console.log("cookie : ",req.cookies );
+    console.log("cookie.REFRESH : ",req.cookies.REFRESH );
     if (!userId){
         res.json({code:-1, message : "userId를 입력해주세요."});
         return;
