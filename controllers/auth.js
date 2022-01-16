@@ -38,6 +38,7 @@ let refreshAccessToken = async function (req,res){
     let userId = req.body.userId;
     // let refreshToken = req.body.refreshToken;
     let refreshToken = req.cookies.REFRESH;
+    console.log("req : ",req);
     console.log("cookie : ",req.cookies);
     console.log("cookie.REFRESH : ",req.cookies.REFRESH );
     if (!userId){
