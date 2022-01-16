@@ -20,6 +20,8 @@ let getAccessToken = async function (req,res){
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 14 * 2   // 한달
     }).json(tokenInfo);
+    console.log('refreshToken(getAccessToken) : ',refreshToken);
+    console.log('res(getAccessToken) : ',res);
 }
 
 let getAccessToken_test = async function (req,res){
