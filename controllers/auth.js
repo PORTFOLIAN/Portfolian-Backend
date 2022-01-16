@@ -20,15 +20,24 @@ let getAccessToken = async function (req,res){
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 14    // 2주
     }).json(tokenInfo);
-    console.log("===================================================================================");
-    console.log('refreshToken(getAccessToken) : ',refreshToken);
-    console.log('res.header(getAccessToken) : ',res.header);
+    // console.log("===================================================================================");
+    // console.log('refreshToken(getAccessToken) : ',refreshToken);
+    // console.log('res.header(getAccessToken) : ',res.header);
 }
 
 let getAccessToken_test = async function (req,res){
     let userInfo = req.body;
     let tokens = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
-    res.json(tokens);
+    let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
+    res.cookie("REFRESH", refreshToken, {
+        sameSite: 'none',
+        httpOnly: true,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 14    // 2주
+    }).json(tokenInfo);
+    // console.log("===================================================================================");
+    // console.log('refreshToken(getAccessToken) : ',refreshToken);
+    // console.log('res.header(getAccessToken) : ',res.header);
 }
 
 let verifyJWT_test = async function(req,res){
@@ -39,16 +48,16 @@ let refreshAccessToken = async function (req,res){
     let userId = req.body.userId;
     // let refreshToken = req.body.refreshToken;
     let refreshToken = req.cookies.REFRESH;
-    console.log("===================================================================================");
-    console.log("req.header : ",req.header);
-    console.log("cookie : ",req.cookies);
-    console.log("cookie.REFRESH : ",req.cookies.REFRESH );
+    // console.log("===================================================================================");
+    // console.log("req.header : ",req.header);
+    // console.log("cookie : ",req.cookies);
+    // console.log("cookie.REFRESH : ",req.cookies.REFRESH );
     if (!userId){
         res.json({code:-1, message : "userId를 입력해주세요."});
         return;
     }
     let newAccessToken = await authServiceInstance.refreshAccessToken(userId, refreshToken);
-    console.log("newAccessToken : " , newAccessToken);
+    //console.log("newAccessToken : " , newAccessToken);
     res.json(newAccessToken);
 }
 
