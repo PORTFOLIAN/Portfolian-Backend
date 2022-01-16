@@ -49,7 +49,7 @@ class AuthService{
             await this.UserModel.updateRefreshToken(findUser, refreshToken);
         }
         let accessToken = JWT.getAccessToken(findUser);
-        return {'code': 1 ,'accessToken': accessToken,'refreshToken': refreshToken, "isNew" : isNew, 'userId': findUser};
+        return refreshToken,{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser};
     }
 
     async verifyAccessToken(header){
@@ -81,11 +81,11 @@ class AuthService{
         if (findUser == null || findUser.id != userId)
             return {code : -5, message : "User를 찾을 수 없습니다."};
         try {
-            if (findUser.refreshToken != refreshToken)
+            if (refreshToken === null || findUser.refreshToken != refreshToken)
                 return {code: -2, message: "올바르지 않은 refreshToken입니다."};
             jwt.verify(refreshToken, secret);
             let accessToken = JWT.getAccessToken(findUser.id, findUser.oauthId, findUser.channel);
-            return {code : 1, accessToken : accessToken};
+            return {code : 1, accessToken : accessToken, userId : findUser.id, nickName : findUser.nickName, photo : findUser.photo };
         } catch (err) {
             return {code : -3, message : "만료된 refreshToken입니다."};
         }

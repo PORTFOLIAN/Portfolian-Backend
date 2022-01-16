@@ -9,11 +9,18 @@ const userServiceInstance = new UserService(User,Project);
 let getAccessToken = async function (req,res){
     let userInfo = await authServiceInstance.getUserInfo(req.params.coperation, req.body.token);
     if(userInfo.code) {
+        // 실패
         res.json(userInfo);
         return;
     }
-    let tokens = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
-    res.json(tokens);
+    let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
+    res.cookie("REFRESH", refreshToken, {
+        sameSite: 'none',
+        httpOnly: true,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 14 * 2   // 한달
+    }).json(tokenInfo);
+    // res.json(tokenInfo);
 }
 
 let getAccessToken_test = async function (req,res){
@@ -28,12 +35,16 @@ let verifyJWT_test = async function(req,res){
 
 let refreshAccessToken = async function (req,res){
     let userId = req.body.userId;
-    let refreshToken = req.body.refreshToken;
+    // let refreshToken = req.body.refreshToken;
+    let refreshToken = req.cookie.REFRESH;
+    // let refreshToken = "dfdf";
+    console.log("cookie : ",req.cookies );
+    console.log("cookie.REFRESH : ",req.cookies.REFRESH );
     if (!userId){
         res.json({code:-1, message : "userId를 입력해주세요."});
         return;
     }
-    let newAccessToken = await authServiceInstance.refreshAccessToken(userId,refreshToken);
+    let newAccessToken = await authServiceInstance.refreshAccessToken(userId, refreshToken);
     res.json(newAccessToken);
 }
 
@@ -48,6 +59,7 @@ let logout = async function (req,res){
         res.json({code: -98, message: "로그인 후 이용해주세요."});
         return;
     }
+    res.clearCookie('REFRESH');
     let logoutRes = await userServiceInstance.deleteRefreshToken(verifyTokenRes.userId);
     res.json(logoutRes);
 }
