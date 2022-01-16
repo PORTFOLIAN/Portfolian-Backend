@@ -49,7 +49,8 @@ class AuthService{
             await this.UserModel.updateRefreshToken(findUser, refreshToken);
         }
         let accessToken = JWT.getAccessToken(findUser);
-        return refreshToken,{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser};
+        console.log("refreshToken(controller) : ", refreshToken);
+        return {"refreshToken": refreshToken,"tokenInfo":{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser}};
     }
 
     async verifyAccessToken(header){
