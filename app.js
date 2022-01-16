@@ -12,7 +12,7 @@ const Project = require('./models/project');
 const {  MONGO_URI } = process.env;
 const PORT = 3000;
 
-const whitelist = ['http://localhost:3000', 'http://3.35.89.48:3000'];
+const whitelist = [ 'http://3.35.89.48:3000'];
 const corsOptions = {
     origin: function(origin, callback){
         const isWhitelisted = whitelist.indexOf(origin) !== -1;
