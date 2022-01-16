@@ -41,15 +41,17 @@ class AuthService{
         {
             isNew = true;
             findUser=findUser.id;
+            await this.UserModel.updateRefreshToken(findUser, refreshToken);
         }
         else{
             // 있으면 refreshToken 갱신
             isNew = false;
             findUser=findUser.id;
+            //console.log("***********************************************************************refresh갱신");
             await this.UserModel.updateRefreshToken(findUser, refreshToken);
         }
         let accessToken = JWT.getAccessToken(findUser);
-        console.log("refreshToken(controller) : ", refreshToken);
+        //console.log("refreshToken(controller) : ", refreshToken);
         return {"refreshToken": refreshToken,"tokenInfo":{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser}};
     }
 
