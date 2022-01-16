@@ -14,7 +14,7 @@ let getAccessToken = async function (req,res){
         return;
     }
     let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
-    console.log("refreshToken : ", refreshToken);
+    console.log("refreshToken(controller) : ", refreshToken);
     res.cookie("REFRESH", refreshToken, {
         sameSite: 'none',
         httpOnly: true,
