@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const cookieParser = require('cookie-parser');
 const app = express();
 const cors = require('cors');
 const session = require('express-session');
@@ -19,7 +20,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
+app.use(cookieParser());
 app.use(express.json());
 // app.use(express.urlencoded({ extends: true}));
 
