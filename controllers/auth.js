@@ -14,13 +14,15 @@ let getAccessToken = async function (req,res){
         return;
     }
     let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
+    console.log("refreshToken : ", refreshToken);
     res.cookie("REFRESH", refreshToken, {
         sameSite: 'none',
         httpOnly: true,
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 14 * 2   // 한달
     }).json(tokenInfo);
-    // res.json(tokenInfo);
+    console.log("res : ", res);
+    //res.json(tokenInfo);
 }
 
 let getAccessToken_test = async function (req,res){
