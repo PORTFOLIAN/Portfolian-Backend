@@ -14,15 +14,12 @@ let getAccessToken = async function (req,res){
         return;
     }
     let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
-    console.log("refreshToken(controller) : ", refreshToken);
     res.cookie("REFRESH", refreshToken, {
         sameSite: 'none',
         httpOnly: true,
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 14 * 2   // 한달
     }).json(tokenInfo);
-    console.log("res : ", res);
-    //res.json(tokenInfo);
 }
 
 let getAccessToken_test = async function (req,res){
@@ -38,15 +35,15 @@ let verifyJWT_test = async function(req,res){
 let refreshAccessToken = async function (req,res){
     let userId = req.body.userId;
     // let refreshToken = req.body.refreshToken;
-    let refreshToken = req.cookie.REFRESH;
-    // let refreshToken = "dfdf";
-    console.log("cookie : ",req.cookies );
+    let refreshToken = req.cookies.REFRESH;
+    console.log("cookie : ",req.cookies);
     console.log("cookie.REFRESH : ",req.cookies.REFRESH );
     if (!userId){
         res.json({code:-1, message : "userId를 입력해주세요."});
         return;
     }
     let newAccessToken = await authServiceInstance.refreshAccessToken(userId, refreshToken);
+    console.log("newAccessToken : " , newAccessToken);
     res.json(newAccessToken);
 }
 
