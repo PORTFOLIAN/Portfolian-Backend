@@ -17,7 +17,7 @@ let getAccessToken = async function (req,res){
     res.cookie("REFRESH", refreshToken, {
         sameSite: 'none',
         httpOnly: true,
-        secure: true,
+        // secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 14 * 2   // 한달
     }).json(tokenInfo);
     console.log('refreshToken(getAccessToken) : ',refreshToken);
