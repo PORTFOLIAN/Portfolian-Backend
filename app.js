@@ -41,7 +41,7 @@ mongoose
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e));
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, 'api.portfolian.site',() => {
     console.log('Start Server : localhost:3000');
 });
 
