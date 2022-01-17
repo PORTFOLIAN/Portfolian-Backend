@@ -15,7 +15,7 @@ const PORT = 3000;
 
 
 const corsOptions = {
-    origin: ['http://3.35.89.48:3000','http://localhost:3000'],
+    origin: ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000'],
     credentials:true
 };
 
