@@ -9,10 +9,8 @@ const path = require('path');
 const User = require('./models/user');
 const Project = require('./models/project');
 
-
 const {  MONGO_URI } = process.env;
 const PORT = 3000;
-
 
 const corsOptions = {
     origin: ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000'],
@@ -22,17 +20,14 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(cookieParser());
 app.use(express.json());
-// app.use(express.urlencoded({ extends: true}));
 
 authRouter = require('./routes/auth'),
-// chatRouter = require('./routes/chat'),
 projectRouter = require('./routes/project');
 userRouter = require('./routes/user');
 headerRouter = require('./routes/header');
 
 app.use('/oauth', authRouter);
 app.use('/projects', projectRouter);
-// app.use('/chat', chatRouter);
 app.use('/users', userRouter);
 app.use('/header',headerRouter);
 
@@ -41,7 +36,7 @@ mongoose
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e));
 
-const server = app.listen(PORT, 'api.portfolian.site',() => {
+const server = app.listen(PORT, () => {
     console.log('Start Server : localhost:3000');
 });
 
