@@ -4,13 +4,14 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const app = express();
 const cors = require('cors');
-const session = require('express-session');
-const path = require('path');
-const User = require('./models/user');
-const Project = require('./models/project');
+
+//for
+const https = require('https');
+const fs = require('fs');
 
 const {  MONGO_URI } = process.env;
 const PORT = 3000;
+const hostName = "api.portfolian.site";
 
 const corsOptions = {
     origin: ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000'],
@@ -36,8 +37,20 @@ mongoose
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e));
 
-const server = app.listen(PORT, () => {
-    console.log('Start Server : localhost:3000');
+// prod mode
+const options = {
+    ca: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/cert.pem'),
+};
+https.createServer(options, app).listen(443, () => {
+    console.log('443번 포트에서 대기중입니다.');
 });
+
+//test mode
+
+// const server = app.listen(PORT, () => {
+//     console.log('Start Server : localhost:3000');
+// });
 
 module.exports = app;
