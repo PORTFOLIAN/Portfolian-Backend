@@ -14,7 +14,7 @@ const PORT = 3000;
 const hostName = "api.portfolian.site";
 
 const corsOptions = {
-    origin: ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000'],
+    origin: ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000','https://portfolian.site:443'],
     credentials:true
 };
 
@@ -44,7 +44,7 @@ const options = {
     cert: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/cert.pem'),
 };
 https.createServer(options, app).listen(443, () => {
-    console.log('443번 포트에서 대기중입니다.');
+    console.log('443:번 포트에서 대기중입니다.');
 });
 
 //test mode
