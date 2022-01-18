@@ -14,7 +14,7 @@ const PORT = 3000;
 const hostName = "api.portfolian.site";
 
 const corsOptions = {
-    origin: ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000','https://portfolian.site:443'],
+    origin: ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000','https://portfolian.site:443','https://portfolian.site','https://3.35.89.48'],
     credentials:true
 };
 
