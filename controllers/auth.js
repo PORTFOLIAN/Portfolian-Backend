@@ -48,11 +48,11 @@ let refreshAccessToken = async function (req,res){
     let userId = req.body.userId;
     // let refreshToken = req.body.refreshToken;
     let refreshToken = req.signedCookies.REFRESH;
-    console.log("===================================================================================");
-    console.log("req : ",req);
-    console.log("req.header : ",req.header);
-    // console.log("cookie : ",req.cookies);
-    console.log("cookie.REFRESH : ",req.signedCookies.REFRESH );
+    // console.log("===================================================================================");
+    // console.log("req : ",req);
+    // console.log("req.header : ",req.header);
+    // // console.log("cookie : ",req.cookies);
+    // console.log("cookie.REFRESH : ",req.signedCookies.REFRESH );
     if (!userId){
         res.json({code:-1, message : "userId를 입력해주세요."});
         return;
