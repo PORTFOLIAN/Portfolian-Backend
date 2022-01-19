@@ -24,7 +24,6 @@ const articleSchema = mongoose.Schema(
 		bookMarkUserList : {
 			type : [{type: mongoose.Schema.Types.ObjectId, ref : "User"}],
 			default : []
-			
 		}
 		,
 		bookMarkCnt : {
@@ -79,7 +78,7 @@ const projectSchema = mongoose.Schema(
 			type: Number,
 			default : 0
 		},
-		candidiate : {
+		candidate : {
 			type: [{type: mongoose.Schema.Types.ObjectId, ref : "User"}], //지원자
 			default : []
 		},
@@ -137,11 +136,10 @@ projectSchema.statics.findByArticleId = async function(articleId){
 	);
 }
 
-projectSchema.statics.findDeleteInfoByArticleId = async function(articleId){
+projectSchema.statics.findDeleteInfoByArticleId = async function(projectId){
 	return await this.findOne(
-		{ article : {  _id : mongoose.Types.ObjectId(articleId) }}
-	).populate('projectInfo article')
-		.select('status candidiate projectInfo article')
+		{_id : mongoose.Types.ObjectId(projectId) }
+	).populate('projectInfo','team').select('status article.bookMarkUserList projectInfo')
 }
 
 projectSchema.statics.findLeaderById = async function(projectId){
@@ -152,8 +150,10 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
-projectSchema.statics.getAllArticles = async function(userId,sort,keyword){
-	return await this.find({"article.title": {$regex : keyword}})
+projectSchema.statics.getAllArticles = async function(userId,sort,keyword, stack){
+	return await this.find(
+		{"article.title": {$regex : keyword},
+		"article.stackList" : {$in : stack}})
 		.populate('leader','_id photo')
 		.select(
 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
@@ -172,21 +172,30 @@ projectSchema.statics.getProjectAricle = async function(project){
 	.lean();
 }
 
-projectSchema.statics.changeBookMarkOn= async function(userId,projectId){
+projectSchema.statics.findBookMarkProject = async function(userId){
+	return await this.find(
+		{"article.bookMarkUserList" : {$in : [userId]}})
+		.populate('leader' , '_id photo')
+		.select(' _id leader article.title article.stackList article.subjectDescription article.capacity \
+		article.view status createdAt')
+		.lean();
+}
+
+projectSchema.statics.pushBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
-		{ _id: projectId }, 
+		{ _id: projectId },
 		{
 		$inc: { "article.bookMarkCnt": 1},
 		$push : {"article.bookMarkUserList" : userId } 
 		});
 }
 
-projectSchema.statics.changeBookMarkOff= async function(userId,projectId){
+projectSchema.statics.pullBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: projectId },
 		{
 		$inc: { "article.bookMarkCnt": -1 },
-		$pull : {"article.bookMarkUserList" : userId } 
+		$pull : { "article.bookMarkUserList" : userId }
 		});
 }
 

@@ -9,5 +9,4 @@ router.put('/:projectId', projectController.modifyProjectAritcle);
 router.delete('/:projectId', projectController.deleteProject);
 router.get('/:projectId', projectController.getProjectArticle);
 
-
 module.exports = router;

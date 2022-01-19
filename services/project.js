@@ -61,23 +61,13 @@ class ProjectService{
             return validateOwnerRes;
 
         let findProject = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
-        console.log('findProject : ',findProject);
-        console.log('status : ',findProject.status);
-        console.log('candidate : ',findProject.candidate);
-        console.log('projectInfo : ',findProject.projectInfo);
-        console.log('article : ',findProject.article);
-       // let {status, candidate, projectInfo, article} = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
+        console.log('findProject(delete) : ',findProject);
+        console.log('team(delete) : ',findProject.team);
+        //bookMark, doing
 
-        // console.log('status : ',status);
-        // console.log('candidate : ',candidate);
-        // console.log('projectInfo : ',projectInfo);
-        // console.log('article : ',article);
 
-        // 1. bookMark 삭제
+        // status확인 후 team의 doing, done에서 삭제
 
-        // 2. apply 삭제
-        // 3. status확인 후 team의 doing, done에서 삭제
-        // 4. project 삭제
 
         return {code : 1, message : "project 삭제 완료"};
     }
@@ -97,7 +87,7 @@ class ProjectService{
         return {code : 1, message : "project수정 완료"};
     }
 
-    async getAllArticles(userId,query){
+    async getAllArticles(userId, query){
     // default(최신순) or bookMarkCnt or view
         let sort = query.sort;
         let keyword = query.keyword;
@@ -113,7 +103,12 @@ class ProjectService{
         sort = "-" + sort;
         if (keyword === "default")
             keyword = ""
-        const ProjectList = await this.ProjectModel.getAllArticles(userId,sort,keyword);
+        if (stack === "default")
+            stack = ["Front-end","Back-end","React","Vue","Spring","Django","Javascript","iOS","Android",
+            "Angular","HTML/CSS","Flask","Node.js","Java","python","Kotlin","Swift","Go","C/C++","C#",
+            "Design","Figma","Sketch","AdobeXD","Photoshop","Illustrator","Firebase","AWS","GCP","Git","ect"]
+        console.log("stack : ", stack);
+        const ProjectList = await this.ProjectModel.getAllArticles(userId,sort,keyword, stack);
         let returnProjectList = await jsonHandler.getArticleListRes(ProjectList);
         returnProjectList['code'] = 1;
         return returnProjectList;

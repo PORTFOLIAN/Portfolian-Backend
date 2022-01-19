@@ -17,10 +17,13 @@ class UserService{
         await this.UserModel.addDoingProject(user, doingProjectId);
     };
 
-    async getBookMarkProjectList(userId) {
-        let bookMarks = await this.UserModel.findBookMarkProject(userId)
-        let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks.bookMarkList);
+    async getBookMarkProjectList(userId, tokenUserId) {
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        let bookMarks = await this.ProjectModel.findBookMarkProject(userId);
+        let returnBookMark = await jsonHandler.getBookMarkListRes(bookMarks);
         returnBookMark['code'] = 1;
+        returnBookMark['message'] = "북마크한 프로젝트 보기 성공";
         return returnBookMark;
     };
 
@@ -53,20 +56,27 @@ class UserService{
         return userMyInfo;
     }
 
-    async changeBookMark(userId,bookMarkCnt,projectId){
-        let result;
-        
-        if (bookMarkCnt == 'true'){
-            const bookMarkOnUser = await this.UserModel.changeBookMarkOn(userId,projectId)
-            result =  await this.ProjectModel.changeBookMarkOn(userId,projectId)
-            
-            console.log(bookMarkOnUser)
-        } else {
-            const bookMarkOffUser = await this.UserModel.changeBookMarkOff(userId,projectId)
-            result =  await this.ProjectModel.changeBookMarkOff(userId,projectId)
+    async changeBookMark(userId, tokenUserId, bookMarked, projectId){
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+
+        // 북마크 했는 지 안했는 지 유효성 검사
+        //return {code : -1, message : "이미 반영되었습니다."}
+
+        if (bookMarked == true)
+        {
+            //북마크 true => false 로 변경
+            await this.UserModel.pullBookMark(userId, projectId);
+            await this.ProjectModel.pullBookMark(userId,projectId);
         }
-        
-        return result
+        else
+        {
+            //북마크 false => true로 변경
+            await this.UserModel.pushBookMark(userId, projectId);
+            await this.ProjectModel.pushBookMark(userId,projectId);
+        }
+
+        return {code : 1, message : "북마크 수정 완료되었습니다."}
     }
     
     async changeNickName(userId, tokenUserId, nickName) {
@@ -92,6 +102,13 @@ class UserService{
     async deleteUser(userId, tokenUserId){
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
+        // 북마크한 프로젝트 삭제, 카운트 감소
+
+        // doing, done 프로젝트 삭제
+        // => 반장일 경우 프로젝트 삭제
+        // => 반장 아니면 team에서 그 사람만 삭제
+
+
         await this.UserModel.deleteUser(userId);
         return {code: 1, message : "탈퇴 성공"};
     }

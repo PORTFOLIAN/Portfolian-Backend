@@ -123,15 +123,6 @@ userSchema.statics.changeUserInfo = async function(userId,info,photo){
 	);
 }
 
-userSchema.statics.findBookMarkProject = async function(userId){ 
-	return await this.findOne(
-		{_id : userId}
-		).populate(
-		'bookMarkList', '_id article.leader article.title article.title article.stackList article.subjectDescription article.capacity \
-		article.view  status'
-	).select('bookMarkList createdAt').sort('-createdAt').lean();
-}
-
 userSchema.statics.findUserInfo = async function(userId){ 
 	return await this.findOne(
 		{_id : userId}
@@ -144,18 +135,16 @@ userSchema.statics.findUserHeader = async function(id){
 	return await this.findById(id);
 }
 
-userSchema.statics.changeBookMarkOn = async function(userId,projectId){ 
+userSchema.statics.pullBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: userId },
-		{ $push: { bookMarkList: projectId } })
-		.select('_id');
+		{ $pull: { bookMarkList: projectId } });
 }
 
-userSchema.statics.changeBookMarkOff = async function(userId,projectId){ 
+userSchema.statics.pushBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: userId },
-		{ $pull: { bookMarkList: projectId }})
-		.select('_id')
+		{ $push: { bookMarkList: projectId }});
 }
 
 userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
