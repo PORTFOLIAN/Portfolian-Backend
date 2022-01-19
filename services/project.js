@@ -104,9 +104,9 @@ class ProjectService{
         if (keyword === "default")
             keyword = ""
         if (stack === "default")
-            stack = ["Front-end","Back-end","React","Vue","Spring","Django","Javascript","iOS","Android",
-            "Angular","HTML/CSS","Flask","Node.js","Java","python","Kotlin","Swift","Go","C/C++","C#",
-            "Design","Figma","Sketch","AdobeXD","Photoshop","Illustrator","Firebase","AWS","GCP","Git","ect"]
+            stack = ["frontEnd","backEnd","react","vue","spring","django","javascript","ios","android",
+            "angular","htmlCss","flask","nodeJs","java","python","kotlin","swift","go","cCpp","cCsharp",
+            "design","figma","sketch","adobeXD","photoshop","illustrator","firebase","aws","gcp","git","ect"]
         console.log("stack : ", stack);
         const ProjectList = await this.ProjectModel.getAllArticles(userId,sort,keyword, stack);
         let returnProjectList = await jsonHandler.getArticleListRes(ProjectList);
