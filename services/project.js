@@ -88,26 +88,23 @@ class ProjectService{
     }
 
     async getAllArticles(userId, query){
-    // default(최신순) or bookMarkCnt or view
         let sort = query.sort;
         let keyword = query.keyword;
         let stack = query.stack;
         if (!sort || !keyword || !stack)
             return {code : -1, message: "조건(sort, keyword, stack)을 모두 입력해주세요"}
         if (sort === "default")
-            sort = "createdAt"
+            sort = "-createdAt"
         else if (sort === "view")
-            sort = "article.view"
+            sort = "-article.view"
         else if (sort === "bookMark")
-            sort = "article.bookMarkCnt"
-        sort = "-" + sort;
+            sort = "-article.bookMarkCnt"
         if (keyword === "default")
             keyword = ""
         if (stack === "default")
             stack = ["frontEnd","backEnd","react","vue","spring","django","javascript","ios","android",
             "angular","htmlCss","flask","nodeJs","java","python","kotlin","swift","go","cCpp","cCsharp",
             "design","figma","sketch","adobeXD","photoshop","illustrator","firebase","aws","gcp","git","ect"]
-        console.log("stack : ", stack);
         const ProjectList = await this.ProjectModel.getAllArticles(userId,sort,keyword, stack);
         let returnProjectList = await jsonHandler.getArticleListRes(ProjectList);
         returnProjectList['code'] = 1;
@@ -115,7 +112,7 @@ class ProjectService{
     }
 
     async getProjectArticle(projectId) {
-        const readProject = await this.ProjectModel.getProjectAricle(projectId);
+        const readProject = await this.ProjectModel.getProjectArticle(projectId);
         function bookMarkChk() {
             let bookMarkCheck
             if(readProject.article.bookMarkUserList == projectId) bookMarkCheck = true  //projectId 부분에 유저id가 들어가야함
@@ -146,7 +143,7 @@ class ProjectService{
             capacity : readProject.article.capacity,
             view : readProject.article.view,
             bookMark : bookMarkChk(),
-
+            createdAt : readProject.createdAt,
             status : readProject.status,
             leader : leaderInfo,
         }
