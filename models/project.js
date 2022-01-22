@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const User = require("./user");
 const Schema = mongoose.Schema
 
 const articleSchema = mongoose.Schema(
@@ -150,9 +151,9 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
-projectSchema.statics.getAllArticles = async function(userId,sort,keyword, stack){
+projectSchema.statics.getAllArticles = async function(userId, sort, keyword, stack){
 	return await this.find(
-		{"article.title": {$regex : keyword},
+		{"article.title": { $regex : keyword},
 		"article.stackList" : {$in : stack}})
 		.populate('leader','_id photo')
 		.select(
@@ -161,15 +162,57 @@ projectSchema.statics.getAllArticles = async function(userId,sort,keyword, stack
 	).sort(sort).lean();
 }
 
-projectSchema.statics.getProjectArticle = async function(project){
-	return await this.findByIdAndUpdate(project,
-		{ $inc : { "article.view" : 1 }},
-		{ new : true }
-	)
-	.populate('leader' , '_id photo nickName description stackList')
-	.select(' _id leader createdAt status article.title article.projectTime article.condition article.progress article.description article.capacity article.view article.bookMarkCnt article.stackList article.subjectDescription article.bookMarkUserList ')
-	.populate('projectInfo')
-	.lean();
+projectSchema.statics.getProjectArticle = async function(projectId, userId){
+	console.log("projectId : ", projectId);
+	console.log("userId : ", userId);
+	return await this.aggregate([
+		{ $match : { _id: mongoose.Types.ObjectId(projectId) } },
+		{
+			$lookup : {
+				from : "users",
+				localField : "leader",
+				foreignField : "_id",
+				as : "leader_info"
+			}
+		},
+		{
+			$unwind : {
+				path : '$leader_info'
+			}
+		},
+		{ $project : {
+				_id : 0,
+				projectId : '$_id',
+				title : "$article.title",
+				stackList : "$article.stackList",
+				capacity : "$article.capacity",
+				view : "$article.view",
+				status : "$status",
+				createdAt : "$createdAt",
+				bookMark : {
+					$cond : {
+						if : { $setIsSubset : [[{ $toString: 'userId' }],'$article.bookMarkUserList']},
+						then: true,
+						else: false
+						}
+					},
+				contents : {
+					subjectDescription : "$article.subjectDescription",
+					projectTime : "$article.projectTime",
+					recruitmentCondition : "$article.condition",
+					progress : "$article.progress",
+					description : "$article.description"
+				},
+				leader : {
+					userId : "$leader_info._id",
+					nickName : "$leader_info.nickName",
+					description: "$leader_info.description",
+					stackList : "$leader_info.stackList",
+					photo : "$leader_info.photo"
+				}
+			}
+		}
+	]);
 }
 
 projectSchema.statics.findBookMarkProject = async function(userId){

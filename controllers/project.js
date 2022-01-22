@@ -74,21 +74,30 @@ let getAllProjectAritcles = async function(req,res,next){
     return;
   }
   let userId = verifyTokenRes.userId;
-  let ret = await projectServiceInstance.getAllArticles(userId,req.query);
+  let ret = await projectServiceInstance.getAllArticles(userId, req.query);
   res.json(ret);
 }
 
 let getProjectArticle = async function(req, res, next) {
-  let projectId = req.params.projectId;
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
+  {
+    res.status(401).json(verifyTokenRes);
+    return;
+  }
+
   try {
-    let ret = await projectServiceInstance.getProjectArticle(projectId);
-    res.status(200).send(ret);
+    let projectId = req.params.projectId;
+    let userId = verifyTokenRes.userId;
+    let article = await projectServiceInstance.getProjectArticle(projectId, userId);
+    article[code] = 1;
+    res.status(200).json(article);
   } catch (e) {
-    res.status(500).json({
+    res.status(200).json({
+      code : -1,
       message: "project 조회 실패",
     });
   }
-  
 }
 
 module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle, deleteProject};
