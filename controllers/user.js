@@ -56,21 +56,17 @@ let deleteUser = async function (req,res){
 }
 
 let getUserHeader = async (req, res) => {
-  const id = req.params.id;
-  console.log(id)
-  try {
-    const headerInfo = await userServiceInstance.getUserHeader(id);
-
-    if (!headerInfo) {
-      return res.status(404).send('404 에러 ');
+    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.status(401).json(verifyTokenRes);
+        return;
     }
-
-    res.status(200).send(headerInfo);
-  } catch (e) {
-    res.status(500).json({
-      message: "회원정보 조회 실패",
-    });
-  }
+    const headerInfo = await userServiceInstance.getUserHeader(verifyTokenRes.userId);
+    if (!headerInfo) {
+        return res.status(403).json(verifyTokenRes);
+    }
+    res.status(200).json(headerInfo);
 }
 
 let changeUserInfo = async (req, res) => {
@@ -89,20 +85,24 @@ let changeUserInfo = async (req, res) => {
 }
 
 let getUserInfo = async (req,res) => {
-  const userId = req.params.id;
-  
-  try {
-    const userInfo = await userServiceInstance.getUserInfo(userId);
-    if (!userInfo) {
-      return res.status(404).send('나의 정보보기 오류');
+    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+    if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    {
+        res.status(401).json(verifyTokenRes);
+        return;
     }
-    res.status(200).send(userInfo);
-  } catch (e) {
-    
-    res.status(500).json({
-      message: "회원정보 조회 실패",
-    });
-  }
+    if (verifyTokenRes.code == 0) {
+        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
+        return;
+    }
+    try {
+        const userInfo = await userServiceInstance.getUserInfo(verifyTokenRes.userId);
+        if (!userInfo)
+            return res.status(404).json('나의 정보보기 오류');
+        res.status(200).json(userInfo);
+    } catch (e) {
+        res.status(500).json({ message: "회원정보 조회 실패" });
+    }
 }
 
 let changeBookMark = async (req,res) => {

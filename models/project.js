@@ -151,20 +151,73 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
-projectSchema.statics.getAllArticles = async function(userId, sort, keyword, stack){
-	return await this.find(
-		{"article.title": { $regex : keyword},
-		"article.stackList" : {$in : stack}})
-		.populate('leader','_id photo')
-		.select(
-		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
-		article.view  article.bookMarkCnt status createdAt'
-	).sort(sort).lean();
+// projectSchema.statics.getAllArticles = async function(userId, sort, keyword, stack){
+// 	return await this.find(
+// 		{"article.title": { $regex : keyword},
+// 		"article.stackList" : {$in : stack}})
+// 		.populate('leader','_id photo')
+// 		.select(
+// 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
+// 		article.view  article.bookMarkCnt status createdAt'
+// 	).sort(sort).lean();
+// }
+
+projectSchema.statics.getAllArticles = async function(userId, sortKeyWord, keyword, stack){
+	let allArticles = await this.aggregate([
+		{
+			$match : {
+				"article.title" : { $regex : keyword } ,
+				"article.stackList" : { $in : stack }
+			}
+		},
+		{
+			$lookup : {
+				from : "users",
+				localField : "leader",
+				foreignField : "_id",
+				as : "leader_info"
+			}
+		},
+		{
+			$unwind : {
+				path : '$leader_info'
+			}
+		},
+		{ $sort : sortKeyWord},
+		{
+			$project : {
+				_id : 0,
+				projectId : "$_id",
+				title : "$article.title",
+				stackList : "$article.stackList",
+				description : "$article.description",
+				capacity : "$article.capacity",
+				view : "$article.view",
+				bookMark : {
+					$cond : {
+						if : { $setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']},
+						then: true,
+						else: false
+					}
+				},
+				status : "$status",
+				leader : {
+					userId : "$leader_info._id",
+					photo : "$leader_info.photo"
+				}
+			}
+		}
+	]);
+	return {articleList : allArticles};
+}
+
+projectSchema.statics.incView = async function(projectId){
+	return await this.findByIdAndUpdate(
+		projectId, {$inc: { "article.view": 1}}
+	);
 }
 
 projectSchema.statics.getProjectArticle = async function(projectId, userId){
-	console.log("projectId : ", projectId);
-	console.log("userId : ", userId);
 	return await this.aggregate([
 		{ $match : { _id: mongoose.Types.ObjectId(projectId) } },
 		{
@@ -191,11 +244,11 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 				createdAt : "$createdAt",
 				bookMark : {
 					$cond : {
-						if : { $setIsSubset : [[{ $toString: 'userId' }],'$article.bookMarkUserList']},
+						if : { $setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']},
 						then: true,
 						else: false
-						}
-					},
+					}
+				},
 				contents : {
 					subjectDescription : "$article.subjectDescription",
 					projectTime : "$article.projectTime",
@@ -214,7 +267,15 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 		}
 	]);
 }
-
+/*
+				bookMark : {
+					$cond : {
+						if : { $setIsSubset : [[{ $toString: 'userId' }],'$article.bookMarkUserList']},
+						then: true,
+						else: false
+						}
+					},
+ */
 projectSchema.statics.findBookMarkProject = async function(userId){
 	return await this.find(
 		{"article.bookMarkUserList" : {$in : [userId]}})

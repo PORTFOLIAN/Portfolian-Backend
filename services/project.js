@@ -87,38 +87,35 @@ class ProjectService{
         return {code : 1, message : "project수정 완료"};
     }
 
-    async getAllArticles(userId, query){
-        let sort = query.sort;
-        let keyword = query.keyword;
-        let stack = query.stack;
-        if (!sort || !keyword || !stack)
-            return {code : -1, message: "조건(sort, keyword, stack)을 모두 입력해주세요"}
-        if (sort === "default")
-            sort = "-createdAt"
-        else if (sort === "view")
-            sort = "-article.view"
-        else if (sort === "bookMark")
-            sort = "-article.bookMarkCnt"
+    async getAllArticles(userId, sortKeyWord, keyword, stack){
+        if (sortKeyWord === "default")
+            sortKeyWord = { "createdAt" : -1 }
+        else if (sortKeyWord === "bookMark")
+            sortKeyWord = { "article.bookMarkCnt" : -1 }
+        else if (sortKeyWord === "view")
+            sortKeyWord = { "article.view" : -1 }
+
         if (keyword === "default")
             keyword = ""
+
         if (stack === "default")
             stack = ["frontEnd","backEnd","react","vue","spring","django","javascript","ios","android",
             "angular","htmlCss","flask","nodeJs","java","python","kotlin","swift","go","cCpp","cCsharp",
             "design","figma","sketch","adobeXD","photoshop","illustrator","firebase","aws","gcp","git","ect"]
-        const ProjectList = await this.ProjectModel.getAllArticles(userId,sort,keyword, stack);
-        let returnProjectList = await jsonHandler.getArticleListRes(ProjectList);
-        returnProjectList['code'] = 1;
+        else if (!Array.isArray(stack))
+            stack = [stack];
+
+        const returnProjectList = await this.ProjectModel.getAllArticles(userId, sortKeyWord, keyword, stack);
         return returnProjectList;
     }
 
     async getProjectArticle(projectId, userId) {
         const readProject = await this.ProjectModel.getProjectArticle(projectId, userId);
-        console.log("readProject : ", readProject);
+        await this.ProjectModel.incView(projectId);
         return readProject;
     }
 
 
 }
-//북마크 체크함수
 
 module.exports  = ProjectService;

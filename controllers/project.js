@@ -67,36 +67,40 @@ let modifyProjectAritcle = async function(req,res,next){
 }
 
 let getAllProjectAritcles = async function(req,res,next){
-  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
-  if (verifyTokenRes === null || verifyTokenRes.code < 0)
-  {
-    res.status(401).json(verifyTokenRes);
+  if (!req.query.sort || !req.query.keyword || !req.query.stack) {
+    res.json({code: -1, message: "조건(sort, keyword, stack)을 모두 입력해주세요"});
     return;
   }
-  let userId = verifyTokenRes.userId;
-  let ret = await projectServiceInstance.getAllArticles(userId, req.query);
-  res.json(ret);
+
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
+  if (verifyTokenRes === null || verifyTokenRes.code < 0)
+    userId = "default";
+
+  try {
+    let userId = verifyTokenRes.userId;
+    let ret = await projectServiceInstance.getAllArticles(userId, req.query.sort, req.query.keyword, req.query.stack);
+    res.json(ret);
+  }catch(e)
+  {
+    console.log(e)
+    res.json({code : -1, message : "프로젝트 목록 조회 실패"});
+  }
 }
 
 let getProjectArticle = async function(req, res, next) {
+  let projectId = req.params.projectId;
+  let userId = verifyTokenRes.userId;
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
   if (verifyTokenRes === null || verifyTokenRes.code < 0)
-  {
-    res.status(401).json(verifyTokenRes);
-    return;
-  }
+    userId = "default";
 
   try {
-    let projectId = req.params.projectId;
-    let userId = verifyTokenRes.userId;
     let article = await projectServiceInstance.getProjectArticle(projectId, userId);
-    article[code] = 1;
+    article["code"] = 1;
     res.status(200).json(article);
   } catch (e) {
-    res.status(200).json({
-      code : -1,
-      message: "project 조회 실패",
-    });
+    console.log(e)
+    res.status(200).json({code : -1, message: "project 조회 실패"});
   }
 }
 
