@@ -267,22 +267,14 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 		}
 	]);
 }
-/*
-				bookMark : {
-					$cond : {
-						if : { $setIsSubset : [[{ $toString: 'userId' }],'$article.bookMarkUserList']},
-						then: true,
-						else: false
-						}
-					},
- */
+
 projectSchema.statics.findBookMarkProject = async function(userId){
 	return await this.find(
 		{"article.bookMarkUserList" : {$in : [userId]}})
 		.populate('leader' , '_id photo')
 		.select(' _id leader article.title article.stackList article.subjectDescription article.capacity \
 		article.view status createdAt')
-		.lean();
+		.sort("-createdAt").lean();
 }
 
 projectSchema.statics.pushBookMark = async function(userId,projectId){
