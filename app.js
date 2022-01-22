@@ -37,20 +37,19 @@ mongoose
   .then(() => console.log('Successfully connected to mongodb'))
   .catch(e => console.error(e));
 
-// // prod mode
-// const options = {
-//     ca: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/fullchain.pem'),
-//     key: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/privkey.pem'),
-//     cert: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/cert.pem'),
-// };
-// https.createServer(options, app).listen(443, () => {
-//     console.log('443:번 포트에서 대기중입니다.');
-// });
-
-// test mode
-
-const server = app.listen(PORT, () => {
-    console.log('Start Server : localhost:3000');
+// prod mode
+const options = {
+    ca: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/fullchain.pem'),
+    key: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/privkey.pem'),
+    cert: fs.readFileSync('/etc/letsencrypt/live/' + hostName + '/cert.pem'),
+};
+https.createServer(options, app).listen(443, () => {
+    console.log('443:번 포트에서 대기중입니다.');
 });
+
+// // test mode
+// const server = app.listen(PORT, () => {
+//     console.log('Start Server : localhost:3000');
+// });
 
 module.exports = app;
