@@ -151,17 +151,6 @@ projectSchema.statics.findLeaderById = async function(projectId){
 		);
 }
 
-// projectSchema.statics.getAllArticles = async function(userId, sort, keyword, stack){
-// 	return await this.find(
-// 		{"article.title": { $regex : keyword},
-// 		"article.stackList" : {$in : stack}})
-// 		.populate('leader','_id photo')
-// 		.select(
-// 		'_id  leader article.title article.stackList article.subjectDescription article.capacity \
-// 		article.view  article.bookMarkCnt status createdAt'
-// 	).sort(sort).lean();
-// }
-
 projectSchema.statics.getAllArticles = async function(userId, sortKeyWord, keyword, stack){
 	let allArticles = await this.aggregate([
 		{
@@ -279,22 +268,39 @@ projectSchema.statics.findBookMarkProject = async function(userId){
 		.sort("-createdAt").lean();
 }
 
-projectSchema.statics.pushBookMark = async function(userId,projectId){
+projectSchema.statics.pushUserBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: projectId },
 		{
-		$inc: { "article.bookMarkCnt": 1},
-		$push : {"article.bookMarkUserList" : userId } 
+		$inc: { "article.bookMarkCnt" : 1},
+		$push : { "article.bookMarkUserList" : mongoose.Types.ObjectId(userId) }
 		});
 }
 
-projectSchema.statics.pullBookMark = async function(userId,projectId){
+projectSchema.statics.pullUserBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: projectId },
 		{
 		$inc: { "article.bookMarkCnt": -1 },
-		$pull : { "article.bookMarkUserList" : userId }
+		$pull : { "article.bookMarkUserList" : mongoose.Types.ObjectId(userId) }
 		});
+}
+
+projectSchema.statics.checkBookMark = async function(userId,projectId){
+	return await this.aggregate([
+		{ $match : { _id: mongoose.Types.ObjectId(projectId) } },
+		{
+			$project : {
+				bookMarked : {
+					$cond : {
+						if : {  $setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']},
+						then: true,
+						else: false
+					}
+				}
+			}
+		}
+	]);
 }
 
 const Project = mongoose.model("Project", projectSchema);

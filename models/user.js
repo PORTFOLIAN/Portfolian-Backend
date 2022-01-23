@@ -135,16 +135,16 @@ userSchema.statics.findUserHeader = async function(id){
 	return await this.findById(id);
 }
 
-userSchema.statics.pullBookMark = async function(userId,projectId){
+userSchema.statics.pullProjectBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: userId },
-		{ $pull: { bookMarkList: projectId } });
+		{ $pull: { bookMarkList: mongoose.Types.ObjectId(projectId) } });
 }
 
-userSchema.statics.pushBookMark = async function(userId,projectId){
+userSchema.statics.pushProjectBookMark = async function(userId,projectId){
 	return await this.findOneAndUpdate(
 		{ _id: userId },
-		{ $push: { bookMarkList: projectId }});
+		{ $push: { bookMarkList: mongoose.Types.ObjectId(projectId) }});
 }
 
 userSchema.statics.findUserByOauthId= async function(oauthId, coperation){

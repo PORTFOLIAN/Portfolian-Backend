@@ -50,32 +50,36 @@ class UserService{
             github : userInfo.github,
             mail : userInfo.email
         }
-        console.log(userMyInfo)
-
-
         return userMyInfo;
     }
 
     async changeBookMark(userId, tokenUserId, bookMarked, projectId){
+        /*
+            북마크하고싶으면 true,
+            북마크 취소하고싶으면 false
+        */
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
 
-        // 북마크 했는 지 안했는 지 유효성 검사
-        //return {code : -1, message : "이미 반영되었습니다."}
+        let checkBookmarked = await this.ProjectModel.checkBookMark(userId, projectId);
+        if (checkBookmarked.length === 0)
+            return {code : -2, message : "해당 프로젝트를 찾을 수 없습니다."};
 
-        if (bookMarked == true)
+        if (checkBookmarked[0].bookMarked === false && bookMarked === true)
         {
-            //북마크 true => false 로 변경
-            await this.UserModel.pullBookMark(userId, projectId);
-            await this.ProjectModel.pullBookMark(userId,projectId);
+            // 북마크 false => true로 변경
+            await this.UserModel.pushProjectBookMark(userId, projectId);
+            await this.ProjectModel.pushUserBookMark(userId,projectId);
         }
-        else
+        else if (checkBookmarked[0].bookMarked === true && bookMarked === false)
         {
-            //북마크 false => true로 변경
-            await this.UserModel.pushBookMark(userId, projectId);
-            await this.ProjectModel.pushBookMark(userId,projectId);
+            // 북마크 true => false로 변경
+            await this.UserModel.pullProjectBookMark(userId, projectId);
+            await this.ProjectModel.pullUserBookMark(userId,projectId);
         }
-
+        else {
+            return {code : -1, message : "이미 반영되었습니다."};
+        }
         return {code : 1, message : "북마크 수정 완료되었습니다."}
     }
     

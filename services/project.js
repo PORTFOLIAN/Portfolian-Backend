@@ -106,6 +106,7 @@ class ProjectService{
             stack = [stack];
 
         const returnProjectList = await this.ProjectModel.getAllArticles(userId, sortKeyWord, keyword, stack);
+
         return returnProjectList;
     }
 
