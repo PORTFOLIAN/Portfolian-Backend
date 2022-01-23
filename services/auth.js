@@ -70,7 +70,7 @@ class AuthService{
                 return { code: 1, userId: decoded.userId, user : findUser };
             }
             else
-                return { code: 0, userId: "default", user : null };
+                return { code: 0, userId: "012345678901234567890123", user : null };
         } catch (err) {
             return { code: -99, message: "만료된 accessToken입니다."};
         }

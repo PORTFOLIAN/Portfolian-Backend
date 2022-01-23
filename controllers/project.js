@@ -71,14 +71,12 @@ let getAllProjectAritcles = async function(req,res,next){
     res.json({code: -1, message: "조건(sort, keyword, stack)을 모두 입력해주세요"});
     return;
   }
-
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
-  if (verifyTokenRes === null || verifyTokenRes.code < 0)
-    userId = "default";
 
   try {
     let userId = verifyTokenRes.userId;
     let ret = await projectServiceInstance.getAllArticles(userId, req.query.sort, req.query.keyword, req.query.stack);
+    ret["code"]=1;
     res.json(ret);
   }catch(e)
   {
@@ -88,12 +86,9 @@ let getAllProjectAritcles = async function(req,res,next){
 }
 
 let getProjectArticle = async function(req, res, next) {
+  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
   let projectId = req.params.projectId;
   let userId = verifyTokenRes.userId;
-  let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
-  if (verifyTokenRes === null || verifyTokenRes.code < 0)
-    userId = "default";
-
   try {
     let article = await projectServiceInstance.getProjectArticle(projectId, userId);
     article["code"] = 1;

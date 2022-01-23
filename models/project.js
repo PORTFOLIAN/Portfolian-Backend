@@ -195,7 +195,7 @@ projectSchema.statics.getAllArticles = async function(userId, sortKeyWord, keywo
 				view : "$article.view",
 				bookMark : {
 					$cond : {
-						if : { $setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']},
+						if : {  $setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']},
 						then: true,
 						else: false
 					}
