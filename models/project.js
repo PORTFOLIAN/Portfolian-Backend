@@ -190,7 +190,7 @@ projectSchema.statics.getAllArticles = async function(userId, sortKeyWord, keywo
 				projectId : "$_id",
 				title : "$article.title",
 				stackList : "$article.stackList",
-				description : "$article.description",
+				description : "$article.subjectDescription",
 				capacity : "$article.capacity",
 				view : "$article.view",
 				bookMark : {
