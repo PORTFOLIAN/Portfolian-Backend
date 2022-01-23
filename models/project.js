@@ -218,7 +218,7 @@ projectSchema.statics.incView = async function(projectId){
 }
 
 projectSchema.statics.getProjectArticle = async function(projectId, userId){
-	return await this.aggregate([
+	let articleInfo =  await this.aggregate([
 		{ $match : { _id: mongoose.Types.ObjectId(projectId) } },
 		{
 			$lookup : {
@@ -260,12 +260,14 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 					userId : "$leader_info._id",
 					nickName : "$leader_info.nickName",
 					description: "$leader_info.description",
-					stackList : "$leader_info.stackList",
+					stack : { $first : "$projectInfo.team.memberStack"},
 					photo : "$leader_info.photo"
 				}
 			}
 		}
 	]);
+	console.log("articleInfo[0] : ",articleInfo[0]);
+	return articleInfo[0];
 }
 
 projectSchema.statics.findBookMarkProject = async function(userId){
