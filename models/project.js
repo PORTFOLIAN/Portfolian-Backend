@@ -260,12 +260,43 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 }
 
 projectSchema.statics.findBookMarkProject = async function(userId){
-	return await this.find(
-		{"article.bookMarkUserList" : {$in : [userId]}})
-		.populate('leader' , '_id photo')
-		.select(' _id leader article.title article.stackList article.subjectDescription article.capacity \
-		article.view status createdAt')
-		.sort("-createdAt").lean();
+	let allArticles = await this.aggregate([
+		{
+			$setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']
+		},
+		{
+			$lookup : {
+				from : "users",
+				localField : "leader",
+				foreignField : "_id",
+				as : "leader_info"
+			}
+		},
+		{
+			$unwind : {
+				path : '$leader_info'
+			}
+		},
+		{ $sort : { "createdAt" : -1 }},
+		{
+			$project : {
+				_id : 0,
+				projectId : "$_id",
+				title : "$article.title",
+				stackList : "$article.stackList",
+				description : "$article.subjectDescription",
+				capacity : "$article.capacity",
+				view : "$article.view",
+				bookMark : true,
+				status : "$status",
+				leader : {
+					userId : "$leader_info._id",
+					photo : "$leader_info.photo"
+				}
+			}
+		}
+	]);
+	return {articleList : allArticles};
 }
 
 projectSchema.statics.pushUserBookMark = async function(userId,projectId){
