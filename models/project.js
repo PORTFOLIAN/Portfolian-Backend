@@ -140,7 +140,7 @@ projectSchema.statics.findByArticleId = async function(articleId){
 projectSchema.statics.findDeleteInfoByArticleId = async function(projectId){
 	return await this.findOne(
 		{_id : mongoose.Types.ObjectId(projectId) }
-	).populate('projectInfo','team').select('status article.bookMarkUserList projectInfo')
+	).populate('projectInfo.team').select('status article.bookMarkUserList projectInfo')
 }
 
 projectSchema.statics.findLeaderById = async function(projectId){
@@ -332,6 +332,10 @@ projectSchema.statics.checkBookMark = async function(userId,projectId){
 			}
 		}
 	]);
+}
+
+projectSchema.statics.deleteProject = async function(projectId){
+	return await this.findByIdAndDelete(projectId);
 }
 
 const Project = mongoose.model("Project", projectSchema);

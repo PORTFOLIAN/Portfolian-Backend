@@ -147,6 +147,18 @@ userSchema.statics.pushProjectBookMark = async function(userId,projectId){
 		{ $push: { bookMarkList: mongoose.Types.ObjectId(projectId) }});
 }
 
+userSchema.statics.pullDoingProject = async function(userId,projectId){
+	return await this.findOneAndUpdate(
+		{ _id: userId },
+		{ $pull: { doingProjectList: mongoose.Types.ObjectId(projectId) } });
+}
+
+userSchema.statics.pullDoneProject = async function(userId,projectId){
+	return await this.findOneAndUpdate(
+		{ _id: userId },
+		{ $pull: { doneProjectList: mongoose.Types.ObjectId(projectId) } });
+}
+
 userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
 	return await this.findOne(
 		{

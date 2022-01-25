@@ -55,21 +55,32 @@ class ProjectService{
     }
 
     async deleteProject(owner, projectId) {
-        // 권한 유효성 검사
-        let validateOwnerRes = await this.validateProjectOwner(projectId, owner);
-        if (validateOwnerRes.code < 0)
-            return validateOwnerRes;
+        try {
+            // 권한 유효성 검사
+            let validateOwnerRes = await this.validateProjectOwner(projectId, owner);
+            if (validateOwnerRes.code < 0)
+                return validateOwnerRes;
 
-        let findProject = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
-        console.log('findProject(delete) : ',findProject);
-        console.log('team(delete) : ',findProject.team);
-        //bookMark, doing
+            // 삭제할 프로젝트 찾기
+            let findProject = await this.ProjectModel.findDeleteInfoByArticleId(projectId);
 
+            // status확인 후 team의 doing, done에서 삭제
+            if (findProject.status != 3)  // doing project
+                for (const user of findProject.projectInfo.team)
+                    await this.UserModel.pullDoingProject(user.teamMember, projectId);
+            else
+                for (const user of findProject.projectInfo.team)
+                    await this.UserModel.pullDoneProject(user.teamMember, projectId);
+            //bookMark 삭제
+            for (const user of findProject.article.bookMarkUserList)
+                await this.UserModel.pullProjectBookMark(user, projectId);
+            // 프로젝트 삭제
+            await this.ProjectModel.deleteProject(projectId);
 
-        // status확인 후 team의 doing, done에서 삭제
-
-
-        return {code : 1, message : "project 삭제 완료"};
+            return {code: 1, message: "project 삭제 완료"};
+        }catch (e) {
+            return {code: -1, message: "DB 에러발생"};
+        }
     }
 
     async modifyProjectArticle(owner,projectId, articleDto, ownerStack){
