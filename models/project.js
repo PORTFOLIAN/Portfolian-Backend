@@ -262,7 +262,9 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 projectSchema.statics.findBookMarkProject = async function(userId){
 	let allArticles = await this.aggregate([
 		{
-			$setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']
+			$match: {
+				$expr : { $setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList'] }
+			}
 		},
 		{
 			$lookup : {
@@ -317,9 +319,17 @@ projectSchema.statics.pullUserBookMark = async function(userId,projectId){
 		});
 }
 
+projectSchema.statics.pullUserTeam = async function(userId,projectId){
+	return await this.findOneAndUpdate(
+		{ _id: projectId },
+		{
+			$pull : { "projectInfo.team" : { teamMember :mongoose.Types.ObjectId(userId)} }
+		});
+}
+
 projectSchema.statics.checkBookMark = async function(userId,projectId){
 	return await this.aggregate([
-		{ $match : { _id: mongoose.Types.ObjectId(projectId) } },
+		{ $match : { _id: mongoose.Types.ObjectId(projectId)} },
 		{
 			$project : {
 				bookMarked : {
@@ -338,5 +348,14 @@ projectSchema.statics.deleteProject = async function(projectId){
 	return await this.findByIdAndDelete(projectId);
 }
 
+projectSchema.statics.getDeleteUserInfo = async function(userId){
+	return await this.findById(userId).select('bookMarkList doingProjectList doneProjectList');
+}
+
+projectSchema.statics.getLeaderProject = async function(userId){
+	return await this.find(
+		{leader : mongoose.Types.ObjectId(userId) }
+	).populate('projectInfo.team');
+}
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;
