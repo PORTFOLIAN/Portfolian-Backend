@@ -92,12 +92,9 @@ let getUserInfo = async (req,res) => {
         res.status(401).json(verifyTokenRes);
         return;
     }
-    if (verifyTokenRes.code == 0) {
-        res.status(403).json({code: -98, message: "로그인 후 이용해주세요."});
-        return;
-    }
+
     try {
-        const userInfo = await userServiceInstance.getUserInfo(verifyTokenRes.userId);
+        const userInfo = await userServiceInstance.getUserInfo(req.params.userId);
         if (!userInfo)
             return res.status(404).json('나의 정보보기 오류');
         res.status(200).json(userInfo);
