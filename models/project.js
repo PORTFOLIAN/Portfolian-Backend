@@ -289,7 +289,7 @@ projectSchema.statics.findBookMarkProject = async function(userId){
 				description : "$article.subjectDescription",
 				capacity : "$article.capacity",
 				view : "$article.view",
-				bookMark : true,
+				bookMark : { $literal: true },
 				status : "$status",
 				leader : {
 					userId : "$leader_info._id",
