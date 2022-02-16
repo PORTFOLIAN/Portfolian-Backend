@@ -255,7 +255,6 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 			}
 		}
 	]);
-	console.log("articleInfo[0] : ",articleInfo[0]);
 	return articleInfo[0];
 }
 
