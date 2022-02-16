@@ -93,7 +93,6 @@ let getUserInfo = async (req,res) => {
         return;
     }
     try {
-        console.log("req.params.userId : ", req.params.userId);
         const userInfo = await userServiceInstance.getUserInfo(req.params.userId);
         if (!userInfo)
             return res.status(404).json('나의 정보보기 오류');
