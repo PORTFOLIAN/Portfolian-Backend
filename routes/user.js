@@ -4,7 +4,7 @@ const userController = require('../controllers/user');
 const upload = require("../S3/S3.js");
 
 router.get('/:userId/bookMark', userController.findBookMarkList);
-router.get('/:id/info',userController.getUserInfo);
+router.get('/:userId/info',userController.getUserInfo);
 router.patch('/:userId/info',upload.single('photo'), userController.changeUserInfo);
 router.post('/:userId/bookMark', userController.changeBookMark);
 router.patch('/:userId/nickName',  userController.changeNickName);
