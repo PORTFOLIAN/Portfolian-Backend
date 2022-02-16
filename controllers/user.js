@@ -92,13 +92,13 @@ let getUserInfo = async (req,res) => {
         res.status(401).json(verifyTokenRes);
         return;
     }
-
     try {
         const userInfo = await userServiceInstance.getUserInfo(req.params.userId);
         if (!userInfo)
             return res.status(404).json('나의 정보보기 오류');
         res.status(200).json(userInfo);
     } catch (e) {
+        console.log(e);
         res.status(500).json({ message: "회원정보 조회 실패" });
     }
 }
