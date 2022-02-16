@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
 
@@ -19,6 +20,8 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(bodyParser.json({limit : '50mb'}));
+app.use(bodyParser.urlencoded({limit : '50mb', extended: true}));
 app.use(cookieParser());
 app.use(express.json());
 
