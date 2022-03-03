@@ -99,5 +99,9 @@ let getProjectArticle = async function(req, res, next) {
   }
 }
 
-module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle, deleteProject};
+let createImage = async function(req, res, next){
+
+}
+
+module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle, deleteProject, createImage};
 
