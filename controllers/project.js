@@ -100,7 +100,7 @@ let getProjectArticle = async function(req, res, next) {
 }
 
 let createImage = async function(req, res, next){
-
+  res.json({"imageURL": req.file.location})
 }
 
 module.exports = {getAllProjectAritcles, createProjectAritcle, modifyProjectAritcle, getProjectArticle, deleteProject, createImage};
