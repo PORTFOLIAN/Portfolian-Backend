@@ -110,42 +110,30 @@ class UserService{
                 return {code: -3, message: "잘못된 userId입니다."};
             }
             let bookMarkProjects = await this.UserModel.findById(userId);
-            // 북마크한 프로젝트 삭제, 카운트 감소
-            //for (const bookMarkProject of bookMarkProjects.bookMarkList)
-            //    await this.ProjectModel.pullUserBookMark(userId,bookMarkProject);
 
+            // 북마크한 프로젝트 삭제, 카운트 감소
+            for (const bookMarkProject of bookMarkProjects.bookMarkList)
+                await this.ProjectModel.pullUserBookMark(userId,bookMarkProject);
 
             // leaderProject 프로젝트 삭제
-            //let leaderProjects = await this.ProjectModel.getLeaderProject(userId);
-            // for (const project of leaderProjects)
-            // {
-            //     // status확인 후 team의 doing, done에서 삭제
-            //     if (project.status != 3)  // doing project
-            //         for (const user of project.projectInfo.team)
-            //             await this.UserModel.pullDoingProject(user.teamMember, projectId);
-            //     else
-            //         for (const user of project.projectInfo.team)
-            //             await this.UserModel.pullDoneProject(user.teamMember, projectId);
-            //     //bookMark 삭제
-            //     for (const user of project.article.bookMarkUserList)
-            //         await this.UserModel.pullProjectBookMark(user, projectId);
-            //     // 프로젝트 삭제
-            //     await this.ProjectModel.deleteProject(projectId);
-            // }
-            // => 반장 아니면 team에서 그 사람만 삭제
-
-            let outProject = await this.UserModel.findById(userId);
-            for (const doingProject of outProject.doingProjectList)
+            let leaderProjects = await this.ProjectModel.getLeaderProject(userId);
+            for (const project of leaderProjects)
             {
-
-            }
-            for (const done of outProject.doneProjectList)
-            {
-
+                // status확인 후 team의 doing, done에서 삭제
+                if (project.status != 3)  // doing project
+                    for (const user of project.projectInfo.team)
+                        await this.UserModel.pullDoingProject(user.teamMember, project.id);
+                else
+                    for (const user of project.projectInfo.team)
+                        await this.UserModel.pullDoneProject(user.teamMember, project.id);
+                //bookMark 삭제
+                for (const user of project.article.bookMarkUserList)
+                    await this.UserModel.pullProjectBookMark(user, project.id);
+                // 프로젝트 삭제
+                await this.ProjectModel.deleteProject(project.id);
             }
 
-
-            //await this.UserModel.deleteUser(userId);
+            await this.UserModel.deleteUser(userId);
             return {code: 1, message: "탈퇴 성공"};
         }catch (e) {
             console.log(e);

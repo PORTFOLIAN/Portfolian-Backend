@@ -7,7 +7,6 @@ const userServiceInstance = new UserService(User,Project);
 const authServiceInstance = new AuthService(User);
 
 let findBookMarkList = async function (req,res){
-    console.log("bookmark header : ", req.headers);
   let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
     if (verifyTokenRes === null || verifyTokenRes.code < 0)
     {
