@@ -49,6 +49,7 @@ class ProjectService{
         if (validateArticleInfo.code <= 0)
             return validateArticleInfo;
 
+        console.log("createProject : ", articleDto);
         //project 생성 & team에 owner,ownweStack 넣기
         const newProject = await this.ProjectModel.createProject(owner, articleDto, ownweStack); 
         return { code : 1, message: "성공적으로 수행되었습니다.",newProjectID : newProject};
