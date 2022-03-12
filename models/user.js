@@ -114,10 +114,10 @@ userSchema.statics.changeUserInfo = async function(userId,info,photo){
 			$set: {
 				'nickName': info.nickName,
 				'description' : info.description,
-				'stack' : info.stack,
+				'stackList' : info.stack,
 				'photo' : photo,
 				'github' : info.github,
-				'mail' : info.email
+				'email' : info.email
 			}
 		}
 	);
