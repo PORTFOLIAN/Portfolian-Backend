@@ -117,7 +117,7 @@ userSchema.statics.changeUserInfo = async function(userId,info,photo){
 				'stackList' : info.stack,
 				'photo' : photo,
 				'github' : info.github,
-				'email' : info.email
+				'email' : info.mail
 			}
 		}
 	);
