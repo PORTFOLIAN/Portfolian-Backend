@@ -1,9 +1,7 @@
 
 const AWS = require("aws-sdk");
 const multer = require("multer");
-const multerS3 = require("multer-s3"); // 이거 쓰면 console.log 안찍힘
-// const multerS3 = require("multer-s3-transform");
-// const path = require("path");
+const multerS3 = require("multer-s3");
 
 const s3 = new AWS.S3({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -21,7 +19,7 @@ let upload = multer({
           cb(null, Date.now() + '.' + file.originalname.split('.').pop());
       },
   }),
-  limits: { fileSize: 5 * 1024 * 1024 }, // 용량 제한
+  limits: { fileSize: 10 * 1024 * 1024 }, // 용량 제한
 });
 
 module.exports = upload;
