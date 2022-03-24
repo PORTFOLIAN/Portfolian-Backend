@@ -131,7 +131,7 @@ userSchema.statics.findUserInfo = async function(userId){
 		).lean();
 }
 
-userSchema.statics.findUserHeader = async function(id){ 
+userSchema.statics.findUserHeaderById = async function(id){ 
 	return await this.findById(id);
 }
 

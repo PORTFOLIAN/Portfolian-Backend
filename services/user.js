@@ -26,8 +26,8 @@ class UserService{
         return bookMarks;
     };
 
-    async getUserHeader(id){
-        const userInfo = await this.UserModel.findUserHeader(id);
+    async getUserHeader(userId){
+        const userInfo = await this.UserModel.findUserHeaderById(userId);
         const user = {
         name : userInfo.nickName,
         profile : userInfo.photo
