@@ -2,8 +2,8 @@ const jsonHandler = require('../utils/jsonHandle');
 const fetch = require("node-fetch-commonjs");
 const jwt = require('jsonwebtoken');
 const JWT = require("../utils/jwt");
-const secretKey = process.env.JWT_SECRET;
 const User = require("../models/user");
+const secretKey = process.env.JWT_SECRET;
 
 let validateAccessToken = async function(req, res, next) {
     let code = 0;

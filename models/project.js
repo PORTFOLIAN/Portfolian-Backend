@@ -206,6 +206,7 @@ projectSchema.statics.incView = async function(projectId){
 }
 
 projectSchema.statics.getProjectArticle = async function(projectId, userId){
+
 	let articleInfo =  await this.aggregate([
 		{ $match : { _id: mongoose.Types.ObjectId(projectId) } },
 		{
@@ -231,11 +232,7 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 				status : "$status",
 				createdAt : "$createdAt",
 				bookMark : {
-					$cond : {
-						if : { $setIsSubset : [[ mongoose.Types.ObjectId(userId) ],'$article.bookMarkUserList']},
-						then: true,
-						else: false
-					}
+					$in : [ mongoose.Types.ObjectId(userId) ,'$article.bookMarkUserList']
 				},
 				contents : {
 					subjectDescription : "$article.subjectDescription",
