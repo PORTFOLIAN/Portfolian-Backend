@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const JWT = require("../utils/jwt");
 const secret = process.env.JWT_SECRET;
 
-module.exports = async function getUserIdByAccessToken(req, res, next) {
+let getUserIdByAccessToken = async function(req, res, next) {
     let code = 0;
     let userId = "012345678901234567890123";
     let user = null;
@@ -27,3 +27,5 @@ module.exports = async function getUserIdByAccessToken(req, res, next) {
     req.user = user;
     next();
 }
+
+module.exports = { getUserIdByAccessToken };

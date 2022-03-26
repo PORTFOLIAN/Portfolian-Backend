@@ -7,28 +7,6 @@ class ProjectService{
         this.ProjectModel = ProjectModel;
     }
 
-    validateArticleContents(articleDto){
-        if (!articleDto.title)
-            return {code : -51, message : "title 정보를 입력해주세요."};
-        else if (!articleDto.stackList)
-            return {code : -52, message : "stackList 정보를 입력해주세요."};
-        else if (articleDto.stackList.length == 0)
-            return {code : -53, message : "stackList는 빈 배열이 될 수 없습니다."};
-        else if (!articleDto.subjectDescription)
-            return {code : -54, message : "subjectDescription 정보를 입력해주세요."};
-        else if (!articleDto.projectTime)
-            return {code : -55, message : "projectTime 정보를 입력해주세요."};
-        else if (!articleDto.condition)
-            return {code : -56, message : "condition 정보를 입력해주세요."};
-        else if (!articleDto.progress)
-            return {code : -57, message : "progress 정보를 입력해주세요."};
-        else if (!articleDto.capacity)
-            return {code : -58, message : "capacity 정보를 입력해주세요."};
-        else if (articleDto.capacity <= 0)
-            return {code : -59, message : "capacity는 0이상 정수로 입력해주세요."};
-        return {code : 1, message : "validation 통과"};
-    }
-
     async validateProjectOwner(projectId, owner){
 
         if(projectId.length != 24)
@@ -45,11 +23,7 @@ class ProjectService{
     }
 
     async createProject(owner, articleDto, ownweStack){
-        let validateArticleInfo = this.validateArticleContents(articleDto);
-        if (validateArticleInfo.code <= 0)
-            return validateArticleInfo;
 
-        console.log("createProject : ", articleDto);
         //project 생성 & team에 owner,ownweStack 넣기
         const newProject = await this.ProjectModel.createProject(owner, articleDto, ownweStack); 
         return { code : 1, message: "성공적으로 수행되었습니다.",newProjectID : newProject};
@@ -89,11 +63,6 @@ class ProjectService{
         let validateOwnerRes = await this.validateProjectOwner(projectId, owner);
         if (validateOwnerRes.code < 0)
             return validateOwnerRes;
-
-        // 내용 유효성 검사
-        let validateArticleInfo = this.validateArticleContents(articleDto);
-        if (validateArticleInfo.code <= 0)
-            return validateArticleInfo;
 
         this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownerStack);
         return {code : 1, message : "project수정 완료"};

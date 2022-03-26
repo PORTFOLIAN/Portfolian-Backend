@@ -55,16 +55,6 @@ let refreshAccessToken = async function (req,res){
 }
 
 let logout = async function (req,res){
-    let verifyTokenRes = await authServiceInstance.verifyAccessToken(req.headers);
-    if (verifyTokenRes === null || verifyTokenRes.code < 0)
-    {
-        res.json(verifyTokenRes);
-        return;
-    }
-    if (verifyTokenRes.code == 0) {
-        res.json({code: -98, message: "로그인 후 이용해주세요."});
-        return;
-    }
     res.clearCookie('REFRESH');
     let logoutRes = await userServiceInstance.deleteRefreshToken(verifyTokenRes.userId);
     res.json(logoutRes);
