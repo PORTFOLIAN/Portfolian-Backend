@@ -82,6 +82,10 @@ userSchema.statics.findUserById = async function (userId) {
 	return await this.findOne({_id : mongoose.Types.ObjectId(userId)});
 }
 
+userSchema.statics.isExistUserById = async function (userId) {
+	return await this.exist({_id : userId});
+}
+
 userSchema.statics.addDoingProject = async function (user, newProjectId){
 	await User.findByIdAndUpdate(
 		{_id : user._id},
