@@ -10,4 +10,7 @@ module.exports = function loadRouter(app){
     app.use('/users', userRouter);
     app.use('/header',headerRouter);
     app.use('/chats',chatRouter);
+    app.use(function (error, req, res, next) {
+        res.json({ message: error.message });
+      });
 }

@@ -18,5 +18,23 @@ const chatRoomSchema = mongoose.Schema(
 	}
 )
 
+chatRoomSchema.statics.findChatRoomByProjectIdAndParticipant = async function (projectId, participantList) {
+	return await this.findOne({
+        projectId : mongoose.Types.ObjectId(projectId),
+        participant : participantList
+    }).select('_id');
+}
+
+chatRoomSchema.statics.createChatRoom = async function(projectId, projectTitle, participantList){
+    let newChatRoom = await new ChatRoom(
+        {
+            projectId : mongoose.Types.ObjectId(projectId),
+            projectTitle : projectTitle,
+            participant : participantList
+        }
+      ).save();
+    return newChatRoom.id;
+}
+
 const ChatRoom = mongoose.model("ChatRoom", chatRoomSchema);
 module.exports  = ChatRoom;

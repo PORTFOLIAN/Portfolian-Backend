@@ -92,12 +92,10 @@ class ProjectService{
     }
 
     async getProjectArticle(projectId, userId) {
-        await this.ProjectModel.incView(projectId);
-	
         const readProject = await this.ProjectModel.getProjectArticle(projectId, userId);
+        await this.ProjectModel.incView(projectId);
         return readProject;
     }
-
 
 }
 

@@ -142,6 +142,12 @@ projectSchema.statics.findDeleteInfoByArticleId = async function(projectId){
 	).populate('projectInfo.team').select('status article.bookMarkUserList projectInfo')
 }
 
+projectSchema.statics.findProjectTitleById = async function(projectId){
+	return await this.findOne(
+		{_id : mongoose.Types.ObjectId(projectId) }
+	).select('article.title');
+}
+
 projectSchema.statics.findLeaderById = async function(projectId){
 	return await this.findOne(
 		{ _id : mongoose.Types.ObjectId(projectId) }
@@ -351,6 +357,13 @@ projectSchema.statics.getLeaderProject = async function(userId){
 	return await this.find(
 		{leader : mongoose.Types.ObjectId(userId) }
 	).populate('projectInfo.team');
+}
+
+projectSchema.statics.isExistProjectByIdAndLeaderId = async function(projectId, userId){
+	return await this.exist(
+		{_id : projectId},
+		{leader : mongoose.Types.ObjectId(userId) }
+	)
 }
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;
