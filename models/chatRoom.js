@@ -3,8 +3,10 @@ const Schema = mongoose.Schema;
 
 const chatRoomSchema = mongoose.Schema(
     {
+        projectId : {type: mongoose.Schema.Types.ObjectId, ref : "Project"},
+        projectTitle : String,
         participant : {
-            type: [String],
+            type: [{type: mongoose.Schema.Types.ObjectId, ref : "User"}],
 			default : []
         }
     },
