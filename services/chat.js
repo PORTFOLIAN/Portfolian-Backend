@@ -1,4 +1,4 @@
-import  mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 class ChatService {
 
@@ -36,7 +36,6 @@ class ChatService {
         let projectTitle = await this.ProjectModel.findProjectTitleById(projectId);
         chatRoom = await this.ChatRoomModel.createChatRoom(projectId, projectTitle, participantList);
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoom};
-    } 
-
+    }
 }
 module.exports = ChatService;
