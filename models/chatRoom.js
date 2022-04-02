@@ -53,9 +53,10 @@ chatRoomSchema.statics.enterChatRoom = async function(chatRoomId, userId){
 }
 
 chatRoomSchema.statics.isExistChatRoom = async function (user, chatRoomId) {
-	return await this.exists({
-        _id : mongoose.Types.ObjectId(chatRoomId),
-        "participant.$.userId" : { $in : [{userId : user, enter : true}]}
+	return await this.exists({            
+        _id: chatRoomId,
+        'participantList.userId': user,
+        'participantList.enter': true,
     });
 }
 
@@ -72,10 +73,25 @@ chatRoomSchema.statics.leaveChatRoom = async function (chatRoomId, user) {
 
 
 chatRoomSchema.statics.getChatRoomList = async function (user) {
-    return await this.find(
+    return await this.aggregate([
         {
-			participantList : { $in : [{userId : user, enter : true}] }
-        }).select('_id projectTitle participantList');
+            $match : {
+                'participantList.userId': user,
+                'participantList.enter': true
+            }
+        },
+        {
+            $project : {
+                _id : 0,
+                chatRoomId : "$_id",
+                projectTitle : "$projectTitle",
+                newChatCnt : {$literal: 100},
+                newChatContent : "안녕하세요~!",
+                newChatDate : "$createdAt"
+            }
+        },
+
+    ])
 }
 
 

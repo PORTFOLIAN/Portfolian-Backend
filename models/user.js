@@ -173,21 +173,7 @@ userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
 }
 
 userSchema.statics.findUserMinInfoById= async function(userId){
-	return await this.aggregate([
-		{
-			$match : {
-				_id : mongoose.Types.ObjectId(userId)
-			}
-		},
-		{
-			$project :{
-				_id : 0,
-				userId : "$_id",
-				nickName : 1,
-				photo : 1
-			}
-		}
-	]);
+	return await this.findById(userId).select('_id photo nickName');
 }
 
 userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
