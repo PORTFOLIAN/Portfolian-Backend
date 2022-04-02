@@ -23,7 +23,7 @@ class ChatService {
         let chatRoomId = await this.ChatRoomModel.findChatRoomByProjectIdAndParticipant(projectId, participantList);
         if (chatRoomId)
             return {code : 1, message : "이미 존재했던 chatRoomId입니다.", chatRoomId : chatRoomId._id};
-
+        
         let projectTitle = await this.ProjectModel.findProjectTitleById(projectId);
         chatRoomId = await this.ChatRoomModel.createChatRoom(projectId, projectTitle.article.title);
         await this.ChatRoomModel.enterChatRoom(chatRoomId, user._id);
@@ -36,8 +36,8 @@ class ChatService {
         const { ObjectId } = mongoose.Types;
         if (!ObjectId.isValid(chatRoomId))
             return {code : -1, message : "잘못된 userId 또는 chatRoomId입니다."};
-        if (!(await this.ChatRoomModel.isExistChatRoom(user._id, chatRoomId)))
-            return {code : -2, message : "해당 채팅방이 없습니다."};
+        if (!(await this.ChatRoomModel.isInChatRoom(user._id, chatRoomId)))
+            return {code : -2, message : "채팅방에 참여하고 있지 않습니다."};
         await this.ChatRoomModel.leaveChatRoom(chatRoomId, user._id);
         return {code : 1, message : "채팅방을 나갔습니다."};
     }

@@ -10,7 +10,8 @@ const chatRoomSchema = mongoose.Schema(
                 userId : {type: mongoose.Schema.Types.ObjectId, ref : "User"},
                 enter : Boolean
             }],
-			default : []
+			default : [],
+            _id : false
         }
     },
     {
@@ -22,10 +23,11 @@ const chatRoomSchema = mongoose.Schema(
 )
 
 chatRoomSchema.statics.findChatRoomByProjectIdAndParticipant = async function (projectId, participantList) {
-	return await this.findOne({
-        projectId : mongoose.Types.ObjectId(projectId),
-        participant : { $in : participantList}
-    });
+	return await this.findOne(
+        {
+            projectId : mongoose.Types.ObjectId(projectId),
+            participantList: { $all : participantList }
+        }).select('_id')
 }
 
 chatRoomSchema.statics.createChatRoom = async function(projectId, projectTitle){
@@ -49,14 +51,14 @@ chatRoomSchema.statics.enterChatRoom = async function(chatRoomId, userId){
                 enter : true 
                 }
             }
+
         });
 }
 
-chatRoomSchema.statics.isExistChatRoom = async function (user, chatRoomId) {
+chatRoomSchema.statics.isInChatRoom = async function (userId, chatRoomId) {
 	return await this.exists({            
         _id: chatRoomId,
-        'participantList.userId': user,
-        'participantList.enter': true,
+        participantList: { $in : [{userId : userId, enter: true}] }
     });
 }
 
