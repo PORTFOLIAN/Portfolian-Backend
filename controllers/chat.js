@@ -11,4 +11,8 @@ let createChatRoom = async function(req, res) {
     res.json({"res" : "hihi"});
 }
 
-module.exports = { createChatRoom };
+let leaveChatRoom = async function(req, res) {
+    let 
+}
+
+module.exports = { createChatRoom, leaveChatRoom };

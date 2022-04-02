@@ -5,8 +5,11 @@ const chatRoomSchema = mongoose.Schema(
     {
         projectId : {type: mongoose.Schema.Types.ObjectId, ref : "Project"},
         projectTitle : String,
-        participant : {
-            type: [{type: mongoose.Schema.Types.ObjectId, ref : "User"}],
+        participantList : {
+            type: [{
+                userId : {type: mongoose.Schema.Types.ObjectId, ref : "User"},
+                enter : Boolean
+            }],
 			default : []
         }
     },
@@ -21,20 +24,60 @@ const chatRoomSchema = mongoose.Schema(
 chatRoomSchema.statics.findChatRoomByProjectIdAndParticipant = async function (projectId, participantList) {
 	return await this.findOne({
         projectId : mongoose.Types.ObjectId(projectId),
-        participant : participantList
-    }).select('_id');
+        participant : { $in : participantList}
+    });
 }
 
-chatRoomSchema.statics.createChatRoom = async function(projectId, projectTitle, participantList){
+chatRoomSchema.statics.createChatRoom = async function(projectId, projectTitle){
     let newChatRoom = await new ChatRoom(
         {
             projectId : mongoose.Types.ObjectId(projectId),
-            projectTitle : projectTitle,
-            participant : participantList
+            projectTitle : projectTitle
         }
       ).save();
     return newChatRoom.id;
 }
+
+chatRoomSchema.statics.enterChatRoom = async function(chatRoomId, userId){
+    return await this.findOneAndUpdate(
+		{ _id: chatRoomId },
+		{
+		$push : { 
+            participantList : 
+                {
+                userId : mongoose.Types.ObjectId(userId),
+                enter : true 
+                }
+            }
+        });
+}
+
+chatRoomSchema.statics.isExistChatRoom = async function (user, chatRoomId) {
+	return await this.exists({
+        _id : mongoose.Types.ObjectId(chatRoomId),
+        "participant.$.userId" : { $in : [{userId : user, enter : true}]}
+    });
+}
+
+//참고 : https://www.mongodb.com/docs/manual/reference/operator/update/positional/
+chatRoomSchema.statics.leaveChatRoom = async function (chatRoomId, user) {
+    return await this.findOneAndUpdate(
+		{ 
+            _id: chatRoomId,
+            'participantList.userId': user   
+        },{
+		    $set : { 'participantList.$.enter' : false }
+		});
+}
+
+
+chatRoomSchema.statics.getChatRoomList = async function (user) {
+    return await this.find(
+        {
+			participantList : { $in : [{userId : user, enter : true}] }
+        }).select('_id projectTitle participantList');
+}
+
 
 const ChatRoom = mongoose.model("ChatRoom", chatRoomSchema);
 module.exports  = ChatRoom;

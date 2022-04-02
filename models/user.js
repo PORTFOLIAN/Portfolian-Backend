@@ -83,7 +83,7 @@ userSchema.statics.findUserById = async function (userId) {
 }
 
 userSchema.statics.isExistUserById = async function (userId) {
-	return await this.exist({_id : userId});
+	return await this.exists({_id : userId});
 }
 
 userSchema.statics.addDoingProject = async function (user, newProjectId){
@@ -170,6 +170,24 @@ userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
 			channel: coperation
 		}
 	).select('id nickName');
+}
+
+userSchema.statics.findUserMinInfoById= async function(userId){
+	return await this.aggregate([
+		{
+			$match : {
+				_id : mongoose.Types.ObjectId(userId)
+			}
+		},
+		{
+			$project :{
+				_id : 0,
+				userId : "$_id",
+				nickName : 1,
+				photo : 1
+			}
+		}
+	]);
 }
 
 userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
