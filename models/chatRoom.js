@@ -73,29 +73,60 @@ chatRoomSchema.statics.leaveChatRoom = async function (chatRoomId, user) {
 		});
 }
 
-
-chatRoomSchema.statics.getChatRoomList = async function (user) {
+chatRoomSchema.statics.getChatRoomList = async function (userId) {
+    console.log("(model) userId : ", userId);
     return await this.aggregate([
         {
             $match : {
-                'participantList.userId': user,
-                'participantList.enter': true
+                participantList: { $in : [{userId : userId, enter: true}] }
             }
         },
-        {
+        {                
+            $project : {
+                chatRoomId : "$_id",
+                projectTitle : 1,
+                user : {
+                    $first : {
+                        $filter : { 
+                            input : "$participantList",
+                            as : "participants",
+                            cond : { $ne : ["$$participants.userId", userId]}
+                        }
+                    }
+                },
+                createdAt : 1
+            }
+        }
+        ,{
+            $lookup : {
+                from : 'users',
+                localField: 'user.userId',
+                foreignField: '_id',
+                as : 'user'
+            }
+        },
+        { 
+            $unwind : {
+                path : '$user'
+            } 
+        }
+        ,{
             $project : {
                 _id : 0,
-                chatRoomId : "$_id",
-                projectTitle : "$projectTitle",
-                newChatCnt : {$literal: 100},
+                chatRoomId : 1,
+                projectTitle : 1,
+                newChatDate : "$createdAt",
+                newChatCnt : { $literal: 100 },
                 newChatContent : "안녕하세요~!",
-                newChatDate : "$createdAt"
+                user : { 
+                    userId : "$user._id",
+                    photo : 1,
+                    nickName : "$user.nickName"
+                }
             }
-        },
-
+        }
     ])
 }
-
 
 const ChatRoom = mongoose.model("ChatRoom", chatRoomSchema);
 module.exports  = ChatRoom;

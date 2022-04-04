@@ -48,16 +48,16 @@ class ChatService {
         console.log("chatRoomList : ", chatRoomList);
         // for (let chatRoom of chatRoomList){
         //     let chatRoomId = chatRoom._id;
-        //     let participantId;
-        //     for (let participant of chatRoom.participantList) {
-        //         if (participant.userId !== user._id)
-        //             participantId = participant.userId;
-        //     }
-        //     let userInfo = await this.UserModel.findUserMinInfoById(participantId);
-        //     console.log("userInfo: ", chatRoom); 
-        //     chatRoom.user = userInfo;
-        //     delete chatRoom.participantList;
-        //     console.log("chatRoom2: ", chatRoom);    
+        //     // let participantId;
+        //     // for (let participant of chatRoom.participantList) {
+        //     //     if (participant.userId !== user._id)
+        //     //         participantId = participant.userId;
+        //     // }
+        //     // let userInfo = await this.UserModel.findUserMinInfoById(participantId);
+        //     // console.log("userInfo: ", chatRoom); 
+        //     // chatRoom.user = userInfo;
+        //     // delete chatRoom.participantList;
+        //     // console.log("chatRoom2: ", chatRoom);
         // }
         return chatRoomList;
     }
