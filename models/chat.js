@@ -6,7 +6,7 @@ const User = require("./user");
 const chatSchema = mongoose.Schema(
     {
         chatRoomId : {type: mongoose.Schema.Types.ObjectId, ref : "ChatRoom"},
-        message : String,
+        messageContent : String,
         messageType : {
             type : String,
             enum : {

@@ -45,20 +45,6 @@ class ChatService {
     //나의 채팅방 목록 조회
     async getChatRoomList(user) {
         let chatRoomList = await this.ChatRoomModel.getChatRoomList(user._id);
-        console.log("chatRoomList : ", chatRoomList);
-        // for (let chatRoom of chatRoomList){
-        //     let chatRoomId = chatRoom._id;
-        //     // let participantId;
-        //     // for (let participant of chatRoom.participantList) {
-        //     //     if (participant.userId !== user._id)
-        //     //         participantId = participant.userId;
-        //     // }
-        //     // let userInfo = await this.UserModel.findUserMinInfoById(participantId);
-        //     // console.log("userInfo: ", chatRoom); 
-        //     // chatRoom.user = userInfo;
-        //     // delete chatRoom.participantList;
-        //     // console.log("chatRoom2: ", chatRoom);
-        // }
         return chatRoomList;
     }
 }
