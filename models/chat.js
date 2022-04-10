@@ -27,5 +27,22 @@ const chatSchema = mongoose.Schema(
 	}
 )
 
+chatRoomSchema.statics.createChat = async function(message_data){
+    const messageContent = message_data.messageContent;
+    const chatRoomId = message_data.roomId;
+    const senderId = message_data.sender;
+    const messageType = 'Chat';
+
+    let newChat = await new Chat(
+        {
+            chatRoomId : mongoose.Types.ObjectId(chatRoomId),
+            messageContent : messageContent,
+            messageType : messageType,
+            sender : mongoose.Types.ObjectId(senderId)
+        }
+      ).save();
+    return newChat.id;
+}
+
 const Chat = mongoose.model("Chat", chatSchema);
 module.exports  = Chat;

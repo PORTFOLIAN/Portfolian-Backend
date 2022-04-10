@@ -47,5 +47,13 @@ class ChatService {
         let chatRoomList = await this.ChatRoomModel.getChatRoomList(user._id);
         return chatRoomList;
     }
+
+    async createChat(message_data) {
+        const messageContent = message_data.messageContent;
+        const roomId = message_data.roomId;
+        const senderId = message_data.sender;
+        let chatRoomList = await this.ChatModel.createChat(roomId, messageContent, 'Chat', senderId);
+        return chatRoomList;
+    }
 }
 module.exports = ChatService;
