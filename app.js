@@ -25,38 +25,32 @@ const server = https.createServer(options, app).listen(443, () => {
 //     console.log('Start Server : localhost:3000');
 // });
 
-const whiteList = ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000','https://portfolian.site:443','https://portfolian.site','https://3.35.89.48'];
+const redis = require('redis');
+const redisClient = redis.createClient();
+const whiteList = ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000',
+                'https://portfolian.site:443','https://portfolian.site','https://3.35.89.48'];
 const io = socketio(server, { path: '/socket.io',  cors: { origin: whiteList } });
+
 
 io.on('connection',function(socket) {
     console.log(`Connection : SocketId = ${socket.id}`);
 
     socket.on('auth', function(data) {
-        
-        // // 채팅 보내기
-        // const message_data = JSON.parse(JSON.stringify(data));
-
-
-        // console.log(`(send) roomId : ${roomId} message : ${messageContent}`);
-
-        // // 저장하기
-        // await Chat.createChat(message_data);
-
-        // // 로그인 유무 확인
-
-        // //로그인 유 => socket으로 보내기
-
-        // //로그인 무 => 안읽은 사람 저장
-        
-        // io.emit('chat:receive',  message_data );
+        const auth_data = JSON.parse(JSON.stringify(data));
+        const userId = auth_data.userId;
+        if (redisClient.exists(userId))
+            redisClient.del(userId);
+        redisClient.set(userId, socket.id);
+        console.log(`(auth) userId : ${userId} socket.id : ${socket.id}`);
     });
 
     socket.on('chat:send', function(data) {
         // 채팅 보내기
         const message_data = JSON.parse(JSON.stringify(data));
-
-
-        console.log(`(send) roomId : ${roomId} message : ${messageContent}`);
+        const messageContent = message_data.messageContent;
+        const roomId = message_data.roomId;
+        const senderId = message_data.sender;
+        console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
         // 저장하기
         await Chat.createChat(message_data);
