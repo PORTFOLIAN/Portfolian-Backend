@@ -41,6 +41,7 @@ io.on('connection',function(socket) {
         if (redisClient.exists(userId))
             redisClient.del(userId);
         redisClient.set(userId, socket.id);
+        socket.userId = userId;
         console.log(`(auth) userId : ${userId} socket.id : ${socket.id}`);
     });
 
@@ -56,7 +57,7 @@ io.on('connection',function(socket) {
         await Chat.createChat(message_data);
 
         // 로그인 유무 확인
-
+        
         //로그인 유 => socket으로 보내기
 
         //로그인 무 => 안읽은 사람 저장
@@ -73,7 +74,7 @@ io.on('connection',function(socket) {
         const roomId = message_data.roomId;
 
         console.log(`roomId : ${roomId} message : ${messageContent}`);
-        io.emit('chat:receive', { "messageContent" : messageContent })
+        io.emit('chat:receive', { "messageContent" : messageContent });
     });
 
     socket.on('notice:leave', function(data) {

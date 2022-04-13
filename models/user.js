@@ -111,7 +111,7 @@ userSchema.statics.changeNickName = async function (userId, nickName){
 	);
 }
 
-userSchema.statics.changeUserInfo = async function(userId,info,photo){
+userSchema.statics.changeUserInfo = async function(userId, info, photo){
 	await User.findOneAndUpdate(
 		{_id : mongoose.Types.ObjectId(userId)},
 		{
