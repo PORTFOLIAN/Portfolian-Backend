@@ -27,6 +27,7 @@ const server = https.createServer(options, app).listen(443, () => {
 
 const redis = require('redis');
 const redisClient = redis.createClient();
+await redisClient.connect();
 const whiteList = ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000',
                 'https://portfolian.site:443','https://portfolian.site','https://3.35.89.48'];
 const io = socketio(server, { path: '/socket.io',  cors: { origin: whiteList } });
