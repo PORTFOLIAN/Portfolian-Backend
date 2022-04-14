@@ -32,12 +32,11 @@ const whiteList = ['http://3.35.89.48:3000','http://localhost:3000','http://port
 const io = socketio(server, { path: '/socket.io',  cors: { origin: whiteList } });
 
 
-io.on('connection',function(socket) {
+io.on('connection',async function(socket) {
+    await redisClient.connect();
     console.log(`Connection : SocketId = ${socket.id}`);
 
     socket.on('auth', async function(data) {
-        await redisClient.connect();
-
         const auth_data = JSON.parse(JSON.stringify(data));
         const userId = auth_data.userId;
         if (redisClient.exists(userId))
@@ -50,8 +49,6 @@ io.on('connection',function(socket) {
     });
 
     socket.on('chat:send', async function(data) {
-        await redisClient.connect();
-
         // 채팅 보내기
         const message_data = JSON.parse(JSON.stringify(data));
         const messageContent = message_data.messageContent;
@@ -74,9 +71,7 @@ io.on('connection',function(socket) {
             console.log(`(chat:send) user is not in here`);
     });
 
-    socket.on('chat:read', async function(data) {
-        await redisClient.connect();
-
+    socket.on('chat:read', function(data) {
         const read_data = JSON.parse(JSON.stringify(data));
         const roomId = read_data.roomId;
         const userId = read_data.userId;
@@ -86,8 +81,6 @@ io.on('connection',function(socket) {
     });
 
     socket.on('disconnect', async function (socket) {
-        await redisClient.connect();
-
         const socketId = socket.id;
         const userId = socket.userId;
         redisClient.del(userId);
