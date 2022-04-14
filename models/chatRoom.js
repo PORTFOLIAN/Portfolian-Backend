@@ -74,7 +74,6 @@ chatRoomSchema.statics.leaveChatRoom = async function (chatRoomId, user) {
 }
 
 chatRoomSchema.statics.getChatRoomList = async function (userId) {
-    console.log("(model) userId : ", userId);
     return await this.aggregate([
         {
             $match : {

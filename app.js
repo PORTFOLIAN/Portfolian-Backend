@@ -35,18 +35,19 @@ const io = socketio(server, { path: '/socket.io',  cors: { origin: whiteList } }
 io.on('connection',function(socket) {
     console.log(`Connection : SocketId = ${socket.id}`);
 
-    socket.on('auth', function(data) {
+    socket.on('auth', async function(data) {
         const auth_data = JSON.parse(JSON.stringify(data));
         const userId = auth_data.userId;
         if (redisClient.exists(userId))
             redisClient.del(userId);
         redisClient.set(userId, socket.id);
         socket.userId = userId;
-        console.log("(auth) redisClient.keys() : " + redisClient.keys());
+        let keys = await redisClient.keys();
+        console.log("(auth) redisClient.keys() : " + keys);
         console.log(`(auth) userId : ${userId} socket.id : ${socket.id}`);
     });
 
-    socket.on('chat:send', function(data) {
+    socket.on('chat:send', async function(data) {
         // 채팅 보내기
         const message_data = JSON.parse(JSON.stringify(data));
         const messageContent = message_data.messageContent;
@@ -56,8 +57,9 @@ io.on('connection',function(socket) {
         console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
         // 저장하기
-        let chatId = Chat.createChat(message_data);
-        
+        let chatId = await Chat.createChat(message_data);
+        let keys = await redisClient.keys();
+        console.log("(chat:send) redisClient.keys() : " + keys);
         // 로그인 유무 확인 후 socket으로 전송
         if (redisClient.exists(receiverId)) {
             // TODO : redisClient에서 socket.id받아와서 보내주도록 수정 필요
@@ -77,10 +79,12 @@ io.on('connection',function(socket) {
         // 수정 필요
     });
 
-    socket.on('disconnect', function (socket) {
+    socket.on('disconnect', async function (socket) {
+        const socketId = socket.id;
         const userId = socket.userId;
         redisClient.del(userId);
-        console.log("(disconnect) redisClient.keys() : " + redisClient.keys());
+        let keys = await redisClient.keys();
+        console.log("(disconnect) redisClient.keys() : " + keys);
         console.log(`(disconnect) userId : ${userId}`);
     });
 })
