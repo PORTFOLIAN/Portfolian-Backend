@@ -74,7 +74,7 @@ io.on('connection',function(socket) {
             console.log(`(chat:send) user is not in here`);
     });
 
-    socket.on('chat:read', function(data) {
+    socket.on('chat:read', async function(data) {
         await redisClient.connect();
 
         const read_data = JSON.parse(JSON.stringify(data));
@@ -87,7 +87,7 @@ io.on('connection',function(socket) {
 
     socket.on('disconnect', async function (socket) {
         await redisClient.connect();
-        
+
         const socketId = socket.id;
         const userId = socket.userId;
         redisClient.del(userId);
