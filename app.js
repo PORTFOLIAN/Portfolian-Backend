@@ -42,6 +42,7 @@ io.on('connection',function(socket) {
             redisClient.del(userId);
         redisClient.set(userId, socket.id);
         socket.userId = userId;
+        console.log("(auth) redisClient.keys() : " + redisClient.keys());
         console.log(`(auth) userId : ${userId} socket.id : ${socket.id}`);
     });
 
@@ -51,48 +52,36 @@ io.on('connection',function(socket) {
         const messageContent = message_data.messageContent;
         const roomId = message_data.roomId;
         const senderId = message_data.sender;
+        const receiverId = message_data.receiver;
         console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
         // 저장하기
         await Chat.createChat(message_data);
 
-        // 로그인 유무 확인
-        
-        //로그인 유 => socket으로 보내기
-
-        //로그인 무 => 안읽은 사람 저장
-        
-        io.emit('chat:receive',  message_data );
+        // 로그인 유무 확인 후 socket으로 전송
+        if (redisClient.exists(receiverId)) {
+            // TODO : redisClient에서 socket.id받아와서 보내주도록 수정 필요
+            console.log(`(chat:send) user is in here`);
+            io.emit('chat:receive',  message_data ); 
+        }
+        else
+            console.log(`(chat:send) user is not in here`);
     });
 
-    socket.on('notice:enter', function(data) {
-        // 채팅방 만들기
-        console.log('send message client to server');
+    socket.on('chat:read', function(data) {
+        const read_data = JSON.parse(JSON.stringify(data));
+        const roomId = read_data.roomId;
+        const userId = read_data.userId;
+        console.log(`(chat:read) roomId : ${roomId} userId : ${userId}`);
 
-        const message_data = JSON.parse(JSON.stringify(data));
-        const messageContent = message_data.messageContent;
-        const roomId = message_data.roomId;
-
-        console.log(`roomId : ${roomId} message : ${messageContent}`);
-        io.emit('chat:receive', { "messageContent" : messageContent });
-    });
-
-    socket.on('notice:leave', function(data) {
-        //채팅방 아예 나가기
-        console.log('send message client to server');
-
-        const message_data = JSON.parse(JSON.stringify(data));
-        const messageContent = message_data.messageContent;
-        const roomId = message_data.roomId;
-
-        console.log(`roomId : ${roomId} message : ${messageContent}`);
-        io.emit('chat:receive', { "messageContent" : messageContent })
+        // 수정 필요
     });
 
     socket.on('disconnect', function (socket) {
-        //socket 제거
-
-        console.log("One of sockets disconnected from our server.")
+        const userId = socket.userId;
+        redisClient.del(userId);
+        console.log("(disconnect) redisClient.keys() : " + redisClient.keys());
+        console.log(`(disconnect) userId : ${userId}`);
     });
 })
 
