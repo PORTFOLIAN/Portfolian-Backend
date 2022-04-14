@@ -56,8 +56,8 @@ io.on('connection',function(socket) {
         console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
         // 저장하기
-        await Chat.createChat(message_data);
-
+        let chatId = Chat.createChat(message_data);
+        
         // 로그인 유무 확인 후 socket으로 전송
         if (redisClient.exists(receiverId)) {
             // TODO : redisClient에서 socket.id받아와서 보내주도록 수정 필요

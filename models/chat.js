@@ -27,7 +27,7 @@ const chatSchema = mongoose.Schema(
 	}
 )
 
-chatRoomSchema.statics.createChat = async function(message_data){
+chatSchema.statics.createChat = async function(message_data){
     const messageContent = message_data.messageContent;
     const chatRoomId = message_data.roomId;
     const senderId = message_data.sender;
