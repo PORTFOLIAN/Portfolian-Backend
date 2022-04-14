@@ -31,6 +31,7 @@ chatRoomSchema.statics.createChat = async function(message_data){
     const messageContent = message_data.messageContent;
     const chatRoomId = message_data.roomId;
     const senderId = message_data.sender;
+    const receiverId = message_data.receiver;
     const messageType = 'Chat';
 
     let newChat = await new Chat(
@@ -38,7 +39,8 @@ chatRoomSchema.statics.createChat = async function(message_data){
             chatRoomId : mongoose.Types.ObjectId(chatRoomId),
             messageContent : messageContent,
             messageType : messageType,
-            sender : mongoose.Types.ObjectId(senderId)
+            sender : mongoose.Types.ObjectId(senderId),
+            receiver : [mongoose.Types.ObjectId(receiverId)]
         }
       ).save();
     return newChat.id;
