@@ -43,9 +43,6 @@ io.on('connection',async function(socket) {
     console.log(`Connection : SocketId = ${socket.id}`);
     io.emit('connection', {socketId : socket.id} ); 
     
-    let test = await redisClient.get("mykey2");
-    console.log(`testtest : ${test}`);
-
     socket.on('auth', async function(data) {
         const auth_data = JSON.parse(JSON.stringify(data));
         const userId = auth_data.userId;
@@ -56,7 +53,6 @@ io.on('connection',async function(socket) {
         await redisClient.set(userId, socket.id);
         socket.userId = userId;
         let keys = await redisClient.get(userId);
-        console.log("(auth) redisClient.get(userId) : " + keys);
     });
 
     socket.on('chat:send', async function(data) {
@@ -95,10 +91,12 @@ io.on('connection',async function(socket) {
     socket.on('disconnect', async function (socket) {
         const socketId = socket.id;
         const userId = socket.userId;
-        redisClient.del(userId);
-        let keys = await redisClient.keys();
-        console.log("(disconnect) redisClient.keys() : " + keys);
-        console.log(`(disconnect) userId : ${userId}`);
+        console.log(`(disconnect) socket.id : ${socket.id} socket.userId : ${socket.userId}`);
+        let isExistBefore = await redisClient.exists(userId);
+        console.log("(disconnect) isExistBefore : " + isExistBefore);
+        await redisClient.del(userId);
+        let isExistAfter = await redisClient.exists(userId);
+        console.log("(disconnect) isExistAfter : " + isExistAfter);
     });
 })
 

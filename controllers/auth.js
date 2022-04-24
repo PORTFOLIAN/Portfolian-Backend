@@ -56,7 +56,7 @@ let refreshAccessToken = async function (req,res){
 
 let logout = async function (req,res){
     res.clearCookie('REFRESH');
-    let logoutRes = await userServiceInstance.deleteRefreshToken(verifyTokenRes.userId);
+    let logoutRes = await userServiceInstance.deleteRefreshToken(req.userId);
     res.json(logoutRes);
 }
 
