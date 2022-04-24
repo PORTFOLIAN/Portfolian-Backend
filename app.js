@@ -37,20 +37,20 @@ const whiteList = ['http://3.35.89.48:3000','http://localhost:3000','http://port
                 'https://portfolian.site:443','https://portfolian.site','https://3.35.89.48'];
 const io = socketio(server, { path: '/socket.io',  cors: { origin: whiteList } });
 
-
 io.on('connection',async function(socket) {
     console.log(`Connection : SocketId = ${socket.id}`);
+    io.emit('connection', {socketId : socket.id} ); 
 
     socket.on('auth', async function(data) {
         const auth_data = JSON.parse(JSON.stringify(data));
         const userId = auth_data.userId;
+        console.log(`(auth) userId : ${userId} socket.id : ${socket.id}`);
         if (redisClient.exists(userId))
             redisClient.del(userId);
         redisClient.set(userId, socket.id);
         socket.userId = userId;
         let keys = await redisClient.keys();
         console.log("(auth) redisClient.keys() : " + keys);
-        console.log(`(auth) userId : ${userId} socket.id : ${socket.id}`);
     });
 
     socket.on('chat:send', async function(data) {
@@ -69,7 +69,8 @@ io.on('connection',async function(socket) {
         // 로그인 유무 확인 후 socket으로 전송
         if (redisClient.exists(receiverId)) {
             // TODO : redisClient에서 socket.id받아와서 보내주도록 수정 필요
-            console.log(`(chat:send) user is in here`);
+            console.log(`(chat:send) sender(${senderId}) is in here`);
+            console.log(`(chat:send) receiver(${receiverId}) is in here`);
             io.emit('chat:receive',  message_data ); 
         }
         else
