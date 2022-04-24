@@ -55,8 +55,8 @@ io.on('connection',async function(socket) {
             await redisClient.del(userId);
         await redisClient.set(userId, socket.id);
         socket.userId = userId;
-        let keys = await redisClient.keys();
-        console.log("(auth) redisClient.keys() : " + keys);
+        let keys = await redisClient.get(userId);
+        console.log("(auth) redisClient.get(userId) : " + keys);
     });
 
     socket.on('chat:send', async function(data) {
