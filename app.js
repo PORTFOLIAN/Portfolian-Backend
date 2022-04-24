@@ -65,17 +65,18 @@ io.on('connection',async function(socket) {
 
         // 저장하기
         let chatId = await Chat.createChat(message_data);
-        let keys = await redisClient.keys();
-        console.log("(chat:send) redisClient.keys() : " + keys);
         // 로그인 유무 확인 후 socket으로 전송
         let isExist = await redisClient.exists(receiverId);
         if (redisClient.exists(receiverId)) {
             // TODO : redisClient에서 socket.id받아와서 보내주도록 수정 필요
             console.log(`(chat:send) receiver(${receiverId}) is in here`);
-            io.to(socket.id).emit('chat:receive',  message_data); 
+            let receiverSocketId = await redisClient.get(receiverId);
+            io.to(receiverSocketId).emit('chat:receive',  message_data);
         }
         else
+        {
             console.log(`(chat:send) user is not in here`);
+        }
     });
 
     socket.on('chat:read', function(data) {
