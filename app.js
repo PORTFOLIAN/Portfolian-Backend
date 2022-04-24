@@ -88,15 +88,14 @@ io.on('connection',async function(socket) {
         // 수정 필요
     });
 
-    socket.on('disconnect', async function (socket) {
+    socket.on('disconnect', async function () {
         const socketId = socket.id;
         const userId = socket.userId;
         console.log(`(disconnect) socket.id : ${socket.id} socket.userId : ${socket.userId}`);
         let isExistBefore = await redisClient.exists(userId);
-        console.log("(disconnect) isExistBefore : " + isExistBefore);
         await redisClient.del(userId);
         let isExistAfter = await redisClient.exists(userId);
-        console.log("(disconnect) isExistAfter : " + isExistAfter);
+        console.log(`(disconnect) Before : ${isExistBefore}  After :  ${isExistAfter} `);
     });
 })
 
