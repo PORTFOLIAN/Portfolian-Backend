@@ -25,16 +25,15 @@ const server = https.createServer(options, app).listen(443, () => {
 //     console.log('Start Server : localhost:3000');
 // });
 
-// let redisConnect = async function(redisClient) {
-//     await redisClient.connect();
-// };
+let redisConnect = async function(redisClient) {
+    await redisClient.connect();
+};
 const redis = require('redis');
 const redisClient = redis.createClient({
     host : "127.0.0.1",
     port : 6379
 });
-// redisConnect(redisClient);
-
+redisConnect(redisClient);
 
 const whiteList = ['http://3.35.89.48:3000','http://localhost:3000','http://portfolian.site:3000',
                 'https://portfolian.site:443','https://portfolian.site','https://3.35.89.48'];
