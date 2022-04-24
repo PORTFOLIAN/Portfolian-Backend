@@ -42,14 +42,18 @@ const io = socketio(server, { path: '/socket.io',  cors: { origin: whiteList } }
 io.on('connection',async function(socket) {
     console.log(`Connection : SocketId = ${socket.id}`);
     io.emit('connection', {socketId : socket.id} ); 
+    
+    let test = await redisClient.get("mykey2");
+    console.log(`testtest : ${test}`);
 
     socket.on('auth', async function(data) {
         const auth_data = JSON.parse(JSON.stringify(data));
         const userId = auth_data.userId;
         console.log(`(auth) userId : ${userId} socket.id : ${socket.id}`);
-        if (redisClient.exists(userId))
-            redisClient.del(userId);
-        redisClient.set(userId, socket.id);
+        let isExist = await redisClient.exists(userId);
+        if (isExist)
+            await redisClient.del(userId);
+        await redisClient.set(userId, socket.id);
         socket.userId = userId;
         let keys = await redisClient.keys();
         console.log("(auth) redisClient.keys() : " + keys);
