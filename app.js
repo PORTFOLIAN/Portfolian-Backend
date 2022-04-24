@@ -41,7 +41,7 @@ const io = socketio(server, { path: '/socket.io',  cors: { origin: whiteList } }
 
 io.on('connection',async function(socket) {
     console.log(`Connection : SocketId = ${socket.id}`);
-    io.emit('connection', {socketId : socket.id} ); 
+    io.to(socket.id).emit('connection', {socketId : socket.id} ); 
     
     socket.on('auth', async function(data) {
         const auth_data = JSON.parse(JSON.stringify(data));
@@ -52,7 +52,6 @@ io.on('connection',async function(socket) {
             await redisClient.del(userId);
         await redisClient.set(userId, socket.id);
         socket.userId = userId;
-        let keys = await redisClient.get(userId);
     });
 
     socket.on('chat:send', async function(data) {
@@ -69,11 +68,11 @@ io.on('connection',async function(socket) {
         let keys = await redisClient.keys();
         console.log("(chat:send) redisClient.keys() : " + keys);
         // 로그인 유무 확인 후 socket으로 전송
+        let isExist = await redisClient.exists(receiverId);
         if (redisClient.exists(receiverId)) {
             // TODO : redisClient에서 socket.id받아와서 보내주도록 수정 필요
-            console.log(`(chat:send) sender(${senderId}) is in here`);
             console.log(`(chat:send) receiver(${receiverId}) is in here`);
-            io.emit('chat:receive',  message_data ); 
+            io.to(socket.id).emit('chat:receive',  message_data); 
         }
         else
             console.log(`(chat:send) user is not in here`);
