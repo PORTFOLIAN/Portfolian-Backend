@@ -46,5 +46,10 @@ chatSchema.statics.createChat = async function(message_data){
     return newChat.id;
 }
 
+chatSchema.statics.readChat = async function(userId, chatRoomId){
+    return await this.findAndUpdate(
+		{ chatRoomId: mongoose.Types.ObjectId(chatRoomId) },
+		{ $pull : { "receiver" : mongoose.Types.ObjectId(userId) }});
+}
 const Chat = mongoose.model("Chat", chatSchema);
 module.exports  = Chat;
