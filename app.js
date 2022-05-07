@@ -76,12 +76,12 @@ io.on('connection',async function(socket) {
         }
     });
 
-    socket.on('chat:read', function(data) {
+    socket.on('chat:read', async function(data) {
         const read_data = JSON.parse(JSON.stringify(data));
         const roomId = read_data.roomId;
         const userId = read_data.userId;
-        console.log(`(chat:read) roomId : ${roomId} userId : ${userId}`);
         await Chat.readChat(userId, roomId);
+        console.log(`(chat:read) roomId : ${roomId} userId : ${userId}`);
     });
 
     socket.on('disconnect', async function () {
