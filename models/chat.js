@@ -47,7 +47,7 @@ chatSchema.statics.createChat = async function(message_data){
 }
 
 chatSchema.statics.readChat = async function(userId, chatRoomId){
-    return await this.findAndUpdate(
+    return await this.update(
 		{ chatRoomId: mongoose.Types.ObjectId(chatRoomId) },
 		{ $pull : { "receiver" : mongoose.Types.ObjectId(userId) }});
 }
