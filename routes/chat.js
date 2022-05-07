@@ -25,8 +25,8 @@ const ChatService = require('../services/chat');
     res.status(200).json({code : 1, message : "조회에 성공했습니다.", chatRoomList : chatRoomList});
  });
 
-// //채팅 메세지 조회
-// router.get('/:chatRoomId', authController.logout);
+//채팅 메세지 조회
+router.get('/:chatRoomId', authController.logout);
 
 //채팅방 만들기
 router.post('/', validateAccessToken, async (req, res, next) => {

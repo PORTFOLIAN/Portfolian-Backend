@@ -51,5 +51,6 @@ chatSchema.statics.readChat = async function(userId, chatRoomId){
 		{ chatRoomId: mongoose.Types.ObjectId(chatRoomId) },
 		{ $pull : { "receiver" : mongoose.Types.ObjectId(userId) }});
 }
+
 const Chat = mongoose.model("Chat", chatSchema);
 module.exports  = Chat;

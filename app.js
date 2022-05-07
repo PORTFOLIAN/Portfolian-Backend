@@ -55,11 +55,9 @@ io.on('connection',async function(socket) {
     });
 
     socket.on('chat:send', async function(data) {
-        // 채팅 보내기
         const message_data = JSON.parse(JSON.stringify(data));
         const messageContent = message_data.messageContent;
         const roomId = message_data.roomId;
-        const senderId = message_data.sender;
         const receiverId = message_data.receiver;
         console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
@@ -68,14 +66,13 @@ io.on('connection',async function(socket) {
         // 로그인 유무 확인 후 socket으로 전송
         let isExist = await redisClient.exists(receiverId);
         if (isExist) {
-            // TODO : redisClient에서 socket.id받아와서 보내주도록 수정 필요
             console.log(`(chat:send) receiver(${receiverId}) is in here`);
             let receiverSocketId = await redisClient.get(receiverId);
             io.to(receiverSocketId).emit('chat:receive',  message_data);
         }
         else
         {
-            console.log(`(chat:send) user is not in here`);
+            console.log(`(chat:send) receiver(${receiverId}) is not in here`);
         }
     });
 
@@ -84,8 +81,7 @@ io.on('connection',async function(socket) {
         const roomId = read_data.roomId;
         const userId = read_data.userId;
         console.log(`(chat:read) roomId : ${roomId} userId : ${userId}`);
-
-        // 수정 필요
+        await Chat.readChat(userId, roomId);
     });
 
     socket.on('disconnect', async function () {
