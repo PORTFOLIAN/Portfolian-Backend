@@ -7,7 +7,7 @@ const Chat = require('./models/chat');
 const app = express();
 loaders(app);
 
-// // prod mode
+// prod mode
 const https = require('https');
 const fs = require('fs');
 const hostName = "api.portfolian.site";

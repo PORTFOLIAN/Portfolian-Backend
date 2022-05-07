@@ -25,9 +25,13 @@ class ChatService {
             return {code : 1, message : "이미 존재했던 chatRoomId입니다.", chatRoomId : chatRoomId._id};
         
         let projectTitle = await this.ProjectModel.findProjectTitleById(projectId);
+        // 방생성
         chatRoomId = await this.ChatRoomModel.createChatRoom(projectId, projectTitle.article.title);
         await this.ChatRoomModel.enterChatRoom(chatRoomId, user._id);
         await this.ChatRoomModel.enterChatRoom(chatRoomId, participant);
+
+        // 입장 메세지 저장 (Notice)
+        this.ChatModel.createStartNotice(chatRoomId, user._id, participant);
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoomId};
     }
 
@@ -46,6 +50,14 @@ class ChatService {
     async getChatRoomList(user) {
         let chatRoomList = await this.ChatRoomModel.getChatRoomList(user._id);
         return chatRoomList;
+    }
+
+    async getChatList(chatRoomId, user) {
+        let userId = user._id;
+        let oldChatList = await this.ChatModel.getOldChatList(chatRoomId, userId);
+        let newChatList = await this.ChatModel.getNewChatList(chatRoomId, userId);
+
+        return { "oldChatList" : oldChatList, "newChatList" : newChatList };
     }
 
     async createChat(message_data) {
