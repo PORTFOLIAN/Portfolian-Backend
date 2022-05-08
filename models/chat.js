@@ -76,7 +76,8 @@ chatSchema.statics.getOldChatList = async function(chatRoomId, userId){
                 chatType : "$messageType",
                 sender : 1,
                 messageContent : 1,
-                date : "$createdAt" 
+                date : "$createdAt" ,
+                _id : 0
             }
         },
         { $sort : { date : 1 }}
@@ -96,7 +97,8 @@ chatSchema.statics.getNewChatList = async function(chatRoomId, userId){
                 chatType : "$messageType",
                 sender : 1,
                 messageContent : 1,
-                date : "$createdAt" 
+                date : "$createdAt",
+                _id : 0
             }
         },
         { $sort : { date : 1 }}
