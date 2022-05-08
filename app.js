@@ -57,9 +57,8 @@ io.on('connection',async function(socket) {
     socket.on('chat:send', async function(data) {
         const message_data = JSON.parse(JSON.stringify(data));
         const messageContent = message_data.messageContent;
-        const roomId = message_data.roomId;
+        const roomId = message_data.chatRoomId;
         const receiverId = message_data.receiver;
-        message_data.chatType = "Chat";
         console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
         // 저장하기
@@ -79,7 +78,7 @@ io.on('connection',async function(socket) {
 
     socket.on('chat:read', async function(data) {
         const read_data = JSON.parse(JSON.stringify(data));
-        const roomId = read_data.roomId;
+        const roomId = read_data.chatRoomId;
         const userId = read_data.userId;
         await Chat.readChat(userId, roomId);
         console.log(`(chat:read) roomId : ${roomId} userId : ${userId}`);

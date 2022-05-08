@@ -29,15 +29,16 @@ const chatSchema = mongoose.Schema(
 
 chatSchema.statics.createChat = async function(message_data){
     const messageContent = message_data.messageContent;
-    const chatRoomId = message_data.roomId;
+    const chatRoomId = message_data.chatRoomId;
     const senderId = message_data.sender;
     const receiverId = message_data.receiver;
+    const messageType = message_data.messageType;
 
     let newChat = await new Chat(
         {
             chatRoomId : mongoose.Types.ObjectId(chatRoomId),
             messageContent : messageContent,
-            messageType : 'Chat',
+            messageType : messageType,
             sender : mongoose.Types.ObjectId(senderId),
             receiver : [mongoose.Types.ObjectId(receiverId)]
         }
@@ -73,7 +74,7 @@ chatSchema.statics.getOldChatList = async function(chatRoomId, userId){
         },
         {
             $project: {
-                chatType : "$messageType",
+                messageType : 1,
                 sender : 1,
                 messageContent : 1,
                 date : "$createdAt" ,
@@ -94,7 +95,7 @@ chatSchema.statics.getNewChatList = async function(chatRoomId, userId){
         },
         {
             $project: {
-                chatType : "$messageType",
+                messageType : 1,
                 sender : 1,
                 messageContent : 1,
                 date : "$createdAt",
