@@ -59,6 +59,7 @@ io.on('connection',async function(socket) {
         const messageContent = message_data.messageContent;
         const roomId = message_data.roomId;
         const receiverId = message_data.receiver;
+        message_data.chatType = "Chat";
         console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
         // 저장하기
