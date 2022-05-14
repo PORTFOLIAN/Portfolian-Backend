@@ -24,7 +24,7 @@ let getAccessToken = async function (req,res){
 }
 
 let getAccessToken_apple = async function (req,res){
-    let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(req.body.id,"apple");
+    let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(req.body.userId,"apple");
     res.cookie("REFRESH", refreshToken, {
         sameSite: 'none',
         httpOnly: true,
