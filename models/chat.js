@@ -74,6 +74,7 @@ chatSchema.statics.getOldChatList = async function(chatRoomId, userId){
         },
         {
             $project: {
+                chatRoomId :1,
                 messageType : 1,
                 sender : 1,
                 messageContent : 1,
@@ -95,6 +96,7 @@ chatSchema.statics.getNewChatList = async function(chatRoomId, userId){
         },
         {
             $project: {
+                chatRoomId :1,
                 messageType : 1,
                 sender : 1,
                 messageContent : 1,

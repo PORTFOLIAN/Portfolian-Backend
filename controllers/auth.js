@@ -23,6 +23,17 @@ let getAccessToken = async function (req,res){
 
 }
 
+let getAccessToken_apple = async function (req,res){
+    let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(req.body.id,"apple");
+    res.cookie("REFRESH", refreshToken, {
+        sameSite: 'none',
+        httpOnly: true,
+        secure: true,
+        maxAge: 1000 * 60 * 60 * 24 * 14    // 2주
+    }).json(tokenInfo);
+
+}
+
 let getAccessToken_test = async function (req,res){
     let userInfo = req.body;
     let tokens = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
@@ -60,4 +71,4 @@ let logout = async function (req,res){
     res.json(logoutRes);
 }
 
-module.exports = {getAccessToken, getAccessToken_test, verifyJWT_test, refreshAccessToken, logout};
+module.exports = {getAccessToken, getAccessToken_test, verifyJWT_test, refreshAccessToken, logout, getAccessToken_apple};
