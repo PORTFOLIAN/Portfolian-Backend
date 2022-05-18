@@ -4,7 +4,7 @@ const authController = require('../controllers/auth');
 const { validateAccessToken } = require('../middlewares/validateAccessToken');
 
 // 소셜로그인
-router.post('/apple', authController.getAccessToken_apple);
+router.post('/testtest', authController.getAccessToken_apple);
 router.post('/:coperation/access', authController.getAccessToken);
 router.post('/:coperation/test', authController.getAccessToken_test);
 
