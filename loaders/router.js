@@ -8,8 +8,8 @@ module.exports = function loadRouter(app){
     app.use('/oauth', authRouter);
     app.use('/projects', projectRouter);
     app.use('/users', userRouter);
-    app.use('/header',headerRouter);
-    app.use('/chats',chatRouter);
+    app.use('/header', headerRouter);
+    app.use('/chats', chatRouter);
     app.use(function (error, req, res, next) {
         res.json({ message: error.message });
       });
