@@ -31,7 +31,7 @@ class ChatService {
         await this.ChatRoomModel.enterChatRoom(chatRoomId, participant);
 
         // 입장 메세지 저장 (Notice)
-        this.ChatModel.createStartNotice(chatRoomId, user._id, participant);
+        this.ChatModel.createStartNotice(chatRoomId);
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoomId};
     }
 

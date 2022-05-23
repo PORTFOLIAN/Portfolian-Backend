@@ -46,13 +46,12 @@ chatSchema.statics.createChat = async function(message_data){
     return newChat.id;
 }
 
-chatSchema.statics.createStartNotice = async function(chatRoomId, senderId, receiverId){
+chatSchema.statics.createStartNotice = async function(chatRoomId){
     let newChat = await new Chat(
         {
             chatRoomId : mongoose.Types.ObjectId(chatRoomId),
             messageContent : "대화가 시작되었습니다.",
-            messageType : 'Notice',
-            receiver : [mongoose.Types.ObjectId(senderId), mongoose.Types.ObjectId(receiverId)]
+            messageType : 'Notice'
         }
       ).save();
     return newChat.id;
