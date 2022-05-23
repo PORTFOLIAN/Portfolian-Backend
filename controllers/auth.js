@@ -32,7 +32,6 @@ let getAccessToken_apple = async function (req,res){
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 14    // 2주
     }).json(tokenInfo);
-
 }
 
 let getAccessToken_test = async function (req,res){
@@ -45,9 +44,6 @@ let getAccessToken_test = async function (req,res){
         secure: true,
         maxAge: 1000 * 60 * 60 * 24 * 14    // 2주
     }).json(tokenInfo);
-     // console.log("===================================================================================");
-     // console.log('refreshToken(getAccessToken) : ',refreshToken);
-     // console.log('res.header(getAccessToken) : ',res.header);
 }
 
 let verifyJWT_test = async function(req,res){
