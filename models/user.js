@@ -86,6 +86,10 @@ userSchema.statics.findUserById = async function (userId) {
 	return await this.findOne({_id : mongoose.Types.ObjectId(userId)});
 }
 
+userSchema.statics.findFCMTokenById = async function (userId) {
+	return await this.findById(userId).select('fcmToken');
+}
+
 userSchema.statics.isExistUserById = async function (userId) {
 	return await this.exists({_id : userId});
 }
@@ -179,6 +183,10 @@ userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
 
 userSchema.statics.findUserMinInfoById= async function(userId){
 	return await this.findById(userId).select('_id photo nickName');
+}
+
+userSchema.statics.findNicknameById= async function(userId){
+	return await this.findById(userId).select('nickName');
 }
 
 userSchema.statics.updateRefreshToken= async function(userId, refreshToken){

@@ -4,7 +4,9 @@ const socket = require('./socket/index.js');
 const express = require('express');
 const socketio = require('socket.io');
 const Chat = require('./models/chat');
+const request = require('request');
 const app = express();
+const { FCM_KEY } = process.env;
 loaders(app);
 
 // prod mode
@@ -59,6 +61,7 @@ io.on('connection',async function(socket) {
         const messageContent = message_data.messageContent;
         const roomId = message_data.chatRoomId;
         const receiverId = message_data.receiver;
+        const senderId = message_data.sender;
         console.log(`(chat:send) roomId : ${roomId} message : ${messageContent}`);
 
         // 저장하기
@@ -73,6 +76,33 @@ io.on('connection',async function(socket) {
         else
         {
             console.log(`(chat:send) receiver(${receiverId}) is not in here`);
+            let fcmToken = await Chat.findFCMTokenById(receiverId);
+            let senderNickname = await Chat.findNicknameById(senderId);
+            let fcmKey = "key=" + FCM_KEY;
+            console.log(`======server's fcm key : ${fcmKey}======`)
+            console.log(`======receiver's fcm token : ${fcmToken}======`)
+            const options = {
+                uri:'https://fcm.googleapis.com/fcm/send',
+                method: 'POST',
+                headers : {
+                    'Content-Type' : 'application/json',
+                    'Authorization' : fcmKey
+                },
+                body:{ 
+                "to": fcmToken,
+                    "priority" : "high",
+                    "notification" : { 
+                        "title" : senderNickname,
+                        "body" : messageContent,
+                        "sound" : "default"
+                        }
+                },
+                json:true
+            }
+            
+            request.post(options, function (error, response, body) {
+                console.log("googleapis에 post 요청 보냄")
+            });
         }
     });
 
