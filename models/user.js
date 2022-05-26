@@ -108,15 +108,17 @@ userSchema.statics.addDoingProject = async function (user, newProjectId){
 	console.log(user);
 }
 
-userSchema.statics.changeNickName = async function (userId, nickName){
+userSchema.statics.changeNickName = async function (userId, nickName, fcmToken){
 	await User.findOneAndUpdate(
 		{_id : mongoose.Types.ObjectId(userId)},
 		{
 			$set: {
-				'nickName': nickName
+				'nickName': nickName,
+				'fcmToken' : fcmToken
 			}
 		}
 	);
+	
 }
 
 userSchema.statics.changeUserInfo = async function(userId, info, photo){
@@ -129,8 +131,7 @@ userSchema.statics.changeUserInfo = async function(userId, info, photo){
 				'stackList' : info.stack,
 				'photo' : photo,
 				'github' : info.github,
-				'email' : info.mail,
-				'fcmToken' : info.fcmToken
+				'email' : info.mail
 			}
 		}
 	);

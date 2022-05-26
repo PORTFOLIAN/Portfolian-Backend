@@ -82,10 +82,10 @@ class UserService{
         return {code : 1, message : "북마크 수정 완료되었습니다."}
     }
     
-    async changeNickName(userId, tokenUserId, nickName) {
+    async changeNickName(userId, tokenUserId, nickName, fcmToken) {
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
-        await this.UserModel.changeNickName(userId, nickName);
+        await this.UserModel.changeNickName(userId, nickName, fcmToken);
         return {code : 1, message : "nickName이 변경되었습니다."}
     };
 

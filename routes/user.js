@@ -40,7 +40,7 @@ router.patch('/:userId/info', validateAccessToken, validateUserInfo, async (req,
 // 닉네임 수정
 router.patch('/:userId/nickName', validateAccessToken, async (req, res, next) => {
     const userServiceInstance = new UserService(User,Project);
-    let changeNickName = await userServiceInstance.changeNickName(req.params.userId, req.userId, req.body.nickName);
+    let changeNickName = await userServiceInstance.changeNickName(req.params.userId, req.userId, req.body.nickName, req.body.fcmToken);
     res.status(200).json(changeNickName);
 });
 
