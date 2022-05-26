@@ -4,6 +4,7 @@ const socket = require('./socket/index.js');
 const express = require('express');
 const socketio = require('socket.io');
 const Chat = require('./models/chat');
+const User = require('./models/user');
 const request = require('request');
 const app = express();
 const { FCM_KEY } = process.env;
@@ -76,8 +77,8 @@ io.on('connection',async function(socket) {
         else
         {
             console.log(`(chat:send) receiver(${receiverId}) is not in here`);
-            let fcmToken = await Chat.findFCMTokenById(receiverId);
-            let senderNickname = await Chat.findNicknameById(senderId);
+            let senderNickname = await User.findNicknameById(senderId);
+            let fcmToken = await User.findFCMTokenById(receiverId);
             let fcmKey = "key=" + FCM_KEY;
             console.log(`======server's fcm key : ${fcmKey}======`)
             console.log(`======receiver's fcm token : ${fcmToken}======`)
@@ -99,7 +100,6 @@ io.on('connection',async function(socket) {
                 },
                 json:true
             }
-            
             request.post(options, function (error, response, body) {
                 console.log("googleapis에 post 요청 보냄")
             });
@@ -118,10 +118,10 @@ io.on('connection',async function(socket) {
         const socketId = socket.id;
         const userId = socket.userId;
         console.log(`(disconnect) socket.id : ${socket.id} socket.userId : ${socket.userId}`);
-        let isExistBefore = await redisClient.exists(userId);
+       // let isExistBefore = await redisClient.exists(userId);
         await redisClient.del(userId);
-        let isExistAfter = await redisClient.exists(userId);
-        console.log(`(disconnect) Before : ${isExistBefore}  After :  ${isExistAfter} `);
+        //let isExistAfter = await redisClient.exists(userId);
+        //console.log(`(disconnect) Before : ${isExistBefore}  After :  ${isExistAfter} `);
     });
 })
 
