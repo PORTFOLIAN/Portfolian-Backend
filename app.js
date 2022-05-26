@@ -78,10 +78,11 @@ io.on('connection',async function(socket) {
         {
             console.log(`(chat:send) receiver(${receiverId}) is not in here`);
             let senderNickname = await User.findNicknameById(senderId);
-            let fcmToken = await User.findFCMTokenById(receiverId).fcmToken;
+            let fcmToken = await User.findFCMTokenById(receiverId);
             let fcmKey = "key=" + FCM_KEY;
+            console.log(`=select result : ${fcmToken}=`)
             console.log(`======server's fcm key : ${fcmKey}======`)
-            console.log(`======receiver's fcm token : ${fcmToken}======`)
+            console.log(`======receiver's fcm token : ${fcmToken.fcmToken}======`)
             const options = {
                 uri:'https://fcm.googleapis.com/fcm/send',
                 method: 'POST',
@@ -90,7 +91,7 @@ io.on('connection',async function(socket) {
                     'Authorization' : fcmKey
                 },
                 body:{ 
-                "to": fcmToken,
+                "to": fcmToken.fcmToken,
                     "priority" : "high",
                     "notification" : { 
                         "title" : senderNickname,
