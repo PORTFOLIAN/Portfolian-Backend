@@ -58,7 +58,7 @@ class ProjectService{
         }
     }
 
-    async modifyProjectArticle(owner,projectId, articleDto, ownerStack){
+    async modifyProjectArticle(owner, projectId, articleDto, ownerStack){
         // 권한 유효성 검사
         let validateOwnerRes = await this.validateProjectOwner(projectId, owner);
         if (validateOwnerRes.code < 0)
@@ -66,6 +66,16 @@ class ProjectService{
 
         this.ProjectModel.modifyProjectArticle(projectId, articleDto, ownerStack);
         return {code : 1, message : "project수정 완료"};
+    }
+
+    async modifyProjectStatus(owner, projectId, status){
+        let validateOwnerRes = await this.validateProjectOwner(projectId, owner);
+        if (validateOwnerRes.code < 0)
+            return validateOwnerRes;
+        if (status !== 0 || status !== 1)
+        return {code : -1, message : "올바른 status를 입력해주세요."};
+        this.ProjectModel.modifyProjectStatus(projectId, status);
+        return {code : 1, message : "project 상태 수정 완료"};
     }
 
     async getAllArticles(userId, sortKeyWord, keyword, stack){

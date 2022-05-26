@@ -365,5 +365,14 @@ projectSchema.statics.isExistProjectByIdAndLeaderId = async function(projectId, 
 		{leader : mongoose.Types.ObjectId(userId) }
 	)
 }
+
+projectSchema.statics.modifyProjectStatus = async function(projectId, status){
+	await this.findOneAndUpdate(
+		{ _id : mongoose.Types.ObjectId(projectId) },
+		{
+			'status': status
+		}
+	);
+}
 const Project = mongoose.model("Project", projectSchema);
 module.exports  = Project;

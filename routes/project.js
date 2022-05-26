@@ -22,6 +22,7 @@ const AuthService = require("../services/auth");
     # GET    /projects/:projectId         : 모집글 상세 조회
     # POST   /projects                    : 모집글 생성
     # PUT    /projects/:projectId         : 모집글 수정
+    # PATCH  /projects/:projectId/status  : 모집글 상태 수정
     # DELETE /projects/:projectId         : 모집글 삭제
     # POST   /projects/image              : (마크다운 용) 이미지 업로드
 */
@@ -72,6 +73,14 @@ router.put('/:projectId', validateAccessToken, validateArticleContents, async (r
     let modifyArticleRes = await projectServiceInstance.modifyProjectArticle(req.user, req.params.projectId ,req.body.article, req.body.ownerStack);
     res.status(200).json(modifyArticleRes);
 });
+
+// 모집글 상태 수정
+router.put('/:projectId/status', validateAccessToken, async (req, res, next) => {
+    const projectServiceInstance = new ProjectService(User,Project);
+    let modifyArticleRes = await projectServiceInstance.modifyProjectStatus(req.user, req.params.projectId ,req.body.status);
+    res.status(200).json(modifyArticleRes);
+});
+
 
 // 모집글 삭제
 router.delete('/:projectId', validateAccessToken, async (req, res, next) => {
