@@ -76,13 +76,11 @@ io.on('connection',async function(socket) {
         }
         else
         {
-            console.log(`(chat:send) receiver(${receiverId}) is not in here`);
-            let senderNickname = await User.findNicknameById(senderId);
-            let fcmToken = await User.findFCMTokenById(receiverId);
+            let senderNicknameInfo = await User.findNicknameById(senderId);
+            let fcmTokenInfo = await User.findFCMTokenById(receiverId);
             let fcmKey = "key=" + FCM_KEY;
-            console.log(`=select result : ${fcmToken}=`)
             console.log(`======server's fcm key : ${fcmKey}======`)
-            console.log(`======receiver's fcm token : ${fcmToken.fcmToken}======`)
+            console.log(`======receiver's fcm token : ${fcmTokenInfo.fcmToken}======`)
             const options = {
                 uri:'https://fcm.googleapis.com/fcm/send',
                 method: 'POST',
@@ -91,10 +89,10 @@ io.on('connection',async function(socket) {
                     'Authorization' : fcmKey
                 },
                 body:{ 
-                "to": fcmToken.fcmToken,
+                "to": fcmTokenInfo.fcmToken,
                     "priority" : "high",
                     "notification" : { 
-                        "title" : senderNickname,
+                        "title" : senderNicknameInfo.nickName,
                         "body" : messageContent,
                         "sound" : "default"
                         }
@@ -102,7 +100,7 @@ io.on('connection',async function(socket) {
                 json:true
             }
             request.post(options, function (error, response, body) {
-                console.log("googleapis에 post 요청 보냄")
+                console.log(`(chat:send) receiver(${receiverId}) is not in here => fcm`);
             });
         }
     });
