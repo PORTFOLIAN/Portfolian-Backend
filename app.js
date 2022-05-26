@@ -78,7 +78,7 @@ io.on('connection',async function(socket) {
         {
             console.log(`(chat:send) receiver(${receiverId}) is not in here`);
             let senderNickname = await User.findNicknameById(senderId);
-            let fcmToken = await User.findFCMTokenById(receiverId);
+            let fcmToken = await User.findFCMTokenById(receiverId).fcmToken;
             let fcmKey = "key=" + FCM_KEY;
             console.log(`======server's fcm key : ${fcmKey}======`)
             console.log(`======receiver's fcm token : ${fcmToken}======`)
