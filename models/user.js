@@ -34,6 +34,10 @@ const userSchema = mongoose.Schema(
 			type : String,
 			default : ""
 		},
+		fcmToken : {
+			type : String,
+			default : ""
+		},
 		stackList : {
 			type: [String],
 			default : []
@@ -121,7 +125,8 @@ userSchema.statics.changeUserInfo = async function(userId, info, photo){
 				'stackList' : info.stack,
 				'photo' : photo,
 				'github' : info.github,
-				'email' : info.mail
+				'email' : info.mail,
+				'fcmToken' : info.fcmToken
 			}
 		}
 	);
