@@ -13,10 +13,6 @@ class UserService{
         return findUser;
     };
 
-    async addDoingProject(user, doingProjectId) {
-        await this.UserModel.addDoingProject(user, doingProjectId);
-    };
-
     async getBookMarkProjectList(userId, tokenUserId) {
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
@@ -89,12 +85,30 @@ class UserService{
         return {code : 1, message : "nickName이 변경되었습니다."}
     };
 
-    async changeUserInfo(userId, tokenUserId, info, photo){
+    async changeUserInfo(userId, tokenUserId, info){
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
-        await this.UserModel.changeUserInfo(userId, info, photo);
+        await this.UserModel.changeUserInfo(userId, info);
         return {code : 1, message : "사용자 정보가 변경되었습니다."}
     }
+
+    async changeUserProfile(userId, tokenUserId, photoURL){
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        await this.UserModel.changeUserProfile(userId, photoURL);
+        return {code : 1, message : "사용자 프로필 이미지가 변경되었습니다."}
+    }
+
+    async changeUserProfileDefault(userId, tokenUserId){
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        await this.UserModel.changeUserProfile(userId, "default");
+        return {code : 1, message : "사용자 프로필 이미지(기본)가 변경되었습니다."}
+    }
+    
+    async addDoingProject(user, doingProjectId) {
+        await this.UserModel.addDoingProject(user, doingProjectId);
+    };
 
     async deleteRefreshToken(userId){
         await this.UserModel.deleteRefreshToken(userId);
@@ -104,8 +118,6 @@ class UserService{
     async deleteUser(userId, tokenUserId){
         try {
             if (userId !== tokenUserId) {
-                console.log("userId : ", userId);
-                console.log("tokenUserId : ", tokenUserId);
                 return {code: -3, message: "잘못된 userId입니다."};
             }
             let bookMarkProjects = await this.UserModel.findById(userId);

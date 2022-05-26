@@ -67,17 +67,23 @@ const userSchema = mongoose.Schema(
 	}
 );
 
+// create
 userSchema.statics.createUser= async function(oauthId, coperation, refreshToken){
+	const randomNum = Math.floor(Math.random() * 5) + 1;
+	let defaultProfile = "https://portfolian-image.s3.ap-northeast-2.amazonaws.com/default-profile-"
+								+ randomNum.toString() + ".png";
 	let newUser = await new User(
 		{
 			oauthId : oauthId,
 			channel : coperation,
-			refreshToken : refreshToken
+			refreshToken : refreshToken,
+			photo : defaultProfile
 		}
 	).save();
 	return newUser.id;
 }
 
+// find
 userSchema.statics.findByNickName = async function (nickName) {
 	return await this.findOne({nickName : nickName});
 }
@@ -90,10 +96,40 @@ userSchema.statics.findFCMTokenById = async function (userId) {
 	return await this.findById(userId).select('fcmToken');
 }
 
+userSchema.statics.findUserInfo = async function(userId){ 
+	return await this.findOne(
+		{_id : userId}
+		).select(
+		'_id nickName description stackList photo github email'
+		).lean();
+}
+
+userSchema.statics.findUserHeaderById = async function(id){ 
+	return await this.findById(id);
+}
+
+userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
+	return await this.findOne(
+		{
+			oauthId :  oauthId,
+			channel: coperation
+		}
+	).select('id nickName');
+}
+
+userSchema.statics.findUserMinInfoById= async function(userId){
+	return await this.findById(userId).select('_id photo nickName');
+}
+
+userSchema.statics.findNicknameById= async function(userId){
+	return await this.findById(userId).select('nickName');
+}
+
 userSchema.statics.isExistUserById = async function (userId) {
 	return await this.exists({_id : userId});
 }
 
+// update
 userSchema.statics.addDoingProject = async function (user, newProjectId){
 	await User.findByIdAndUpdate(
 		{_id : user._id},
@@ -105,7 +141,6 @@ userSchema.statics.addDoingProject = async function (user, newProjectId){
 			}
 		}
 	);
-	console.log(user);
 }
 
 userSchema.statics.changeNickName = async function (userId, nickName, fcmToken){
@@ -121,7 +156,7 @@ userSchema.statics.changeNickName = async function (userId, nickName, fcmToken){
 	
 }
 
-userSchema.statics.changeUserInfo = async function(userId, info, photo){
+userSchema.statics.changeUserInfo = async function(userId, info){
 	await User.findOneAndUpdate(
 		{_id : mongoose.Types.ObjectId(userId)},
 		{
@@ -129,7 +164,6 @@ userSchema.statics.changeUserInfo = async function(userId, info, photo){
 				'nickName': info.nickName,
 				'description' : info.description,
 				'stackList' : info.stack,
-				'photo' : photo,
 				'github' : info.github,
 				'email' : info.mail
 			}
@@ -137,16 +171,22 @@ userSchema.statics.changeUserInfo = async function(userId, info, photo){
 	);
 }
 
-userSchema.statics.findUserInfo = async function(userId){ 
-	return await this.findOne(
-		{_id : userId}
-		).select(
-		'_id nickName description stackList photo github email'
-		).lean();
-}
-
-userSchema.statics.findUserHeaderById = async function(id){ 
-	return await this.findById(id);
+userSchema.statics.changeUserProfile = async function(userId, photoURL){
+	let profileURL = photoURL;
+	if (photoURL === "default")
+	{
+		const randomNum = Math.floor(Math.random() * 5) + 1;
+		profileURL = "https://portfolian-image.s3.ap-northeast-2.amazonaws.com/default-profile-"
+									+ randomNum.toString() + ".png";
+	}
+	await User.findOneAndUpdate(
+		{_id : mongoose.Types.ObjectId(userId)},
+		{
+			$set: {
+				'photo': profileURL
+			}
+		}
+	);
 }
 
 userSchema.statics.pullProjectBookMark = async function(userId,projectId){
@@ -173,23 +213,6 @@ userSchema.statics.pullDoneProject = async function(userId,projectId){
 		{ $pull: { doneProjectList: mongoose.Types.ObjectId(projectId) } });
 }
 
-userSchema.statics.findUserByOauthId= async function(oauthId, coperation){
-	return await this.findOne(
-		{
-			oauthId :  oauthId,
-			channel: coperation
-		}
-	).select('id nickName');
-}
-
-userSchema.statics.findUserMinInfoById= async function(userId){
-	return await this.findById(userId).select('_id photo nickName');
-}
-
-userSchema.statics.findNicknameById= async function(userId){
-	return await this.findById(userId).select('nickName');
-}
-
 userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
 	await User.findByIdAndUpdate(
 		{_id : userId},
@@ -199,6 +222,7 @@ userSchema.statics.updateRefreshToken= async function(userId, refreshToken){
 	);
 }
 
+// delete
 userSchema.statics.deleteRefreshToken= async function(userId){
 	await User.findByIdAndUpdate(
 		{_id : userId},

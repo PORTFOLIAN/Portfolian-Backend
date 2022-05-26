@@ -10,6 +10,11 @@ const app = express();
 const { FCM_KEY } = process.env;
 loaders(app);
 
+// // test mode
+// const server = app.listen(3000, () => {
+//     console.log('Start Server : localhost:3000');
+// });
+
 // prod mode
 const https = require('https');
 const fs = require('fs');
@@ -22,11 +27,6 @@ const options = {
 const server = https.createServer(options, app).listen(443, () => {
     console.log('443:번 포트에서 대기중입니다.');
 });
-
-// // test mode
-// const server = app.listen(3000, () => {
-//     console.log('Start Server : localhost:3000');
-// });
 
 let redisConnect = async function(redisClient) {
     await redisClient.connect();
@@ -79,8 +79,6 @@ io.on('connection',async function(socket) {
             let senderNicknameInfo = await User.findNicknameById(senderId);
             let fcmTokenInfo = await User.findFCMTokenById(receiverId);
             let fcmKey = "key=" + FCM_KEY;
-            console.log(`======server's fcm key : ${fcmKey}======`)
-            console.log(`======receiver's fcm token : ${fcmTokenInfo.fcmToken}======`)
             const options = {
                 uri:'https://fcm.googleapis.com/fcm/send',
                 method: 'POST',
@@ -117,10 +115,7 @@ io.on('connection',async function(socket) {
         const socketId = socket.id;
         const userId = socket.userId;
         console.log(`(disconnect) socket.id : ${socket.id} socket.userId : ${socket.userId}`);
-       // let isExistBefore = await redisClient.exists(userId);
         await redisClient.del(userId);
-        //let isExistAfter = await redisClient.exists(userId);
-        //console.log(`(disconnect) Before : ${isExistBefore}  After :  ${isExistAfter} `);
     });
 })
 
