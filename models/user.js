@@ -187,6 +187,7 @@ userSchema.statics.changeUserProfile = async function(userId, photoURL){
 			}
 		}
 	);
+	return profileURL;
 }
 
 userSchema.statics.pullProjectBookMark = async function(userId,projectId){

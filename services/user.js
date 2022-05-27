@@ -86,9 +86,6 @@ class UserService{
     };
 
     async changeUserInfo(userId, tokenUserId, info){
-        
-        console.log("validateUserInfo : ");
-        console.log(info);
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
         await this.UserModel.changeUserInfo(userId, info);
@@ -105,8 +102,8 @@ class UserService{
     async changeUserProfileDefault(userId, tokenUserId){
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
-        await this.UserModel.changeUserProfile(userId, "default");
-        return {code : 1, message : "사용자 프로필 이미지(기본)가 변경되었습니다."}
+        let profileURL = await this.UserModel.changeUserProfile(userId, "default");
+        return {code : 1, message : "사용자 프로필 이미지(기본)가 변경되었습니다.", "profileURL" : profileURL};
     }
     
     async addDoingProject(user, doingProjectId) {
