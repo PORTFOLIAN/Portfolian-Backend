@@ -75,12 +75,11 @@ router.put('/:projectId', validateAccessToken, validateArticleContents, async (r
 });
 
 // 모집글 상태 수정
-router.put('/:projectId/status', validateAccessToken, async (req, res, next) => {
+router.patch('/:projectId/status', validateAccessToken, async (req, res, next) => {
     const projectServiceInstance = new ProjectService(User,Project);
     let modifyArticleRes = await projectServiceInstance.modifyProjectStatus(req.user, req.params.projectId ,req.body.status);
     res.status(200).json(modifyArticleRes);
 });
-
 
 // 모집글 삭제
 router.delete('/:projectId', validateAccessToken, async (req, res, next) => {
