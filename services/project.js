@@ -73,7 +73,7 @@ class ProjectService{
         if (validateOwnerRes.code < 0)
             return validateOwnerRes;
         if (status !== 0 || status !== 1)
-        return {code : -1, message : "올바른 status를 입력해주세요."};
+            return {code : -1, message : "올바른 status를 입력해주세요."};
         this.ProjectModel.modifyProjectStatus(projectId, status);
         return {code : 1, message : "project 상태 수정 완료"};
     }
