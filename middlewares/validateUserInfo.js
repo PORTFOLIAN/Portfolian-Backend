@@ -9,7 +9,6 @@ let validateUserInfo = async function(req, res, next) {
         req.body.github = ""; 
     if (!req.body.mail)
         req.body.mail = "";
-    console.log("validateUserInfo : " + req.body);
     next();
 }
 

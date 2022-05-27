@@ -86,6 +86,9 @@ class UserService{
     };
 
     async changeUserInfo(userId, tokenUserId, info){
+        
+        console.log("validateUserInfo : ");
+        console.log(info);
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
         await this.UserModel.changeUserInfo(userId, info);
