@@ -1,5 +1,3 @@
-const upload = require("../S3/S3.js");
-
 let validateUserInfo = async function(req, res, next) {
     if (!req.body.nickName)
         req.body.nickName = "";
