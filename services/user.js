@@ -89,14 +89,14 @@ class UserService{
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
         await this.UserModel.changeUserInfo(userId, info);
-        return {code : 1, message : "사용자 정보가 변경되었습니다."}
+        return {code : 1, message : "사용자 정보가 변경되었습니다."};
     }
 
     async changeUserProfile(userId, tokenUserId, photoURL){
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
         await this.UserModel.changeUserProfile(userId, photoURL);
-        return {code : 1, message : "사용자 프로필 이미지가 변경되었습니다."}
+        return {code : 1, message : "사용자 프로필 이미지가 변경되었습니다.", "profileURL" : profileURL}
     }
 
     async changeUserProfileDefault(userId, tokenUserId){
