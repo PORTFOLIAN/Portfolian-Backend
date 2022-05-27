@@ -25,11 +25,11 @@ const UserService = require('../services/user');
 */
 
 // user 정보 조회
-router.get('/:userId/info', validateAccessToken, async (req, res, next) => {
+router.get('/:userId/info', async (req, res, next) => {
     const userServiceInstance = new UserService(User,Project);
-    const userInfo = await userServiceInstance.getUserInfo(req.userId);
+    const userInfo = await userServiceInstance.getUserInfo(req.params.userId);
     if (!userInfo)
-        return res.status(404).json('나의 정보보기 오류');
+        return res.status(404).json({code : -1, message : '정보 조회 오류'});
     res.status(200).json(userInfo);
 });
 
