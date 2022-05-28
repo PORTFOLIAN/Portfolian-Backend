@@ -107,5 +107,40 @@ chatSchema.statics.getNewChatList = async function(chatRoomId, userId){
     ]);
 }
 
+chatSchema.statics.getChatRoomInfo = async function(chatRoomId){
+    return await this.aggregate([
+        {
+            $match:{ chatRoomId : mongoose.Types.ObjectId(chatRoomId) }
+        },
+        {
+            $project: {
+                messageContent : "$messageContent" ,
+                date: "$createdAt" ,
+                _id : 0
+            }
+        },
+        { 
+            $sort : { date : -1 }
+        },
+        {
+            $limit : 1
+        }
+    ]);
+}
+
+chatSchema.statics.getNewChatCnt = async function(chatRoomId, userId){
+    return await this.aggregate([
+        {
+            $match:{
+                chatRoomId : mongoose.Types.ObjectId(chatRoomId),
+                receiver : { $in : [mongoose.Types.ObjectId(userId)] }
+            }
+        },
+        {
+            $count: "newChatCnt" 
+        }
+    ]);
+}
+
 const Chat = mongoose.model("Chat", chatSchema);
 module.exports  = Chat;

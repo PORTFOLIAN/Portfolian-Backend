@@ -9,7 +9,7 @@ class ChatService {
         this.ChatRoomModel = ChatRoomModel;
     }
 
-    //채팅방 만들기
+    // 채팅방 만들기
     async createChatRoom(user, projectId, participant) {
         const { ObjectId } = mongoose.Types;
 
@@ -35,7 +35,7 @@ class ChatService {
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoomId};
     }
 
-    //채팅방 나가기
+    // 채팅방 나가기
     async leaveChatRoom(user, chatRoomId) {
         const { ObjectId } = mongoose.Types;
         if (!ObjectId.isValid(chatRoomId))
@@ -46,12 +46,22 @@ class ChatService {
         return {code : 1, message : "채팅방을 나갔습니다."};
     }
 
-    //나의 채팅방 목록 조회
+    // 나의 채팅방 목록 조회
     async getChatRoomList(user) {
-        let chatRoomList = await this.ChatRoomModel.getChatRoomList(user._id);
+        let userId = user._id;
+        let chatRoomList = await this.ChatRoomModel.getChatRoomList(userId);
+        for (const chatRoom of chatRoomList) {
+            let chatRoomId = chatRoom.chatRoomId;
+            let chatInfo = await this.ChatModel.getChatRoomInfo(chatRoomId);
+            let newChatCnt = await this.ChatModel.getNewChatCnt(chatRoomId, userId);
+            chatRoom.newChatContent = chatInfo[0].messageContent;
+            chatRoom.newChatCnt = newChatCnt[0].newChatCnt;
+            chatRoom.newChatDate = chatInfo[0].date;
+        }
         return chatRoomList;
     }
 
+    // 채팅 내역 조회
     async getChatList(chatRoomId, user) {
         let userId = user._id;
         let oldChatList = await this.ChatModel.getOldChatList(chatRoomId, userId);
@@ -60,6 +70,7 @@ class ChatService {
         return { "oldChatList" : oldChatList, "newChatList" : newChatList };
     }
 
+    // 채팅 보내기
     async createChat(message_data) {
         const messageContent = message_data.messageContent;
         const roomId = message_data.roomId;

@@ -114,9 +114,6 @@ chatRoomSchema.statics.getChatRoomList = async function (userId) {
                 _id : 0,
                 chatRoomId : 1,
                 projectTitle : 1,
-                newChatDate : "$createdAt",
-                newChatCnt : { $literal: 100 },
-                newChatContent : "안녕하세요~!",
                 user : { 
                     userId : "$user._id",
                     photo : 1,
