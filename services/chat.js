@@ -54,8 +54,11 @@ class ChatService {
             let chatRoomId = chatRoom.chatRoomId;
             let chatInfo = await this.ChatModel.getChatRoomInfo(chatRoomId);
             let newChatCnt = await this.ChatModel.getNewChatCnt(chatRoomId, userId);
+            let chatCnt = 0;
+            if(newChatCnt.length !== 0)
+                chatCnt = newChatCnt[0].newChatCnt;
+            chatRoom.newChatCnt = chatCnt;
             chatRoom.newChatContent = chatInfo[0].messageContent;
-            chatRoom.newChatCnt = newChatCnt[0].newChatCnt;
             chatRoom.newChatDate = chatInfo[0].date;
         }
         return chatRoomList;
