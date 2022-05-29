@@ -25,7 +25,7 @@ router.post('/users/:userId', validateAccessToken, async (req, res, next) => {
     let reason = req.body.reason;
 
     const resInfo = await reportServiceInstance.createUserReport(srcUserId, destUserId, reason);
-    return resInfo;
+    res.status(200).json(resInfo);
 });
 
 // 프로젝트 신고하기
@@ -36,7 +36,7 @@ router.post('/projects/:projectId', validateAccessToken, async (req, res, next) 
     let reason = req.body.reason;
 
     const resInfo = await reportServiceInstance.createProjectReport(srcUserId, destProjectId, reason);
-    return resInfo;
+    res.status(200).json(resInfo);
 });
 
 
