@@ -61,11 +61,7 @@ class ChatService {
             chatRoom.newChatContent = chatInfo[0].messageContent;
             chatRoom.newChatDate = chatInfo[0].date;
         }
-        console.log("sort 전");
-        console.log(chatRoomList);
         chatRoomList.sort(function(a,b) {	return new Date(b.newChatDate) - new Date(a.newChatDate)});
-        console.log("sort 후");
-        console.log(chatRoomList);
         return chatRoomList;
     }
 
