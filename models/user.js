@@ -163,6 +163,17 @@ userSchema.statics.changeNickName = async function (userId, nickName, fcmToken){
 	);
 }
 
+userSchema.statics.changeBan = async function (userId){
+	await User.findOneAndUpdate(
+		{_id : mongoose.Types.ObjectId(userId)},
+		{
+			$set: {
+				'isBan': true
+			}
+		}
+	);
+}
+
 userSchema.statics.changeFcm = async function (userId, fcmToken){
 	await User.findOneAndUpdate(
 		{_id : mongoose.Types.ObjectId(userId)},

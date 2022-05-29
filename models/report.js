@@ -96,5 +96,31 @@ reportSchema.statics.findProjectReportUnder24Hour = async function (srcUserId, d
     ]);
 }
 
+reportSchema.statics.getUserReportCnt = async function(destUserId){
+    return await this.aggregate([
+        {
+            $match:{
+                destUserId : mongoose.Types.ObjectId(destUserId) 
+            }
+        },
+        {
+            $count: "reportCnt"
+        }
+    ]);
+}
+
+reportSchema.statics.getProjectReportCnt = async function(destProjectId){
+    return await this.aggregate([
+        {
+            $match:{
+                destProjectId : mongoose.Types.ObjectId(destProjectId) 
+            }
+        },
+        {
+            $count: "reportCnt"
+        }
+    ]);
+}
+
 const Report = mongoose.model("Report", reportSchema);
 module.exports  = Report;
