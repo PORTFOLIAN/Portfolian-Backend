@@ -8,6 +8,15 @@ class ReportService {
         this.ReportModel = ReportModel;
     }
 
+    // 사용자 신고글이 3개 이상인 경우 체크
+    async checkUserReport(destUserId){
+        let cntInfo = await this.ReportModel.getUserReportCnt(destUserId);
+        if (cntInfo.reportCnt >= 3)
+        {
+            await this.UserModel.changeBan(destUserId);
+        }
+    }
+
     // 사용자 신고하기
     async createUserReport(srcUserId, destUserId, reason) {
         const { ObjectId } = mongoose.Types;
@@ -25,15 +34,17 @@ class ReportService {
 
         //  사용자 신고 생성
         let reportId = await this.ReportModel.createUserReport(srcUserId, destUserId, reason);
+        checkUserReport(destUserId);
+        
         return {code : 1, message : "사용자 신고가 성공적으로 처리되었습니다.", reportId : reportId};
     }
 
-    // 사용자 신고글이 3개 이상인 경우 체크
-    async checkUserReport(destUserId){
-        let cntInfo = await this.ReportModel.getUserReportCnt(destUserId);
+    // 프로젝트 신고글이 3개 이상인 경우 체크
+    async checkProjectReport(destProjectId){
+        let cntInfo = await this.ReportModel.getProjectReportCnt(destProjectId);
         if (cntInfo.reportCnt >= 3)
         {
-            await this.UserModel.changeBan(destUserId);
+            await this.ProjectModel.deleteProject(destProjectId);
         }
     }
 
@@ -57,17 +68,9 @@ class ReportService {
 
         //  프로젝트 신고 생성
         let reportId = await this.ReportModel.createProjectReport(srcUserId, destProjectId, reason);
+        checkProjectReport(destProjectId);
 
         return {code : 1, message : "프로젝트 신고가 성공적으로 처리되었습니다.", reportId : reportId};
-    }
-
-    // 프로젝트 신고글이 3개 이상인 경우 체크
-    async checkProjectReport(destProjectId){
-        let cntInfo = await this.ReportModel.getProjectReportCnt(destProjectId);
-        if (cntInfo.reportCnt >= 3)
-        {
-            await this.ProjectModel.deleteProject(destProjectId);
-        }
     }
 }
 module.exports = ReportService;
