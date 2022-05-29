@@ -16,14 +16,11 @@ class ReportService {
             return {code : -1, message : "userId가 잘못되었습니다."};
         
         let under24HourReport = await this.ReportModel.findUserReportUnder24Hour(srcUsreId, destUserId);
-        console.log("under24HourReport");
-        console.log(under24HourReport);
-
-        let under24HourReport2 = await this.ReportModel.findUserReportUnder24Hour2(srcUsreId, destUserId);
-        console.log("under24HourReport2");
-        console.log(under24HourReport2);
         if (under24HourReport.length !== 0)
             return {code : -3, message : "같은 사용자에 대해서 24시간에 한번만 신고가 가능합니다."};
+
+        if (srcUsreId === destUserId)
+            return {code : -4, message : "자신은 신고할 수 없습니다."};
 
         //  사용자 신고 생성
         let reportId = await this.ReportModel.createUserReport(srcUsreId, destUserId, reason);
@@ -44,6 +41,9 @@ class ReportService {
         let under24HourReport = await this.ReportModel.findProjectReportUnder24Hour(srcUsreId, destProjectId);
         if (under24HourReport.length !== 0)
             return {code : -3, message : "같은 프로젝트에 대해서 24시간에 한번만 신고가 가능합니다."};
+
+        if ((await this.ProjectModel.isExistProjectByIdAndLeaderId(destProjectId, srcUsreId)))
+            return {code : -4, message : "자신의 프로젝트는 신고할 수 없습니다."};
 
         //  프로젝트 신고 생성
         let reportId = await this.ReportModel.createProjectReport(srcUsreId, destProjectId, reason);
