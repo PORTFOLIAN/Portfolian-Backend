@@ -28,10 +28,10 @@ const UserService = require('../services/user');
 // user 정보 조회
 router.get('/:userId/info', async (req, res, next) => {
     const userServiceInstance = new UserService(User,Project);
-    const userInfo = await userServiceInstance.getUserInfo(req.params.userId);
+    const getUserInfoRes = await userServiceInstance.getUserInfo(req.params.userId);
     if (!userInfo)
         return res.status(404).json({code : -1, message : '정보 조회 오류'});
-    res.status(200).json(userInfo);
+    res.status(200).json(getUserInfoRes);
 });
 
 // user 정보 수정
@@ -58,8 +58,8 @@ router.patch('/:userId/profile', validateAccessToken, upload.single('photo'), as
 // 닉네임 수정
 router.patch('/:userId/nickName', validateAccessToken, async (req, res, next) => {
     const userServiceInstance = new UserService(User,Project);
-    let changeNickName = await userServiceInstance.changeNickName(req.params.userId, req.userId, req.body.nickName, req.body.fcmToken);
-    res.status(200).json(changeNickName);
+    let changeNickNameRes = await userServiceInstance.changeNickName(req.params.userId, req.userId, req.body.nickName, req.body.fcmToken);
+    res.status(200).json(changeNickNameRes);
 });
 
 // fcm 수정
@@ -72,8 +72,8 @@ router.patch('/:userId/fcm', validateAccessToken, async (req, res, next) => {
 // user 북마크 리스트 조회
 router.get('/:userId/bookMark', validateAccessToken, async (req, res, next) => {
     const userServiceInstance = new UserService(User,Project);
-    const bookMarkList = await userServiceInstance.getBookMarkProjectList(req.params.userId, req.userId);
-    res.status(200).json(bookMarkList);
+    const getBookMarkListRes = await userServiceInstance.getBookMarkProjectList(req.params.userId, req.userId);
+    res.status(200).json(getBookMarkListRes);
 });
 
 // user 북마크 목록 수정
