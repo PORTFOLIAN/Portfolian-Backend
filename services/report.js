@@ -34,8 +34,8 @@ class ReportService {
 
         //  사용자 신고 생성
         let reportId = await this.ReportModel.createUserReport(srcUserId, destUserId, reason);
-        checkUserReport(destUserId);
-        
+        this.checkUserReport(destUserId);
+
         return {code : 1, message : "사용자 신고가 성공적으로 처리되었습니다.", reportId : reportId};
     }
 
@@ -68,7 +68,7 @@ class ReportService {
 
         //  프로젝트 신고 생성
         let reportId = await this.ReportModel.createProjectReport(srcUserId, destProjectId, reason);
-        checkProjectReport(destProjectId);
+        this.checkProjectReport(destProjectId);
 
         return {code : 1, message : "프로젝트 신고가 성공적으로 처리되었습니다.", reportId : reportId};
     }
