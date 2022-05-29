@@ -260,6 +260,10 @@ projectSchema.statics.getProjectArticle = async function(projectId, userId){
 	return articleInfo[0];
 }
 
+projectSchema.statics.isExistProjectById = async function (projectId) {
+	return await this.exists({_id : projectId});
+}
+
 projectSchema.statics.findBookMarkProject = async function(userId){
 	let allArticles = await this.aggregate([
 		{
