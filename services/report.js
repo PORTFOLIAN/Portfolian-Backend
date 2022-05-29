@@ -17,7 +17,10 @@ class ReportService {
         if (!reason)
             return {code : -3, message : "신고 사유를 입력해주세요."};
         console.log(`src : ${srcUserId}, dest : ${destUserId}`);
+        console.log(`src type : ${typeof(srcUserId)}, dest type : ${typeof(destUserId)}`);
         console.log(srcUserId === destUserId);
+        console.log(srcUserId == destUserId);
+
         if (srcUserId === destUserId)
             return {code : -4, message : "자신은 신고할 수 없습니다."};
 
