@@ -49,8 +49,10 @@ class AuthService{
             findUser=findUser.id;
             await this.UserModel.updateRefreshToken(findUser, refreshToken);
         }
+        let isBanInfo = await this.UserModel.findIsBanById(findUser);
+        let isBan = isBanInfo.isBan;
         let accessToken = JWT.getAccessToken(findUser);
-        return {"refreshToken": refreshToken,"tokenInfo":{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser}};
+        return {"refreshToken": refreshToken,"tokenInfo":{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser, 'isBan' : isBan}};
     }
 
     async verifyAccessToken(header){

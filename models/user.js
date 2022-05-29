@@ -38,6 +38,10 @@ const userSchema = mongoose.Schema(
 			type : String,
 			default : ""
 		},
+		isBan : {
+			type : Boolean,
+			default : false
+		},
 		stackList : {
 			type: [String],
 			default : []
@@ -94,6 +98,10 @@ userSchema.statics.findUserById = async function (userId) {
 
 userSchema.statics.findFCMTokenById = async function (userId) {
 	return await this.findById(userId).select('fcmToken');
+}
+
+userSchema.statics.findIsBanById = async function (userId) {
+	return await this.findById(userId).select('isBan');
 }
 
 userSchema.statics.findUserInfo = async function(userId){ 
