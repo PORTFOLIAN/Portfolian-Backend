@@ -8,6 +8,7 @@ class UserService{
         this.ProjectModel = ProjectModel;
     }
 
+    // find
     async findUserByNickName(userNickName) {
         const findUser = await this.UserModel.findByNickName(userNickName);
         return findUser;
@@ -48,6 +49,7 @@ class UserService{
         return userMyInfo;
     }
 
+    // change
     async changeBookMark(userId, tokenUserId, bookMarked, projectId){
         /*
             북마크하고싶으면 true,
@@ -117,6 +119,7 @@ class UserService{
         await this.UserModel.addDoingProject(user, doingProjectId);
     };
 
+    // delete
     async deleteRefreshToken(userId){
         await this.UserModel.deleteRefreshToken(userId);
         return {code: 1, message : "로그아웃 성공"};
