@@ -15,7 +15,7 @@ class ReportService {
         if (!ObjectId.isValid(srcUsreId) || !ObjectId.isValid(destUserId) || !(await this.UserModel.isExistUserById(destUserId)))
             return {code : -1, message : "userId가 잘못되었습니다."};
         
-        let under24HourReport = await this.ReportModel.findProjectReportUnder24Hour(srcUsreId, destProjectId);
+        let under24HourReport = await this.ReportModel.findProjectReportUnder24Hour(srcUsreId, destUserId);
         if (under24HourReport.length !== 0)
             return {code : -3, message : "같은 사용자에 대해서 24시간에 한번만 신고가 가능합니다."};
 
