@@ -16,6 +16,12 @@ class ReportService {
             return {code : -1, message : "userId가 잘못되었습니다."};
         
         let under24HourReport = await this.ReportModel.findProjectReportUnder24Hour(srcUsreId, destUserId);
+        console.log("under24HourReport");
+        console.log(under24HourReport);
+
+        let under24HourReport2 = await this.ReportModel.findProjectReportUnder24Hour2(srcUsreId, destUserId);
+        console.log("under24HourReport2");
+        console.log(under24HourReport2);
         if (under24HourReport.length !== 0)
             return {code : -3, message : "같은 사용자에 대해서 24시간에 한번만 신고가 가능합니다."};
 

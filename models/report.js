@@ -71,6 +71,28 @@ reportSchema.statics.findUserReportUnder24Hour = async function (srcUserId, dest
     ]);
 }
 
+reportSchema.statics.findUserReportUnder24Hour2 = async function (srcUserId, destUserId) {
+    return await this.aggregate([
+        { 
+            $match : { 
+                srcUserId : mongoose.Types.ObjectId(srcUserId),
+                destUserId : mongoose.Types.ObjectId(destUserId)
+            }
+        },
+        {
+            $project : {
+                timeDiff : {
+                    $dateDiff: {
+                        startDate: "$createdAt",
+                        endDate: "$$NOW",
+                        unit: "hour"
+                    }
+                }
+            }
+        }
+    ]);
+}
+
 reportSchema.statics.findProjectReportUnder24Hour = async function (srcUserId, destProjectId) {
     return await this.aggregate([
         { 
