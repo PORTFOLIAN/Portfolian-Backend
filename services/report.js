@@ -13,6 +13,7 @@ class ReportService {
         let cntInfo = await this.ReportModel.getUserReportCnt(destUserId);
         console.log("cnt : ");
         console.log(cntInfo.reportCnt);
+        console.log(cntInfo);
         if (cntInfo.reportCnt >= 3)
         {
             await this.UserModel.changeBan(destUserId);
