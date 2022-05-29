@@ -29,7 +29,7 @@ const UserService = require('../services/user');
 router.get('/:userId/info', async (req, res, next) => {
     const userServiceInstance = new UserService(User,Project);
     const getUserInfoRes = await userServiceInstance.getUserInfo(req.params.userId);
-    if (!userInfo)
+    if (!getUserInfoRes)
         return res.status(404).json({code : -1, message : '정보 조회 오류'});
     res.status(200).json(getUserInfoRes);
 });
