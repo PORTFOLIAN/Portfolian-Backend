@@ -11,6 +11,8 @@ class ReportService {
     // 사용자 신고글이 3개 이상인 경우 체크
     async checkUserReport(destUserId){
         let cntInfo = await this.ReportModel.getUserReportCnt(destUserId);
+        console.log("cnt : ");
+        console.log(cntInfo.reportCnt);
         if (cntInfo.reportCnt >= 3)
         {
             await this.UserModel.changeBan(destUserId);
