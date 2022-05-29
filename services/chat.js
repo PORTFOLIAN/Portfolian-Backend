@@ -42,7 +42,9 @@ class ChatService {
             return {code : -1, message : "잘못된 userId 또는 chatRoomId입니다."};
         if (!(await this.ChatRoomModel.isInChatRoom(user._id, chatRoomId)))
             return {code : -2, message : "채팅방에 참여하고 있지 않습니다."};
-        await this.ChatRoomModel.leaveChatRoom(chatRoomId, user._id);
+        this.ChatRoomModel.leaveChatRoom(chatRoomId, user._id);
+        let nicknameInfo = await this.UserModel.findNicknameById(user._id);
+        await this.ChatModel.createLeaveNotice(chatRoomId, nicknameInfo.nickName);
         return {code : 1, message : "채팅방을 나갔습니다."};
     }
 

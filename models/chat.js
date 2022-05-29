@@ -57,6 +57,19 @@ chatSchema.statics.createStartNotice = async function(chatRoomId){
     return newChat.id;
 }
 
+chatSchema.statics.createLeaveNotice = async function(chatRoomId, nickName){
+    let leaveMessage = nickName + "님이 나갔습니다.";
+    let newChat = await new Chat(
+        {
+            chatRoomId : mongoose.Types.ObjectId(chatRoomId),
+            messageContent : leaveMessage,
+            messageType : 'Notice'
+        }
+      ).save();
+    return newChat.id;
+}
+
+
 chatSchema.statics.readChat = async function(userId, chatRoomId){
     return await this.update(
 		{ chatRoomId: mongoose.Types.ObjectId(chatRoomId) },
