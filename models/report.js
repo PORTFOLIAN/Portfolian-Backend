@@ -66,7 +66,7 @@ reportSchema.statics.findUserReportUnder24Hour = async function (srcUserId, dest
             }
         },
         { 
-            $match : { $lt : ["$timeDiff", 24] }
+            $match : { timeDiff : { $lt : 24 } } 
         }
     ]);
 }
@@ -91,7 +91,7 @@ reportSchema.statics.findProjectReportUnder24Hour = async function (srcUserId, d
             }
         },
         { 
-            $match : { $lt : ["$timeDiff", 24] }
+            $match : { timeDiff : { $lt : 24 } } 
         }
     ]);
 }
