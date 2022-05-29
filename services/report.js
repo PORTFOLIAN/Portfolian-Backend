@@ -11,10 +11,7 @@ class ReportService {
     // 사용자 신고글이 3개 이상인 경우 체크
     async checkUserReport(destUserId){
         let cntInfo = await this.ReportModel.getUserReportCnt(destUserId);
-        console.log("cnt : ");
-        console.log(cntInfo.reportCnt);
-        console.log(cntInfo);
-        if (cntInfo.reportCnt >= 3)
+        if (cntInfo[0].reportCnt >= 3)
         {
             await this.UserModel.changeBan(destUserId);
         }
@@ -45,7 +42,7 @@ class ReportService {
     // 프로젝트 신고글이 3개 이상인 경우 체크
     async checkProjectReport(destProjectId){
         let cntInfo = await this.ReportModel.getProjectReportCnt(destProjectId);
-        if (cntInfo.reportCnt >= 3)
+        if (cntInfo[0].reportCnt >= 3)
         {
             await this.ProjectModel.deleteProject(destProjectId);
         }
