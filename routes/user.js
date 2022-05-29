@@ -19,6 +19,7 @@ const UserService = require('../services/user');
     # PATCH   /users/:userId/profile/default     : user 프로필사진 기본 이미지로 수정
     # PATCH   /users/:userId/profile             : user 프로필사진 수정
     # PATCH   /users/:userId/nickName            : 닉네임 수정
+    # PATCH   /users/:userId/fcm                 : fcm 수정
     # GET     /users/:userId/bookMark            : user 북마크 리스트 조회
     # POST    /users/:userId/bookMark            : user 북마크 목록 수정
     # DELETE  /users/:userId                     : 회원 탈퇴
@@ -59,6 +60,13 @@ router.patch('/:userId/nickName', validateAccessToken, async (req, res, next) =>
     const userServiceInstance = new UserService(User,Project);
     let changeNickName = await userServiceInstance.changeNickName(req.params.userId, req.userId, req.body.nickName, req.body.fcmToken);
     res.status(200).json(changeNickName);
+});
+
+// fcm 수정
+router.patch('/:userId/fcm', validateAccessToken, async (req, res, next) => {
+    const userServiceInstance = new UserService(User,Project);
+    let changeFcmRes = await userServiceInstance.changeFCM(req.params.userId, req.userId, req.body.fcmToken);
+    res.status(200).json(changeFcmRes);
 });
 
 // user 북마크 리스트 조회

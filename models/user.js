@@ -153,7 +153,17 @@ userSchema.statics.changeNickName = async function (userId, nickName, fcmToken){
 			}
 		}
 	);
-	
+}
+
+userSchema.statics.changeFcm = async function (userId, fcmToken){
+	await User.findOneAndUpdate(
+		{_id : mongoose.Types.ObjectId(userId)},
+		{
+			$set: {
+				'fcmToken' : fcmToken
+			}
+		}
+	);
 }
 
 userSchema.statics.changeUserInfo = async function(userId, info){

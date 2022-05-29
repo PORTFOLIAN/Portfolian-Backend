@@ -85,6 +85,13 @@ class UserService{
         return {code : 1, message : "nickName이 변경되었습니다."}
     };
 
+    async changeFCM(userId, tokenUserId, fcmToken) {
+        if (userId !== tokenUserId)
+            return {code : -3, message : "잘못된 userId입니다."};
+        await this.UserModel.changeFcm(userId, fcmToken);
+        return {code : 1, message : "fcm이 변경되었습니다."}
+    };
+
     async changeUserInfo(userId, tokenUserId, info){
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
