@@ -59,7 +59,7 @@ reportSchema.statics.findUserReportUnder24Hour = async function (srcUserId, dest
                 timeDiff : {
                     $dateDiff: {
                         startDate: "$createdAt",
-                        endDate: new DateTime(),
+                        endDate: "$$NOW",
                         unit: "hour"
                     }
                 }
@@ -84,7 +84,7 @@ reportSchema.statics.findProjectReportUnder24Hour = async function (srcUserId, d
                 timeDiff : {
                     $dateDiff: {
                         startDate: "$createdAt",
-                        endDate: new DateTime(),
+                        endDate: "$$NOW",
                         unit: "hour"
                     }
                 }
