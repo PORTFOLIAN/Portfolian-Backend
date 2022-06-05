@@ -15,6 +15,7 @@ const UserService = require('../services/user');
     user에 관련된 Router를 정의한다.
 
     # GET     /users/:userId/info                : user 정보 조회
+    # GET     /users/:userId/isBan               : user의 isBan 조회
     # PATCH   /users/:userId/info                : user 정보 수정
     # PATCH   /users/:userId/profile/default     : user 프로필사진 기본 이미지로 수정
     # PATCH   /users/:userId/profile             : user 프로필사진 수정
@@ -32,6 +33,15 @@ router.get('/:userId/info', async (req, res, next) => {
     if (!getUserInfoRes)
         return res.status(404).json({code : -1, message : '정보 조회 오류'});
     res.status(200).json(getUserInfoRes);
+});
+
+// user의 isBan 조회
+router.get('/:userId/isBan', async (req, res, next) => {
+    const userServiceInstance = new UserService(User,Project);
+    const getUserIsBanRes = await userServiceInstance.getUserIsBan(req.params.userId);
+    if (!getUserIsBanRes)
+        return res.status(404).json({code : -1, message : '정보 조회 오류'});
+    res.status(200).json(getUserIsBanRes);
 });
 
 // user 정보 수정

@@ -112,6 +112,14 @@ userSchema.statics.findUserInfo = async function(userId){
 		).lean();
 }
 
+userSchema.statics.findUserBan = async function(userId){ 
+	return await this.findOne(
+		{_id : userId}
+		).select(
+		'isBan'
+		).lean();
+}
+
 userSchema.statics.findUserHeaderById = async function(id){ 
 	return await this.findById(id);
 }

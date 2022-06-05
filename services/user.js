@@ -49,6 +49,14 @@ class UserService{
         return userMyInfo;
     }
 
+    async getUserIsBan(userId) {
+        const userInfo = await this.UserModel.findUserInfo(userId)
+        const userMyIsBan= {
+            isBan : userInfo.isBan
+        }
+        return userMyIsBan;
+    }
+
     // change
     async changeBookMark(userId, tokenUserId, bookMarked, projectId){
         /*
