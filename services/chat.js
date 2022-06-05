@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {postFCM} = require('./utils/fcm');
+const {postFCM} = require('../utils/fcm');
 
 class ChatService {
 
@@ -35,7 +35,7 @@ class ChatService {
         let createMessage = "대화가 시작되었습니다."
         this.ChatModel.createNotice(chatRoomId, createMessage);
         // senderId, receiverId, messageContent
-        postFCM.postFCM(user._id, projectId, createMessage);
+        postFCM(user._id, projectId, createMessage);
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoomId};
     }
 
@@ -60,7 +60,7 @@ class ChatService {
                 break;
             }
         }
-        postFCM.postFCM(user._id, receiverId, leaveMessage);
+        postFCM(user._id, receiverId, leaveMessage);
         return {code : 1, message : "채팅방을 나갔습니다."};
     }
 

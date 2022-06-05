@@ -365,8 +365,10 @@ projectSchema.statics.getLeaderProject = async function(userId){
 
 projectSchema.statics.isExistProjectByIdAndLeaderId = async function(projectId, userId){
 	return await this.exists(
-		{_id : projectId},
-		{leader : mongoose.Types.ObjectId(userId) }
+		{
+			_id : projectId,
+			leader : mongoose.Types.ObjectId(userId) 
+		}
 	)
 }
 
