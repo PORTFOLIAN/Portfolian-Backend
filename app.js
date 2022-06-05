@@ -5,9 +5,8 @@ const express = require('express');
 const socketio = require('socket.io');
 const Chat = require('./models/chat');
 const User = require('./models/user');
-const request = require('request');
 const app = express();
-const { FCM_KEY } = process.env;
+const {postFCM} = require('./utils/fcm');
 loaders(app);
 
 // // test mode
@@ -74,33 +73,7 @@ io.on('connection',async function(socket) {
             let receiverSocketId = await redisClient.get(receiverId);
             io.to(receiverSocketId).emit('chat:receive',  message_data);
         }
-        else
-        {
-            let senderNicknameInfo = await User.findNicknameById(senderId);
-            let fcmTokenInfo = await User.findFCMTokenById(receiverId);
-            let fcmKey = "key=" + FCM_KEY;
-            const options = {
-                uri:'https://fcm.googleapis.com/fcm/send',
-                method: 'POST',
-                headers : {
-                    'Content-Type' : 'application/json',
-                    'Authorization' : fcmKey
-                },
-                body:{ 
-                "to": fcmTokenInfo.fcmToken,
-                    "priority" : "high",
-                    "notification" : { 
-                        "title" : senderNicknameInfo.nickName,
-                        "body" : messageContent,
-                        "sound" : "default"
-                        }
-                },
-                json:true
-            }
-            request.post(options, function (error, response, body) {
-                console.log(`(chat:send) receiver(${receiverId}) is not in here => fcm`);
-            });
-        }
+        postFCM(senderId, receiverId, messageContent);
     });
 
     socket.on('chat:read', async function(data) {
