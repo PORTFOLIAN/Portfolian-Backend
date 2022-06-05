@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const {postFCM} = require('./utils/fcm');
 
 class ChatService {
 
@@ -31,7 +32,10 @@ class ChatService {
         await this.ChatRoomModel.enterChatRoom(chatRoomId, participant);
 
         // 입장 메세지 저장 (Notice)
-        this.ChatModel.createStartNotice(chatRoomId);
+        let createMessage = "대화가 시작되었습니다."
+        this.ChatModel.createNotice(chatRoomId, createMessage);
+        // senderId, receiverId, messageContent
+        postFCM.postFCM(user._id, projectId, createMessage);
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoomId};
     }
 
@@ -42,9 +46,21 @@ class ChatService {
             return {code : -1, message : "잘못된 userId 또는 chatRoomId입니다."};
         if (!(await this.ChatRoomModel.isInChatRoom(user._id, chatRoomId)))
             return {code : -2, message : "채팅방에 참여하고 있지 않습니다."};
-        this.ChatRoomModel.leaveChatRoom(chatRoomId, user._id);
+        await this.ChatRoomModel.leaveChatRoom(chatRoomId, user._id);
         let nicknameInfo = await this.UserModel.findNicknameById(user._id);
-        await this.ChatModel.createLeaveNotice(chatRoomId, nicknameInfo.nickName);
+        let leaveMessage = nicknameInfo.nickName + "님이 나갔습니다.";
+        this.ChatModel.createNotice(chatRoomId, leaveMessage);
+        let participantList = await this.ChatRoomModel.getChatParticipant(chatRoomId);
+        let receiverId;
+        for (participant of participantList)
+        {
+            if (user._id !== participant.userId)
+            {
+                receiverId = participant.userId;
+                break;
+            }
+        }
+        postFCM.postFCM(user._id, receiverId, leaveMessage);
         return {code : 1, message : "채팅방을 나갔습니다."};
     }
 

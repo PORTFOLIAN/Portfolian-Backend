@@ -124,5 +124,13 @@ chatRoomSchema.statics.getChatRoomList = async function (userId) {
     ])
 }
 
+chatRoomSchema.statics.getChatParticipant = async function (chatRoomId) {
+    return await this.findOne(
+		{_id : chatRoomId}
+		).select(
+		'participantList'
+		).lean();
+}
+
 const ChatRoom = mongoose.model("ChatRoom", chatRoomSchema);
 module.exports  = ChatRoom;

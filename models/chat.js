@@ -46,29 +46,16 @@ chatSchema.statics.createChat = async function(message_data){
     return newChat.id;
 }
 
-chatSchema.statics.createStartNotice = async function(chatRoomId){
+chatSchema.statics.createNotice = async function(chatRoomId, messageContent){
     let newChat = await new Chat(
         {
             chatRoomId : mongoose.Types.ObjectId(chatRoomId),
-            messageContent : "대화가 시작되었습니다.",
+            messageContent : messageContent,
             messageType : 'Notice'
         }
       ).save();
     return newChat.id;
 }
-
-chatSchema.statics.createLeaveNotice = async function(chatRoomId, nickName){
-    let leaveMessage = nickName + "님이 나갔습니다.";
-    let newChat = await new Chat(
-        {
-            chatRoomId : mongoose.Types.ObjectId(chatRoomId),
-            messageContent : leaveMessage,
-            messageType : 'Notice'
-        }
-      ).save();
-    return newChat.id;
-}
-
 
 chatSchema.statics.readChat = async function(userId, chatRoomId){
     return await this.update(

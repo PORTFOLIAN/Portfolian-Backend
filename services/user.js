@@ -32,7 +32,7 @@ class UserService{
         const headerInfo = {
         user : user
         }
-    return headerInfo;
+        return headerInfo;
     }
 
     async getUserInfo(userId) {

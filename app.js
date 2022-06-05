@@ -6,7 +6,7 @@ const socketio = require('socket.io');
 const Chat = require('./models/chat');
 const User = require('./models/user');
 const app = express();
-const {postFCM} = require('./utils/fcm');
+const { postFCM } = require('./utils/fcm');
 loaders(app);
 
 // // test mode
