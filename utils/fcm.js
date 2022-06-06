@@ -1,5 +1,6 @@
 require('dotenv').config();
 const request = require('request');
+const User = require('./models/user');
 const { FCM_KEY } = process.env;
 
 let postFCM = async function (senderId, receiverId, messageContent){
