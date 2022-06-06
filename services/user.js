@@ -51,7 +51,6 @@ class UserService{
 
     async getUserIsBan(userId) {
         const userInfo = await this.UserModel.findIsBanById(userId)
-        console.log("isBan : ", userInfo);
         return {code : 1, message : "isBan 조회 성공", isBan : userInfo.isBan};
     }
 
@@ -94,7 +93,6 @@ class UserService{
     };
 
     async changeFCM(userId, tokenUserId, fcmToken) {
-        console.log("-------------------------FCMToken 갱신-------------------------");
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
         await this.UserModel.changeFcm(userId, fcmToken);

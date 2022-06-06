@@ -49,7 +49,7 @@ class ChatService {
         await this.ChatRoomModel.leaveChatRoom(chatRoomId, user._id);
         let nicknameInfo = await this.UserModel.findNicknameById(user._id);
         let leaveMessage = nicknameInfo.nickName + "님이 나갔습니다.";
-        this.ChatModel.createNotice(chatRoomId, leaveMessage);
+        await this.ChatModel.createNotice(chatRoomId, leaveMessage);
         let participantList = await this.ChatRoomModel.getChatParticipant(chatRoomId);
         let receiverId;
         console.log("participantList" , participantList);
