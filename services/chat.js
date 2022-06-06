@@ -35,7 +35,7 @@ class ChatService {
         let createMessage = "대화가 시작되었습니다."
         this.ChatModel.createNotice(chatRoomId, createMessage);
         // senderId, receiverId, messageContent
-        postFCM(userId, projectId, createMessage);
+        postFCM(userId, participant, createMessage);
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoomId};
     }
 
