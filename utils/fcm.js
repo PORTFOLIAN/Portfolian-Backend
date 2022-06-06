@@ -6,6 +6,7 @@ const { FCM_KEY } = process.env;
 let postFCM = async function (senderId, receiverId, messageContent){
 
     console.log("POST FCM");
+    console.log("----senderId : ", senderId, "----");
 
     let senderNicknameInfo = await User.findNicknameById(senderId);
     let fcmTokenInfo = await User.findFCMTokenById(receiverId);
