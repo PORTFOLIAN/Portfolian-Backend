@@ -46,7 +46,7 @@ router.post('/', validateAccessToken, async (req, res, next) => {
     let projectId = req.body.projectId;
     let participant = req.body.userId;
 
-    const roomId = await chatServiceInstance.createChatRoom(user, projectId, participant);
+    const roomId = await chatServiceInstance.createChatRoom(user, req.userId,  projectId, participant);
     res.status(200).json(roomId);
 });
 

@@ -11,7 +11,7 @@ class ChatService {
     }
 
     // 채팅방 만들기
-    async createChatRoom(user, projectId, participant) {
+    async createChatRoom(user, userId, projectId, participant) {
         const { ObjectId } = mongoose.Types;
 
         if (!ObjectId.isValid(participant) || !(await this.UserModel.isExistUserById(participant)))
@@ -35,8 +35,7 @@ class ChatService {
         let createMessage = "대화가 시작되었습니다."
         this.ChatModel.createNotice(chatRoomId, createMessage);
         // senderId, receiverId, messageContent
-        console.log("createChatRoom (userId):", user._id);
-        postFCM(user._id, projectId, createMessage);
+        postFCM(userId, projectId, createMessage);
         return {code : 1, message : "새로 생성된 chatRoomId입니다.", chatRoomId : chatRoomId};
     }
 
