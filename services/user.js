@@ -50,7 +50,7 @@ class UserService{
     }
 
     async getUserIsBan(userId) {
-        const userInfo = await this.UserModel.findUserInfo(userId)
+        const userInfo = await this.UserModel.findIsBanById(userId)
         console.log("isBan : ", userInfo);
         return {code : -3, message : "잘못된 userId입니다.", isBan : userInfo.isBan};
     }
