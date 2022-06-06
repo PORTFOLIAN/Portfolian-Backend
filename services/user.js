@@ -96,6 +96,7 @@ class UserService{
     };
 
     async changeFCM(userId, tokenUserId, fcmToken) {
+        console.log("-------------------------FCMToken 갱신-------------------------");
         if (userId !== tokenUserId)
             return {code : -3, message : "잘못된 userId입니다."};
         await this.UserModel.changeFcm(userId, fcmToken);

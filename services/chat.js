@@ -53,7 +53,7 @@ class ChatService {
         let participantList = await this.ChatRoomModel.getChatParticipant(chatRoomId);
         let receiverId;
         console.log("participantList" , participantList);
-        for (participant of participantList.participantList)
+        for (let participant of participantList.participantList)
         {
             if (user._id !== participant.userId)
             {
