@@ -10,6 +10,7 @@ let postFCM = async function (senderId, receiverId, messageContent){
     let senderNicknameInfo = await User.findNicknameById(senderId);
     let fcmTokenInfo = await User.findFCMTokenById(receiverId);
     let fcmKey = "key=" + FCM_KEY;
+    console.log("sender name: " , senderNicknameInfo , " FCMToken : ", fcmTokenInfo);
     const options = {
         uri:'https://fcm.googleapis.com/fcm/send',
         method: 'POST',
