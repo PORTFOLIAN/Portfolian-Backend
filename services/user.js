@@ -162,7 +162,6 @@ class UserService{
             await this.UserModel.deleteUser(userId);
             return {code: 1, message: "탈퇴 성공"};
         }catch (e) {
-            console.log(e);
             return {code: -1, message: "탈퇴 실패"};
         }
     }

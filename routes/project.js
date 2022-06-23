@@ -48,7 +48,6 @@ router.get('/:projectId', getUserIdByAccessToken, async (req, res, next) => {
         article["code"] = 1;
         res.status(200).json(article);
       } catch (e) {
-        console.log(e)
         res.status(200).json({code : -1, message: "project 조회 실패"});
       }
 });

@@ -52,7 +52,6 @@ class ChatService {
         await this.ChatModel.createNotice(chatRoomId, leaveMessage);
         let participantList = await this.ChatRoomModel.getChatParticipant(chatRoomId);
         let receiverId;
-        console.log("participantList" , participantList);
         for (let participant of participantList.participantList)
         {
             if (user._id !== participant.userId)
