@@ -12,13 +12,25 @@ class AuthService{
 
     async getUserInfo(coperation, access_token) {
         try {
-            return await fetch("https://kapi.kakao.com/v2/user/me", {
-                method: 'POST',
-                headers: {
-                    'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
-                    'Authorization': `Bearer ${access_token}`
-                }
-            }).then(res => res.json());
+            if (coperation === "kakao"){
+                let info = await fetch("https://kapi.kakao.com/v2/user/me", {
+                    method: 'POST',
+                    headers: {
+                        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8',
+                        'Authorization': `Bearer ${access_token}`
+                    }
+                }).then(res => res.json());
+                return {id : info.id, code : 1};
+            }   
+            else if(coperation === "google"){
+                let info = await fetch("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + access_token , {
+                    method: 'GET',
+                    headers: {
+                        'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'               
+                    }
+                }).then(res => res.json());
+                return {id : info.sub, code : 1};
+            }
         }catch(e) {
             console.log("error: ",e);
             return {code : -1, message:"올바르지 않은 access_token입니다."}
