@@ -38,8 +38,10 @@ router.post('/login/apple', async (req, res, next) => {
 router.post('/:coperation/access', async (req, res, next) => {
     const authServiceInstance = new AuthService(User);
     let userInfo = await authServiceInstance.getUserInfo(req.params.coperation, req.body.token);
-    if(userInfo.code)
+    if(userInfo.code){
+        console.log("code 500");
         return res.status(500).json(userInfo);
+    }
     let {refreshToken, tokenInfo} = await authServiceInstance.getToekns(userInfo.id,req.params.coperation);
     res.cookie("REFRESH", refreshToken, {
         sameSite: 'none',

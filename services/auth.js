@@ -13,7 +13,7 @@ class AuthService{
     async getUserInfo(coperation, access_token) {
         try {
             console.log("coperation (out): ", coperation);
-            if (coperation === "kakao"){
+            if (coperation === "kakao") {
                 console.log("coperation (in): ", coperation);
                 let info = await fetch("https://kapi.kakao.com/v2/user/me", {
                     method: 'POST',
@@ -25,7 +25,7 @@ class AuthService{
                 console.log("kakao id : ", info.id);
                 return {id : info.id, code : 1};
             }   
-            else if(coperation === "google"){
+            else if(coperation === "google") {
                 console.log("coperation (in): ", coperation);
                 let info = await fetch("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + access_token , {
                     method: 'GET',
@@ -44,6 +44,7 @@ class AuthService{
     };
 
     async getToekns(oauthId, channel){
+        console.log("getToekns 접근");
         let refreshToken = JWT.getRefreshToken();
         let isNew = true;
 
