@@ -34,7 +34,7 @@ router.post('/login/apple', async (req, res, next) => {
     }).json(tokenInfo);
 });
 
-// 소셜로그인 (카카오)
+// 소셜로그인 (카카오, 구글)
 router.post('/:coperation/access', async (req, res, next) => {
     const authServiceInstance = new AuthService(User);
     let userInfo = await authServiceInstance.getUserInfo(req.params.coperation, req.body.token);

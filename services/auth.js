@@ -12,7 +12,9 @@ class AuthService{
 
     async getUserInfo(coperation, access_token) {
         try {
+            console.log("coperation (out): ", coperation);
             if (coperation === "kakao"){
+                console.log("coperation (in): ", coperation);
                 let info = await fetch("https://kapi.kakao.com/v2/user/me", {
                     method: 'POST',
                     headers: {
@@ -23,6 +25,7 @@ class AuthService{
                 return {id : info.id, code : 1};
             }   
             else if(coperation === "google"){
+                console.log("coperation (in): ", coperation);
                 let info = await fetch("https://www.googleapis.com/oauth2/v3/userinfo?access_token=" + access_token , {
                     method: 'GET',
                     headers: {
@@ -31,6 +34,8 @@ class AuthService{
                 }).then(res => res.json());
                 return {id : info.sub, code : 1};
             }
+            else
+                console.log("coperation nothing");   
         }catch(e) {
             console.log("error: ",e);
             return {code : -1, message:"올바르지 않은 access_token입니다."}
