@@ -22,6 +22,7 @@ class AuthService{
                         'Authorization': `Bearer ${access_token}`
                     }
                 }).then(res => res.json());
+                console.log("kakao id : ", info.id);
                 return {id : info.id, code : 1};
             }   
             else if(coperation === "google"){
@@ -69,7 +70,9 @@ class AuthService{
         let isBanInfo = await this.UserModel.findIsBanById(findUser);
         let isBan = isBanInfo.isBan;
         let accessToken = JWT.getAccessToken(findUser);
-        return {"refreshToken": refreshToken,"tokenInfo":{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser, 'isBan' : isBan}};
+        let ret = {"refreshToken": refreshToken,"tokenInfo":{'code': 1 ,'accessToken': accessToken, "isNew" : isNew, 'userId': findUser, 'isBan' : isBan}}
+        console.log("getToken return : ", ret);
+        return ret;
     }
 
     async verifyAccessToken(header){
