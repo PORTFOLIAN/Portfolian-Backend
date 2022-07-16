@@ -39,7 +39,7 @@ router.post('/:coperation/access', async (req, res, next) => {
     const authServiceInstance = new AuthService(User);
     let userInfo = await authServiceInstance.getUserInfo(req.params.coperation, req.body.token);
     console.log("userInfo : ", userInfo);
-    if(userInfo.code){
+    if(userInfo.code === -1){
         console.log("code 500");
         return res.status(500).json(userInfo);
     }
