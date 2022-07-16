@@ -11,6 +11,7 @@ class AuthService{
     }
 
     async getUserInfo(coperation, access_token) {
+        let id = 0;
         try {
             console.log("coperation (out): ", coperation);
             if (coperation === "kakao") {
@@ -22,8 +23,8 @@ class AuthService{
                         'Authorization': `Bearer ${access_token}`
                     }
                 }).then(res => res.json());
-                console.log("kakao id : ", info.id);
-                return {id : info.id, code : 1};
+                id = info.id;
+                console.log("kakao id : ", id);
             }   
             else if(coperation === "google") {
                 console.log("coperation (in): ", coperation);
@@ -33,14 +34,14 @@ class AuthService{
                         'Content-type': 'application/x-www-form-urlencoded;charset=utf-8'               
                     }
                 }).then(res => res.json());
-                return {id : info.sub, code : 1};
+                id = info.sub;
+                console.log("google id : ", id);
             }
-            else
-                console.log("coperation nothing");   
         }catch(e) {
             console.log("error: ",e);
             return {code : -1, message:"올바르지 않은 access_token입니다."}
         }
+        return {id : id, code : 1};
     };
 
     async getToekns(oauthId, channel){
