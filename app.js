@@ -26,6 +26,10 @@ const server = https.createServer(options, app).listen(443, () => {
     console.log('443:번 포트에서 대기중입니다.');
 });
 
+process.on('uncaughtException', function (err) {
+    console.log(err);
+}); 
+
 let redisConnect = async function(redisClient) {
     await redisClient.connect();
 };
